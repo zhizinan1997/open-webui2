@@ -133,7 +133,7 @@
 								<input
 									class="w-full rounded-sm py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-800 outline-hidden"
 									type="number"
-									step="0.0001"
+									step="0.000000000001"
 									bind:value={_user.credit}
 									autocomplete="off"
 									required
