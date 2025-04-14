@@ -9,6 +9,7 @@ from sqlalchemy import JSON, BigInteger, Column, Numeric, String
 
 from open_webui.internal.db import Base, get_db
 
+
 ####################
 # User Credit DB Schema
 ####################
@@ -31,6 +32,17 @@ class CreditLog(Base):
     id = Column(String, primary_key=True)
     user_id = Column(String, index=True, nullable=False)
     credit = Column(Numeric(precision=24, scale=12))
+    detail = Column(JSON, nullable=True)
+
+    created_at = Column(BigInteger)
+
+
+class TradeTicket(Base):
+    __tablename__ = "trade_ticket"
+
+    id = Column(String, primary_key=True)
+    user_id = Column(String, index=True, nullable=False)
+    amount = Column(Numeric(precision=24, scale=12))
     detail = Column(JSON, nullable=True)
 
     created_at = Column(BigInteger)
@@ -76,6 +88,15 @@ class SetCreditForm(BaseModel):
     user_id: str
     credit: Decimal
     detail: SetCreditFormDetail
+
+
+class TradeTicketModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: str = Field(default_factory=lambda: uuid.uuid4().hex)
+    user_id: str
+    amount: Decimal = Field(default_factory=lambda: Decimal("0"))
+    detail: dict = Field(default_factory=lambda: {})
+    created_at: int = Field(default_factory=lambda: int(time.time()))
 
 
 ####################
@@ -164,3 +185,51 @@ class CreditsTable:
 
 
 Credits = CreditsTable()
+
+
+class TradeTicketTable:
+    def insert_new_ticket(
+        self, id: str, user_id: str, amount: float, detail: dict
+    ) -> TradeTicketModel:
+        try:
+            ticket = TradeTicketModel(
+                id=id,
+                user_id=user_id,
+                amount=Decimal(amount),
+                detail=detail,
+            )
+            with get_db() as db:
+                db.add(TradeTicket(**ticket.model_dump()))
+                db.commit()
+            return ticket
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+    def get_ticket_by_id(self, id: str) -> Optional[TradeTicketModel]:
+        try:
+            with get_db() as db:
+                ticket = db.query(TradeTicket).filter(TradeTicket.id == id).first()
+                return TradeTicketModel.model_validate(ticket)
+        except Exception:
+            return None
+
+    def update_credit_by_id(self, id: str, detail: dict) -> Optional[TradeTicketModel]:
+        try:
+            with get_db() as db:
+                db.query(TradeTicket).filter(TradeTicket.id == id).update(
+                    {"detail": detail}
+                )
+                db.commit()
+                ticket = self.get_ticket_by_id(id)
+                Credits.add_credit_by_user_id(
+                    AddCreditForm(
+                        user_id=ticket.user_id,
+                        amount=ticket.amount,
+                        detail=SetCreditFormDetail(desc="payment success"),
+                    )
+                )
+        except Exception:
+            return None
+
+
+TradeTickets = TradeTicketTable()

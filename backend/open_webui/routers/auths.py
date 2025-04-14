@@ -3,6 +3,8 @@ import uuid
 import time
 import datetime
 import logging
+from decimal import Decimal
+
 from aiohttp import ClientSession
 
 from open_webui.models.auths import (
@@ -18,7 +20,8 @@ from open_webui.models.auths import (
     UpdateProfileForm,
     UserResponse,
 )
-from open_webui.models.users import Users
+from open_webui.models.credits import Credits
+from open_webui.models.users import Users, UserModel
 
 from open_webui.constants import ERROR_MESSAGES, WEBHOOK_MESSAGES
 from open_webui.env import (
@@ -58,6 +61,7 @@ router = APIRouter()
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
+
 ############################
 # GetSessionUser
 ############################
@@ -66,11 +70,12 @@ log.setLevel(SRC_LOG_LEVELS["MAIN"])
 class SessionUserResponse(Token, UserResponse):
     expires_at: Optional[int] = None
     permissions: Optional[dict] = None
+    credit: Decimal
 
 
 @router.get("/", response_model=SessionUserResponse)
 async def get_session_user(
-    request: Request, response: Response, user=Depends(get_current_user)
+    request: Request, response: Response, user: UserModel = Depends(get_current_user)
 ):
     expires_delta = parse_duration(request.app.state.config.JWT_EXPIRES_IN)
     expires_at = None
@@ -102,6 +107,8 @@ async def get_session_user(
         user.id, request.app.state.config.USER_PERMISSIONS
     )
 
+    credit = Credits.init_credit_by_user_id(user.id)
+
     return {
         "token": token,
         "token_type": "Bearer",
@@ -112,6 +119,7 @@ async def get_session_user(
         "role": user.role,
         "profile_image_url": user.profile_image_url,
         "permissions": user_permissions,
+        "credit": credit.credit,
     }
 
 
@@ -304,6 +312,8 @@ async def ldap_auth(request: Request, response: Response, form_data: LdapForm):
                     user.id, request.app.state.config.USER_PERMISSIONS
                 )
 
+                credit = Credits.init_credit_by_user_id(user.id)
+
                 return {
                     "token": token,
                     "token_type": "Bearer",
@@ -313,6 +323,7 @@ async def ldap_auth(request: Request, response: Response, form_data: LdapForm):
                     "role": user.role,
                     "profile_image_url": user.profile_image_url,
                     "permissions": user_permissions,
+                    "credit": credit.credit,
                 }
             else:
                 raise HTTPException(400, detail=ERROR_MESSAGES.INVALID_CRED)
@@ -401,6 +412,8 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
             user.id, request.app.state.config.USER_PERMISSIONS
         )
 
+        credit = Credits.init_credit_by_user_id(user.id)
+
         return {
             "token": token,
             "token_type": "Bearer",
@@ -411,6 +424,7 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
             "role": user.role,
             "profile_image_url": user.profile_image_url,
             "permissions": user_permissions,
+            "credit": credit.credit,
         }
     else:
         raise HTTPException(400, detail=ERROR_MESSAGES.INVALID_CRED)
@@ -423,7 +437,6 @@ async def signin(request: Request, response: Response, form_data: SigninForm):
 
 @router.post("/signup", response_model=SessionUserResponse)
 async def signup(request: Request, response: Response, form_data: SignupForm):
-
     if WEBUI_AUTH:
         if (
             not request.app.state.config.ENABLE_SIGNUP
@@ -515,6 +528,8 @@ async def signup(request: Request, response: Response, form_data: SignupForm):
                 user.id, request.app.state.config.USER_PERMISSIONS
             )
 
+            credit = Credits.init_credit_by_user_id(user.id)
+
             return {
                 "token": token,
                 "token_type": "Bearer",
@@ -525,6 +540,7 @@ async def signup(request: Request, response: Response, form_data: SignupForm):
                 "role": user.role,
                 "profile_image_url": user.profile_image_url,
                 "permissions": user_permissions,
+                "credit": credit.credit,
             }
         else:
             raise HTTPException(500, detail=ERROR_MESSAGES.CREATE_USER_ERROR)
