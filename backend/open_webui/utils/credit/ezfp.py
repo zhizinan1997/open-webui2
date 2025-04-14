@@ -1,3 +1,4 @@
+import copy
 import hashlib
 
 import httpx
@@ -44,15 +45,11 @@ class EZFPClient:
     def verify(self, payload: dict) -> bool:
         if payload["pid"] != EZFP_PID.value:
             return False
-        params = [
-            f"{k}={v}"
-            for k, v in payload.items()
-            if v and k not in ["sign", "sign_type"]
-        ]
-        params.sort()
-        plain_text = "&".join(params) + EZFP_KEY
-        sign = hashlib.md5(plain_text).hexdigest()
-        return payload["sign"] == sign and payload["sign_type"] == "MD5"
+        payload2 = self.sign(copy.deepcopy(payload))
+        return (
+            payload["sign"] == payload2["sign"]
+            and payload["sign_type"] == payload2["sign_type"]
+        )
 
     async def create_trade(
         self, pay_type: str, out_trade_no: str, amount: float, client_ip: str, ua: str

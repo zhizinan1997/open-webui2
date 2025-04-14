@@ -38,17 +38,18 @@ async def create_ticket(
     )
 
 
-@router.post("/callback", response_class=PlainTextResponse)
+@router.get("/callback", response_class=PlainTextResponse)
 async def ticket_callback(request: Request) -> str:
-    if not ezfp_client.verify(request.query_params):
+    callback = dict(request.query_params)
+    if not ezfp_client.verify(callback):
         return "invalid signature"
 
     # payment failed
-    if request.query_params["trade_status"] != "TRADE_SUCCESS":
+    if callback["trade_status"] != "TRADE_SUCCESS":
         return "success"
 
     # find ticket
-    ticket = TradeTickets.get_ticket_by_id(request.query_params["out_trade_no"])
+    ticket = TradeTickets.get_ticket_by_id(callback["out_trade_no"])
     if not ticket:
         return "no ticket fount"
 
@@ -56,7 +57,7 @@ async def ticket_callback(request: Request) -> str:
     if ticket.detail.get("callback"):
         return "success"
 
-    ticket.detail["callback"] = dict(request.query_params)
+    ticket.detail["callback"] = callback
     TradeTickets.update_credit_by_id(ticket.id, ticket.detail)
 
     return "success"
