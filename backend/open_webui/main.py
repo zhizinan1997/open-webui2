@@ -1082,7 +1082,9 @@ async def chat_completion(
     user=Depends(get_verified_user),
 ):
     Credits.check_credit_by_user_id(
-        user_id=user.id, error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG
+        user_id=user.id,
+        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        metadata=form_data,
     )
 
     if not request.app.state.MODELS:

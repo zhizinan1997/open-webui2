@@ -594,7 +594,9 @@ async def generate_chat_completion(
     bypass_filter: Optional[bool] = False,
 ):
     Credits.check_credit_by_user_id(
-        user_id=user.id, error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG
+        user_id=user.id,
+        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        metadata=form_data.get("metadata"),
     )
 
     if BYPASS_MODEL_ACCESS_CONTROL:

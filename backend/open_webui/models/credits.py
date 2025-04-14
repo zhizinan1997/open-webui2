@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import JSON, BigInteger, Column, Numeric, String
 
 from open_webui.internal.db import Base, get_db
+from open_webui.models.chats import Chats
 
 
 ####################
@@ -194,9 +195,18 @@ class CreditsTable:
             db.commit()
         return self.get_credit_by_user_id(form_data.user_id)
 
-    def check_credit_by_user_id(self, user_id: str, error_msg: str) -> None:
+    def check_credit_by_user_id(
+        self, user_id: str, error_msg: str, metadata: dict = None
+    ) -> None:
         credit = self.init_credit_by_user_id(user_id=user_id)
         if credit is None or credit.credit <= 0:
+            if isinstance(metadata, dict) and metadata:
+                chat_id = metadata.get("chat_id")
+                message_id = metadata.get("message_id") or metadata.get("id")
+                if chat_id and message_id:
+                    Chats.upsert_message_to_chat_by_id_and_message_id(
+                        chat_id, message_id, {"error": {"content": error_msg}}
+                    )
             raise HTTPException(status_code=403, detail=error_msg)
 
 
