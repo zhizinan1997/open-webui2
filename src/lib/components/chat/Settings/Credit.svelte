@@ -89,7 +89,7 @@
 			}
 
 			if (detail?.payurl) {
-				open(detail.payurl);
+				window.location.href = detail.payurl;
 			}
 
 			if (detail?.urlscheme) {
