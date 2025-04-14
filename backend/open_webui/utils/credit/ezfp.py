@@ -59,6 +59,7 @@ class EZFPClient:
             "type": pay_type,
             "out_trade_no": out_trade_no,
             "notify_url": f"{EZFP_CALLBACK_HOST.value.rstrip('/')}/api/v1/credit/callback",
+            "return_url": EZFP_CALLBACK_HOST.value,
             "name": f"{WEBUI_NAME} Credit",
             "money": "%.2f" % amount,
             "clientip": client_ip,
