@@ -4,8 +4,9 @@ import uuid
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, RedirectResponse
 
+from open_webui.config import EZFP_CALLBACK_HOST
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import (
     TradeTicketModel,
@@ -83,3 +84,8 @@ async def ticket_callback(request: Request) -> str:
     TradeTickets.update_credit_by_id(ticket.id, ticket.detail)
 
     return "success"
+
+
+@router.get("/callback/redirect", response_class=RedirectResponse)
+async def ticket_callback_redirect() -> RedirectResponse:
+    return RedirectResponse(url=EZFP_CALLBACK_HOST.value, status_code=302)
