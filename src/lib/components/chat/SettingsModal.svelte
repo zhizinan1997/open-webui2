@@ -238,9 +238,7 @@
 		{
 			id: 'credit',
 			title: 'Credit',
-			keywords: [
-				'credit'
-			]
+			keywords: ['credit']
 		},
 		{
 			id: 'admin',

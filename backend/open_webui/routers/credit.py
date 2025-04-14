@@ -1,12 +1,18 @@
 import datetime
 import logging
 import uuid
+from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import PlainTextResponse
 
 from open_webui.env import SRC_LOG_LEVELS
-from open_webui.models.credits import TradeTicketModel, TradeTickets
+from open_webui.models.credits import (
+    TradeTicketModel,
+    TradeTickets,
+    CreditLogModel,
+    CreditLogs,
+)
 from open_webui.models.users import UserModel
 from open_webui.utils.auth import get_current_user
 from open_webui.utils.credit.ezfp import ezfp_client
@@ -15,6 +21,22 @@ log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
 router = APIRouter()
+
+
+@router.get("/logs", response_model=list[CreditLogModel])
+async def list_credit_logs(
+    page: Optional[int] = None, user: UserModel = Depends(get_current_user)
+) -> TradeTicketModel:
+    if page:
+        limit = 100
+        offset = (page - 1) * limit
+        return CreditLogs.get_credit_log_by_user_id(
+            user_id=user.id, offset=offset, limit=limit
+        )
+    else:
+        return CreditLogs.get_credit_log_by_user_id(
+            user_id=user.id, offset=0, limit=100
+        )
 
 
 @router.post("/tickets", response_model=TradeTicketModel)

@@ -71,6 +71,22 @@ class CreditLogModel(BaseModel):
     created_at: int = Field(default_factory=lambda: int(time.time()))
 
 
+class CreditLogSimpleDetailAPIParams(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    model: dict = Field(default_factory=lambda: {})
+
+
+class CreditLogSimpleDetail(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    desc: str = Field(default_factory=lambda: "")
+    api_params: CreditLogSimpleDetailAPIParams
+
+
+class CreditLogSimpleModel(CreditLogModel):
+    model_config = ConfigDict(from_attributes=True)
+    detail: CreditLogSimpleDetail
+
+
 class SetCreditFormDetail(BaseModel):
     api_path: str = Field(default="")
     api_params: dict = Field(default_factory=lambda: {})
@@ -233,3 +249,21 @@ class TradeTicketTable:
 
 
 TradeTickets = TradeTicketTable()
+
+
+class CreditLogTable:
+    def get_credit_log_by_user_id(
+        self, user_id: str, offset: Optional[int] = None, limit: Optional[int] = None
+    ) -> list[CreditLogSimpleModel]:
+        with get_db() as db:
+            query = db.query(CreditLog).filter(CreditLog.user_id == user_id)
+            query = query.order_by(CreditLog.created_at.desc())
+            if offset:
+                query = query.offset(offset)
+            if limit:
+                query = query.limit(limit)
+            all_logs = query.all()
+            return [CreditLogSimpleModel.model_validate(log) for log in all_logs]
+
+
+CreditLogs = CreditLogTable()
