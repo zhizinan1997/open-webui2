@@ -98,7 +98,7 @@
 
 			if (detail?.qrcode) {
 				document.getElementById('trade-qrcode').innerHTML = '';
-				new QRCode(document.getElementById('qrcode'), {
+				new QRCode(document.getElementById('trade-qrcode'), {
 					text: detail.qrcode,
 					width: 128,
 					height: 128,
@@ -197,53 +197,55 @@
 
 			<div id="trade-qrcode"></div>
 
-			<hr class=" border-gray-100 dark:border-gray-700/10 my-2.5 w-full" />
+			{#if !tradeInfo?.detail?.qrcode}
+				<hr class=" border-gray-100 dark:border-gray-700/10 my-2.5 w-full" />
 
-			<div class="pt-0.5">
-				<div class="flex flex-col w-full">
-					<div class="mb-1 text-base font-medium">{$i18n.t('Credit Log')}</div>
-					<div class="overflow-y-scroll max-h-[15rem] flex flex-col">
-						{#if logs.length > 0}
-							<table class="w-full text-center table-auto border-collapse border border-gray-400">
-								<thead>
-									<tr>
-										<th class="border border-gray-300 bg-stone-100">{$i18n.t('Date')}</th>
-										<th class="border border-gray-300 bg-stone-100">{$i18n.t('Credit')}</th>
-										<th class="border border-gray-300 bg-stone-100">{$i18n.t('Model')}</th>
-										<th class="border border-gray-300 bg-stone-100">{$i18n.t('Desc')}</th>
-									</tr>
-								</thead>
-								<tbody>
-									{#each logs as log}
+				<div class="pt-0.5">
+					<div class="flex flex-col w-full">
+						<div class="mb-1 text-base font-medium">{$i18n.t('Credit Log')}</div>
+						<div class="overflow-y-scroll max-h-[15rem] flex flex-col">
+							{#if logs.length > 0}
+								<table class="w-full text-center table-auto border-collapse border border-gray-400">
+									<thead>
 										<tr>
-											<td class="border border-gray-300">{formatDate(log.created_at)}</td>
-											<td class="border border-gray-300">{parseFloat(log.credit).toFixed(6)}</td>
-											<td class="border border-gray-300"
-												>{log.detail?.api_params?.model?.name ||
-													log.detail?.api_params?.model?.id ||
-													'- -'}</td
-											>
-											<td class="border border-gray-300">{log.detail.desc}</td>
+											<th class="border border-gray-300 bg-stone-100">{$i18n.t('Date')}</th>
+											<th class="border border-gray-300 bg-stone-100">{$i18n.t('Credit')}</th>
+											<th class="border border-gray-300 bg-stone-100">{$i18n.t('Model')}</th>
+											<th class="border border-gray-300 bg-stone-100">{$i18n.t('Desc')}</th>
 										</tr>
-									{/each}
-								</tbody>
-							</table>
-							{#if hasMore}
-								<button
-									type="button"
-									on:click={() => {
-										nextLogs(true);
-									}}
-								>
-									{$i18n.t('Load More')}
-								</button>
+									</thead>
+									<tbody>
+										{#each logs as log}
+											<tr>
+												<td class="border border-gray-300">{formatDate(log.created_at)}</td>
+												<td class="border border-gray-300">{parseFloat(log.credit).toFixed(6)}</td>
+												<td class="border border-gray-300"
+													>{log.detail?.api_params?.model?.name ||
+														log.detail?.api_params?.model?.id ||
+														'- -'}</td
+												>
+												<td class="border border-gray-300">{log.detail.desc}</td>
+											</tr>
+										{/each}
+									</tbody>
+								</table>
+								{#if hasMore}
+									<button
+										type="button"
+										on:click={() => {
+											nextLogs(true);
+										}}
+									>
+										{$i18n.t('Load More')}
+									</button>
+								{/if}
+							{:else}
+								<div>{$i18n.t('No Log')}</div>
 							{/if}
-						{:else}
-							<div>{$i18n.t('No Log')}</div>
-						{/if}
+						</div>
 					</div>
 				</div>
-			</div>
+			{/if}
 		</div>
 	</div>
 </div>
