@@ -262,7 +262,7 @@
 				info.price = {
 					prompt_price: 0,
 					completion_price: 0,
-					request_price: 0,
+					request_price: 0
 				};
 			}
 
