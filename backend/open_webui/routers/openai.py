@@ -19,6 +19,7 @@ from open_webui.models.credits import Credits
 from open_webui.models.models import Models
 from open_webui.config import (
     CACHE_DIR,
+    CREDIT_NO_CREDIT_MSG,
 )
 from open_webui.env import (
     AIOHTTP_CLIENT_TIMEOUT,
@@ -592,7 +593,7 @@ async def generate_chat_completion(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data.get("metadata"),
     )
 
@@ -734,7 +735,6 @@ async def generate_chat_completion(
 
             async def consumer_content(content):
                 with CreditDeduct(
-                    request=request,
                     user=user,
                     model=model,
                     body=form_data,
@@ -767,7 +767,7 @@ async def generate_chat_completion(
             r.raise_for_status()
 
             with CreditDeduct(
-                request=request, user=user, model=model, body=form_data, is_stream=False
+                user=user, model=model, body=form_data, is_stream=False
             ) as credit_deduct:
                 credit_deduct.run(response=response)
 

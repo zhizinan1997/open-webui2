@@ -4,7 +4,7 @@ from decimal import Decimal
 from typing import List, Union, Optional
 
 import tiktoken
-from fastapi import HTTPException, Request
+from fastapi import HTTPException
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from pydantic import BaseModel, ConfigDict, Field
@@ -13,6 +13,8 @@ from tiktoken import Encoding
 from open_webui.config import (
     USAGE_CALCULATE_DEFAULT_TOKEN_PRICE,
     USAGE_CALCULATE_DEFAULT_REQUEST_PRICE,
+    USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
+    USAGE_DEFAULT_ENCODING_MODEL,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
@@ -165,13 +167,11 @@ class CreditDeduct:
 
     def __init__(
         self,
-        request: Request,
         user: UserModel,
         model: dict,
         body: dict,
         is_stream: bool,
     ) -> None:
-        self.request = request
         self.user = user
         self.model = model
         self.body = body
@@ -198,7 +198,6 @@ class CreditDeduct:
                         "request_unit_price": float(self.request_unit_price),
                         **self.usage.model_dump(),
                     },
-                    api_path=str(self.request.url),
                     api_params={"model": self.model, "is_stream": self.is_stream},
                     desc=f"updated by {self.__class__.__name__}",
                 ),
@@ -269,24 +268,29 @@ class CreditDeduct:
             ),
         )
 
-    def run(self, response: Union[dict, bytes]) -> None:
-        if not isinstance(response, (dict, bytes)):
+    def run(self, response: Union[dict, bytes, str]) -> None:
+        if not isinstance(response, (dict, bytes, str)):
             logger.warning("[credit_deduct] response is type of %s", type(response))
             return
+        if isinstance(response, str):
+            response = response.encode("utf-8")
         # prompt messages
         messages = self.body.get("messages", [])
         if not messages:
             raise HTTPException(status_code=400, detail="prompt messages is empty")
         # stream
         if self.is_stream:
-            _response = response.decode("utf-8").strip().lstrip("data: ")
-            if not _response or _response.startswith("[DONE]"):
-                return
-            try:
-                _response = json.loads(_response)
-            except json.decoder.JSONDecodeError:
-                logger.error("[credit_deduct] json decode error: %s", _response)
-                return
+            if isinstance(response, bytes):
+                _response = response.decode("utf-8").strip().lstrip("data: ")
+                if not _response or _response.startswith("[DONE]"):
+                    return
+                try:
+                    _response = json.loads(_response)
+                except json.decoder.JSONDecodeError:
+                    logger.error("[credit_deduct] json decode error: %s", _response)
+                    return
+            else:
+                _response = response
             _response["object"] = "chat.completion.chunk"
             response = ChatCompletionChunk.model_validate(_response)
         else:
@@ -296,8 +300,8 @@ class CreditDeduct:
             model_id=self.model["id"],
             messages=messages,
             response=response,
-            model_prefix_to_remove=self.request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
-            default_model_for_encoding=self.request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL,
+            model_prefix_to_remove=USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE.value,
+            default_model_for_encoding=USAGE_DEFAULT_ENCODING_MODEL.value,
         )
         if is_official_usage:
             self.usage = usage

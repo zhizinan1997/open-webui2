@@ -35,6 +35,7 @@ from open_webui.config import (
     DEFAULT_AUTOCOMPLETE_GENERATION_PROMPT_TEMPLATE,
     DEFAULT_EMOJI_GENERATION_PROMPT_TEMPLATE,
     DEFAULT_MOA_GENERATION_PROMPT_TEMPLATE,
+    CREDIT_NO_CREDIT_MSG,
 )
 from open_webui.env import SRC_LOG_LEVELS
 
@@ -150,7 +151,7 @@ async def generate_title(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -253,7 +254,7 @@ async def generate_chat_tags(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -333,7 +334,7 @@ async def generate_image_prompt(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -411,7 +412,7 @@ async def generate_queries(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -498,7 +499,7 @@ async def generate_autocompletion(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -592,7 +593,7 @@ async def generate_emoji(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
@@ -672,7 +673,7 @@ async def generate_moa_response(
 ):
     Credits.check_credit_by_user_id(
         user_id=user.id,
-        error_msg=request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
         metadata=form_data,
     )
 
