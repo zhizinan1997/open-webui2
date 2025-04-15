@@ -316,7 +316,11 @@ class CreditDeduct:
                     "object": "chat.completion.chunk",
                 },
             )
-            if not _response:
+            if (
+                not _response
+                or not _response.get("choices")
+                or _response.get("choices")[0].get("finish_reason")
+            ):
                 return
             # validate
             _response["object"] = "chat.completion.chunk"
@@ -334,7 +338,11 @@ class CreditDeduct:
                     "object": "chat.completion",
                 },
             )
-            if not _response:
+            if (
+                not _response
+                or not _response.get("choices")
+                or _response.get("choices")[0].get("finish_reason")
+            ):
                 return
             # validate
             response["object"] = "chat.completion"
