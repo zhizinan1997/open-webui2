@@ -9,7 +9,6 @@ import aiohttp
 from aiocache import cached
 import requests
 
-
 from fastapi import Depends, FastAPI, HTTPException, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
@@ -31,7 +30,6 @@ from open_webui.models.users import UserModel
 
 from open_webui.constants import ERROR_MESSAGES
 from open_webui.env import ENV, SRC_LOG_LEVELS
-
 
 from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
@@ -407,7 +405,6 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
 
         for idx, models in enumerate(model_lists):
             if models is not None and "error" not in models:
-
                 merged_list.extend(
                     [
                         {
@@ -747,6 +744,10 @@ async def generate_chat_completion(
                         credit_deduct.run(response=chunk)
                         yield chunk
 
+                    yield "data: " + json.dumps(
+                        {"usage": credit_deduct.usage_with_cost}
+                    )
+
             streaming = True
             return StreamingResponse(
                 consumer_content(r.content),
@@ -769,6 +770,9 @@ async def generate_chat_completion(
                 request=request, user=user, model=model, body=form_data, is_stream=False
             ) as credit_deduct:
                 credit_deduct.run(response=response)
+
+                if isinstance(response, dict):
+                    response.update({"usage": credit_deduct.usage_with_cost})
 
             return response
     except Exception as e:

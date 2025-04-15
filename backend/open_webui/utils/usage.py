@@ -135,15 +135,10 @@ class CreditDeduct:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        prompt_price = self.prompt_unit_price * self.usage.prompt_tokens / 1000 / 1000
-        completion_price = (
-            self.completion_unit_price * self.usage.completion_tokens / 1000 / 1000
-        )
-        total_price = prompt_price + completion_price
         Credits.add_credit_by_user_id(
             form_data=AddCreditForm(
                 user_id=self.user.id,
-                amount=Decimal(-total_price),
+                amount=Decimal(-self.total_price),
                 detail=SetCreditFormDetail(
                     usage={
                         "prompt_unit_price": float(self.prompt_unit_price),
@@ -161,8 +156,29 @@ class CreditDeduct:
             self.user.id,
             self.usage.prompt_tokens,
             self.usage.completion_tokens,
-            total_price,
+            self.total_price,
         )
+
+    @property
+    def prompt_price(self) -> Decimal:
+        return self.prompt_unit_price * self.usage.prompt_tokens / 1000 / 1000
+
+    @property
+    def completion_price(self) -> Decimal:
+        return self.completion_unit_price * self.usage.completion_tokens / 1000 / 1000
+
+    @property
+    def total_price(self) -> Decimal:
+        return self.prompt_price + self.completion_price
+
+    @property
+    def usage_with_cost(self) -> dict:
+        return {
+            "cost": float(self.total_price),
+            "prompt_unit_price": float(self.prompt_unit_price),
+            "completion_unit_price": float(self.completion_unit_price),
+            **self.usage.model_dump(),
+        }
 
     def get_model_price(self) -> (Decimal, Decimal):
         model = Models.get_model_by_id(self.model["id"])
