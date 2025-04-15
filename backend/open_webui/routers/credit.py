@@ -11,7 +11,7 @@ from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import (
     TradeTicketModel,
     TradeTickets,
-    CreditLogModel,
+    CreditLogSimpleModel,
     CreditLogs,
 )
 from open_webui.models.users import UserModel
@@ -24,7 +24,7 @@ log.setLevel(SRC_LOG_LEVELS["MAIN"])
 router = APIRouter()
 
 
-@router.get("/logs", response_model=list[CreditLogModel])
+@router.get("/logs", response_model=list[CreditLogSimpleModel])
 async def list_credit_logs(
     page: Optional[int] = None, user: UserModel = Depends(get_current_user)
 ) -> TradeTicketModel:
