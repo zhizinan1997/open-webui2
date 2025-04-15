@@ -209,7 +209,10 @@ class CreditDeduct:
                         "request_unit_price": float(self.request_unit_price),
                         **self.usage.model_dump(),
                     },
-                    api_params={"model": self.model.model_dump(), "is_stream": self.is_stream},
+                    api_params={
+                        "model": self.model.model_dump(),
+                        "is_stream": self.is_stream,
+                    },
                     desc=f"updated by {self.__class__.__name__}",
                 ),
             )
