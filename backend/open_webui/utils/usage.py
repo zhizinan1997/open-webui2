@@ -1,13 +1,13 @@
 import json
 import logging
 from decimal import Decimal
-from typing import List, Union
+from typing import List, Union, Optional
 
 import tiktoken
 from fastapi import HTTPException, Request
 from openai.types import CompletionUsage
 from openai.types.chat import ChatCompletion, ChatCompletionChunk
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from tiktoken import Encoding
 
 from open_webui.env import SRC_LOG_LEVELS
@@ -19,11 +19,43 @@ logger = logging.getLogger(__name__)
 logger.setLevel(SRC_LOG_LEVELS["MAIN"])
 
 
+class FileFile(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    file_data: Optional[str] = Field(default="")
+    file_id: Optional[str] = Field(default="")
+    filename: Optional[str] = Field(default="")
+
+
+class InputAudio(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    data: Optional[str] = Field(default="")
+    format: Optional[str] = Field(default="")
+
+
+class ImageURL(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    url: Optional[str] = Field(default="")
+    detail: Optional[str] = Field(default="")
+
+
+class MessageContent(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    type: Optional[str] = Field(default="")
+    text: Optional[str] = Field(default="")
+    image_url: Optional[ImageURL] = Field(default_factory=lambda: ImageURL())
+    input_audio: Optional[InputAudio] = Field(default_factory=lambda: InputAudio())
+    file: Optional[FileFile] = Field(default_factory=lambda: FileFile())
+
+
 class MessageItem(BaseModel):
     model_config = ConfigDict(extra="allow")
 
     role: str
-    content: str
+    content: Union[str, list[MessageContent]] = Field(default="")
 
 
 class Calculator:
@@ -54,6 +86,18 @@ class Calculator:
             return self.get_encoder(default_model_for_encoding)
         return self.get_encoder(model_id)
 
+    def get_message_content(self, content: Union[str, list[MessageContent]]):
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            return "".join(
+                [
+                    item.model_dump_json(exclude_none=True, exclude_unset=True)
+                    for item in content
+                ]
+            )
+        return str(content)
+
     def calculate_usage(
         self,
         model_id: str,
@@ -79,7 +123,9 @@ class Calculator:
             )
             # prompt tokens
             for message in messages:
-                usage.prompt_tokens += len(encoder.encode(message.content or ""))
+                usage.prompt_tokens += len(
+                    encoder.encode(self.get_message_content(message.content) or "")
+                )
             # completion tokens
             choices = response.choices
             if choices:
