@@ -1,5 +1,7 @@
 import json
 import logging
+import time
+import uuid
 from decimal import Decimal
 from typing import List, Union, Optional
 
@@ -18,7 +20,7 @@ from open_webui.config import (
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
-from open_webui.models.models import Models
+from open_webui.models.models import ModelModel
 from open_webui.models.users import UserModel
 
 logger = logging.getLogger(__name__)
@@ -106,6 +108,7 @@ class Calculator:
 
     def calculate_usage(
         self,
+        cached_usage: CompletionUsage,
         model_id: str,
         messages: List[dict],
         response: Union[ChatCompletion, ChatCompletionChunk],
@@ -113,25 +116,32 @@ class Calculator:
         default_model_for_encoding: str = "gpt-4o",
     ) -> (bool, CompletionUsage):
         try:
-            # usage
+            # use provider usage
             if response.usage is not None:
                 return True, response.usage
+
             # init
-            messages = [MessageItem.model_validate(message) for message in messages]
-            # calculate
+            usage = CompletionUsage(
+                prompt_tokens=0, completion_tokens=0, total_tokens=0
+            )
             encoder = self.get_encoder(
                 model_id=model_id,
                 model_prefix_to_remove=model_prefix_to_remove,
                 default_model_for_encoding=default_model_for_encoding,
             )
-            usage = CompletionUsage(
-                prompt_tokens=0, completion_tokens=0, total_tokens=0
-            )
+
             # prompt tokens
-            for message in messages:
-                usage.prompt_tokens += len(
-                    encoder.encode(self.get_message_content(message.content) or "")
+            # only calculate once
+            if cached_usage.prompt_tokens:
+                usage.prompt_tokens = cached_usage.prompt_tokens
+            else:
+                usage.prompt_tokens += sum(
+                    len(encoder.encode(self.get_message_content(message.content) or ""))
+                    for message in [
+                        MessageItem.model_validate(message) for message in messages
+                    ]
                 )
+
             # completion tokens
             choices = response.choices
             if choices:
@@ -144,6 +154,7 @@ class Calculator:
                     usage.completion_tokens = len(
                         encoder.encode(choice.delta.content or "")
                     )
+
             # total tokens
             usage.total_tokens = usage.prompt_tokens + usage.completion_tokens
             return False, usage
@@ -168,7 +179,7 @@ class CreditDeduct:
     def __init__(
         self,
         user: UserModel,
-        model: dict,
+        model: ModelModel,
         body: dict,
         is_stream: bool,
     ) -> None:
@@ -198,7 +209,7 @@ class CreditDeduct:
                         "request_unit_price": float(self.request_unit_price),
                         **self.usage.model_dump(),
                     },
-                    api_params={"model": self.model, "is_stream": self.is_stream},
+                    api_params={"model": self.model.model_dump(), "is_stream": self.is_stream},
                     desc=f"updated by {self.__class__.__name__}",
                 ),
             )
@@ -242,14 +253,13 @@ class CreditDeduct:
         }
 
     def get_model_price(self) -> (Decimal, Decimal, Decimal):
-        model = Models.get_model_by_id(self.model["id"])
-        if model is None:
+        if self.model is None or not isinstance(self.model, ModelModel):
             return (
                 Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
                 Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
                 Decimal(USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value),
             )
-        model_price = model.price or {}
+        model_price = self.model.price or {}
         return (
             Decimal(
                 model_price.get(
@@ -272,32 +282,65 @@ class CreditDeduct:
         if not isinstance(response, (dict, bytes, str)):
             logger.warning("[credit_deduct] response is type of %s", type(response))
             return
-        if isinstance(response, str):
-            response = response.encode("utf-8")
+
         # prompt messages
         messages = self.body.get("messages", [])
         if not messages:
             raise HTTPException(status_code=400, detail="prompt messages is empty")
+
         # stream
         if self.is_stream:
-            if isinstance(response, bytes):
-                _response = response.decode("utf-8").strip().lstrip("data: ")
-                if not _response or _response.startswith("[DONE]"):
+            # dict
+            if isinstance(response, dict):
+                _response = response
+            # str or bytes
+            else:
+                _response = ""
+                if isinstance(response, bytes):
+                    _response = response.decode("utf-8").strip().lstrip("data: ")
+                if _response.startswith("[DONE]"):
                     return
                 try:
                     _response = json.loads(_response)
                 except json.decoder.JSONDecodeError:
-                    logger.error("[credit_deduct] json decode error: %s", _response)
-                    return
-            else:
-                _response = response
+                    _response = {
+                        "id": uuid.uuid4().hex,
+                        "choices": [{"delta": {"content": _response}, "index": 0}],
+                        "created": int(time.time()),
+                        "model": self.model.id,
+                        "object": [],
+                    }
+            # skip empty
+            if not _response:
+                return
+            # validate
             _response["object"] = "chat.completion.chunk"
             response = ChatCompletionChunk.model_validate(_response)
+
+        # non-stream
         else:
-            response = ChatCompletion.model_validate(response)
-        # usage
+            # dict
+            if isinstance(response, dict):
+                _response = response
+            # str or bytes
+            else:
+                _response = ""
+                if isinstance(response, bytes):
+                    _response = response.decode("utf-8").strip().lstrip("data: ")
+                _response = {
+                    "id": uuid.uuid4().hex,
+                    "choices": [{"message": {"content": _response}, "index": 0}],
+                    "created": int(time.time()),
+                    "model": self.model.id,
+                    "object": [],
+                }
+            # validate
+            response = ChatCompletion.model_validate(_response)
+
+        # calculate
         is_official_usage, usage = calculator.calculate_usage(
-            model_id=self.model["id"],
+            cached_usage=self.usage,
+            model_id=self.model.id,
             messages=messages,
             response=response,
             model_prefix_to_remove=USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE.value,
