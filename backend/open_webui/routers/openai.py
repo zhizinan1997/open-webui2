@@ -736,7 +736,7 @@ async def generate_chat_completion(
             async def consumer_content(content):
                 with CreditDeduct(
                     user=user,
-                    model=Models.get_model_by_id(model_id),
+                    model_id=model_id,
                     body=form_data,
                     is_stream=True,
                 ) as credit_deduct:
@@ -768,7 +768,7 @@ async def generate_chat_completion(
 
             with CreditDeduct(
                 user=user,
-                model=Models.get_model_by_id(model_id),
+                model_id=model_id,
                 body=form_data,
                 is_stream=False,
             ) as credit_deduct:

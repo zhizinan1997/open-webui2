@@ -18,12 +18,10 @@ from fastapi import (
 )
 from starlette.responses import Response, StreamingResponse
 
-
 from open_webui.socket.main import (
     get_event_call,
     get_event_emitter,
 )
-
 
 from open_webui.models.functions import Functions
 from open_webui.models.models import Models
@@ -45,7 +43,7 @@ from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
 )
-
+from open_webui.utils.usage import CreditDeduct
 
 logging.basicConfig(stream=sys.stdout, level=GLOBAL_LOG_LEVEL)
 log = logging.getLogger(__name__)
@@ -272,37 +270,75 @@ async def generate_function_chat_completion(
 
                 # Directly return if the response is a StreamingResponse
                 if isinstance(res, StreamingResponse):
-                    async for data in res.body_iterator:
-                        yield data
+                    with CreditDeduct(
+                        user=user,
+                        model_id=model_id,
+                        body=form_data,
+                        is_stream=True,
+                    ) as credit_deduct:
+
+                        async for data in res.body_iterator:
+                            credit_deduct.run(data)
+                            yield data
+
+                        yield "data: " + json.dumps(
+                            {"usage": credit_deduct.usage_with_cost}
+                        )
                     return
+
                 if isinstance(res, dict):
-                    yield f"data: {json.dumps(res)}\n\n"
+                    with CreditDeduct(
+                        user=user,
+                        model_id=model_id,
+                        body=form_data,
+                        is_stream=False,
+                    ) as credit_deduct:
+                        credit_deduct.run(res)
+                        res.update({"usage": credit_deduct.usage_with_cost})
+
+                        yield f"data: {json.dumps(res)}\n\n"
                     return
 
             except Exception as e:
                 log.error(f"Error: {e}")
-                yield f"data: {json.dumps({'error': {'detail':str(e)}})}\n\n"
+                yield f"data: {json.dumps({'error': {'detail': str(e)}})}\n\n"
                 return
 
-            if isinstance(res, str):
-                message = openai_chat_chunk_message_template(form_data["model"], res)
-                yield f"data: {json.dumps(message)}\n\n"
+            with CreditDeduct(
+                user=user,
+                model_id=model_id,
+                body=form_data,
+                is_stream=True,
+            ) as credit_deduct:
 
-            if isinstance(res, Iterator):
-                for line in res:
-                    yield process_line(form_data, line)
+                if isinstance(res, str):
+                    message = openai_chat_chunk_message_template(
+                        form_data["model"], res
+                    )
+                    credit_deduct.run(message)
+                    yield f"data: {json.dumps(message)}\n\n"
 
-            if isinstance(res, AsyncGenerator):
-                async for line in res:
-                    yield process_line(form_data, line)
+                if isinstance(res, Iterator):
+                    for line in res:
+                        line = process_line(form_data, line)
+                        credit_deduct.run(line)
+                        yield line
 
-            if isinstance(res, str) or isinstance(res, Generator):
-                finish_message = openai_chat_chunk_message_template(
-                    form_data["model"], ""
-                )
-                finish_message["choices"][0]["finish_reason"] = "stop"
-                yield f"data: {json.dumps(finish_message)}\n\n"
-                yield "data: [DONE]"
+                if isinstance(res, AsyncGenerator):
+                    async for line in res:
+                        line = process_line(form_data, line)
+                        credit_deduct.run(line)
+                        yield line
+
+                if isinstance(res, str) or isinstance(res, Generator):
+                    finish_message = openai_chat_chunk_message_template(
+                        form_data["model"], ""
+                    )
+                    finish_message["choices"][0]["finish_reason"] = "stop"
+                    yield f"data: {json.dumps(finish_message)}\n\n"
+                    yield "data: [DONE]"
+
+                yield "data: " + json.dumps({"usage": credit_deduct.usage_with_cost})
 
         return StreamingResponse(stream_content(), media_type="text/event-stream")
     else:
@@ -313,10 +349,28 @@ async def generate_function_chat_completion(
             log.error(f"Error: {e}")
             return {"error": {"detail": str(e)}}
 
-        if isinstance(res, StreamingResponse) or isinstance(res, dict):
-            return res
-        if isinstance(res, BaseModel):
-            return res.model_dump()
+        with CreditDeduct(
+            user=user,
+            model_id=model_id,
+            body=form_data,
+            is_stream=False,
+        ) as credit_deduct:
+            if isinstance(res, StreamingResponse) or isinstance(res, dict):
+                credit_deduct.run(res)
+                return res
 
-        message = await get_message_content(res)
-        return openai_chat_completion_message_template(form_data["model"], message)
+            if isinstance(res, BaseModel):
+                with CreditDeduct(
+                    user=user,
+                    model_id=model_id,
+                    body=form_data,
+                    is_stream=False,
+                ) as credit_deduct:
+                    res = res.model_dump()
+                    credit_deduct.run(res)
+                    return res
+
+            message = await get_message_content(res)
+            res = openai_chat_completion_message_template(form_data["model"], message)
+            credit_deduct.run(res)
+            return res
