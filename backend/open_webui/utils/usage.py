@@ -20,7 +20,7 @@ from open_webui.config import (
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
-from open_webui.models.models import ModelModel
+from open_webui.models.models import ModelModel, Models
 from open_webui.models.users import UserModel
 
 logger = logging.getLogger(__name__)
@@ -179,12 +179,13 @@ class CreditDeduct:
     def __init__(
         self,
         user: UserModel,
-        model: ModelModel,
+        model_id: str,
         body: dict,
         is_stream: bool,
     ) -> None:
         self.user = user
-        self.model = model
+        self.model_id = model_id
+        self.model = Models.get_model_by_id(self.model_id)
         self.body = body
         self.is_stream = is_stream
         self.usage = CompletionUsage(
@@ -193,6 +194,7 @@ class CreditDeduct:
         self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
             self.get_model_price()
         )
+        self.is_official_usage = False
 
     def __enter__(self):
         return self
@@ -210,7 +212,11 @@ class CreditDeduct:
                         **self.usage.model_dump(),
                     },
                     api_params={
-                        "model": self.model.model_dump(),
+                        "model": (
+                            self.model.model_dump()
+                            if self.model
+                            else {"id": self.model_id}
+                        ),
                         "is_stream": self.is_stream,
                     },
                     desc=f"updated by {self.__class__.__name__}",
@@ -251,6 +257,7 @@ class CreditDeduct:
                 "prompt_price": float(self.prompt_price),
                 "completion_price": float(self.completion_price),
                 "request_price": float(self.request_price),
+                "is_calculate": not self.is_official_usage,
             },
             **self.usage.model_dump(),
         }
@@ -282,6 +289,12 @@ class CreditDeduct:
         )
 
     def run(self, response: Union[dict, bytes, str]) -> None:
+        try:
+            self._run(response)
+        except Exception as e:
+            logger.exception("[credit_deduct] unknown error %s", e)
+
+    def _run(self, response: Union[dict, bytes, str]) -> None:
         if not isinstance(response, (dict, bytes, str)):
             logger.warning("[credit_deduct] response is type of %s", type(response))
             return
@@ -293,27 +306,16 @@ class CreditDeduct:
 
         # stream
         if self.is_stream:
-            # dict
-            if isinstance(response, dict):
-                _response = response
-            # str or bytes
-            else:
-                _response = ""
-                if isinstance(response, bytes):
-                    _response = response.decode("utf-8").strip().lstrip("data: ")
-                if _response.startswith("[DONE]"):
-                    return
-                try:
-                    _response = json.loads(_response)
-                except json.decoder.JSONDecodeError:
-                    _response = {
-                        "id": uuid.uuid4().hex,
-                        "choices": [{"delta": {"content": _response}, "index": 0}],
-                        "created": int(time.time()),
-                        "model": self.model.id,
-                        "object": [],
-                    }
-            # skip empty
+            _response = self.clean_response(
+                response=response,
+                default_response={
+                    "id": uuid.uuid4().hex,
+                    "choices": [{"delta": {"content": str(response)}, "index": 0}],
+                    "created": int(time.time()),
+                    "model": self.model_id,
+                    "object": "chat.completion.chunk",
+                },
+            )
             if not _response:
                 return
             # validate
@@ -322,35 +324,36 @@ class CreditDeduct:
 
         # non-stream
         else:
-            # dict
-            if isinstance(response, dict):
-                _response = response
-            # str or bytes
-            else:
-                _response = ""
-                if isinstance(response, bytes):
-                    _response = response.decode("utf-8").strip().lstrip("data: ")
-                _response = {
+            _response = self.clean_response(
+                response=response,
+                default_response={
                     "id": uuid.uuid4().hex,
-                    "choices": [{"message": {"content": _response}, "index": 0}],
+                    "choices": [{"message": {"content": str(response)}, "index": 0}],
                     "created": int(time.time()),
-                    "model": self.model.id,
-                    "object": [],
-                }
+                    "model": self.model_id,
+                    "object": "chat.completion",
+                },
+            )
+            if not _response:
+                return
             # validate
+            response["object"] = "chat.completion"
             response = ChatCompletion.model_validate(_response)
 
         # calculate
         is_official_usage, usage = calculator.calculate_usage(
             cached_usage=self.usage,
-            model_id=self.model.id,
+            model_id=self.model_id,
             messages=messages,
             response=response,
             model_prefix_to_remove=USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE.value,
             default_model_for_encoding=USAGE_DEFAULT_ENCODING_MODEL.value,
         )
         if is_official_usage:
+            self.is_official_usage = True
             self.usage = usage
+            return
+        if self.is_official_usage:
             return
         if self.is_stream:
             self.usage.prompt_tokens = usage.prompt_tokens
@@ -360,3 +363,24 @@ class CreditDeduct:
             )
             return
         self.usage = usage
+
+    def clean_response(
+        self, response: Union[dict, bytes, str], default_response: dict
+    ) -> dict:
+        # dict
+        if isinstance(response, dict):
+            return response
+        # str or bytes
+        if isinstance(response, bytes):
+            _response = response.decode("utf-8")
+        else:
+            _response = response
+        # remove prefix
+        _response = _response.strip().lstrip("data: ")
+        if _response.startswith("[DONE]"):
+            return {}
+        try:
+            _response = json.loads(_response)
+        except json.decoder.JSONDecodeError:
+            _response = default_response
+        return _response
