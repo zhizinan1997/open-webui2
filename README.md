@@ -49,6 +49,8 @@ USAGE_DEFAULT_ENCODING_MODEL: "gpt-4o
 
 如果你是 Pipe 开发者，请参考下面的文档进行埋点，确保能够正常计费
 
+### 流式传输
+
 ```python
 from open_webui.models.models import Models
 from open_webui.models.users import Users
@@ -73,7 +75,32 @@ with CreditDeduct(
     )
 ```
 
-转换方式，假设你只有文本 content
+### 非流式传输
+
+```python
+from open_webui.models.models import Models
+from open_webui.models.users import Users
+from open_webui.utils.usage import CreditDeduct
+
+with CreditDeduct(
+    user=Users.get_user_by_id(__user__["id"]),
+    model=Models.get_model_by_id(body["model"]).model_dump(),
+    body=body,
+    is_stream=False,
+) as credit_deduct:
+
+    # 需要获取到 JSON
+    # 如果你的 response 不是标准的 openai 格式，请自行转换
+    response = response.json()
+
+    credit_deduct.run(response=response)
+    if isinstance(response, dict):
+        response.update({"usage": credit_deduct.usage_with_cost})
+```
+
+### 转换方式
+
+假设你只有文本 content
 
 ```python
 content = "我是 LLM 的回复"
