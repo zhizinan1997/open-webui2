@@ -71,7 +71,8 @@
 		},
 		price: {
 			prompt_price: 0,
-			completion_price: 0
+			completion_price: 0,
+			request_price: 0
 		}
 	};
 
@@ -260,7 +261,8 @@
 			if (!info.price) {
 				info.price = {
 					prompt_price: 0,
-					completion_price: 0
+					completion_price: 0,
+					request_price: 0,
 				};
 			}
 
@@ -496,7 +498,7 @@
 						</div>
 					</div>
 					<div class="my-2">
-						<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens')}</div>
+						<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
 						<div class="flex justify-between text-xs">
 							<span class="min-w-36">
 								{$i18n.t('Prompt Token Price')}
@@ -519,6 +521,19 @@
 								type="number"
 								step="0.0001"
 								bind:value={info.price.completion_price}
+								autocomplete="off"
+								required
+							/>
+						</div>
+						<div class="flex justify-between text-xs">
+							<span class="min-w-36">
+								{$i18n.t('Request Price')}
+							</span>
+							<input
+								class="w-full border-solid"
+								type="number"
+								step="0.0001"
+								bind:value={info.price.request_price}
 								autocomplete="off"
 								required
 							/>
