@@ -140,6 +140,7 @@ class ModelPriceForm(BaseModel):
     completion_price: float = Field(
         default=0, description="completion token price for 1m tokens"
     )
+    request_price: float = Field(default=0, description="price for 1m request")
 
 
 class ModelForm(BaseModel):
