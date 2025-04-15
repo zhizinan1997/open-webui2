@@ -209,11 +209,11 @@ class CreditDeduct:
                         "prompt_unit_price": float(self.prompt_unit_price),
                         "completion_unit_price": float(self.completion_unit_price),
                         "request_unit_price": float(self.request_unit_price),
-                        **self.usage.model_dump(),
+                        **self.usage.model_dump(exclude_unset=True, exclude_none=True),
                     },
                     api_params={
                         "model": (
-                            self.model.model_dump()
+                            self.model.model_dump(exclude_unset=True, exclude_none=True)
                             if self.model
                             else {"id": self.model_id}
                         ),
@@ -259,7 +259,7 @@ class CreditDeduct:
                 "request_price": float(self.request_price),
                 "is_calculate": not self.is_official_usage,
             },
-            **self.usage.model_dump(),
+            **self.usage.model_dump(exclude_unset=True, exclude_none=True),
         }
 
     def get_model_price(self) -> (Decimal, Decimal, Decimal):
