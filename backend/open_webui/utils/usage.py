@@ -10,6 +10,10 @@ from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from pydantic import BaseModel, ConfigDict, Field
 from tiktoken import Encoding
 
+from open_webui.config import (
+    USAGE_CALCULATE_DEFAULT_TOKEN_PRICE,
+    USAGE_CALCULATE_DEFAULT_REQUEST_PRICE,
+)
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
 from open_webui.models.models import Models
@@ -175,7 +179,9 @@ class CreditDeduct:
         self.usage = CompletionUsage(
             prompt_tokens=0, completion_tokens=0, total_tokens=0
         )
-        self.prompt_unit_price, self.completion_unit_price = self.get_model_price()
+        self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
+            self.get_model_price()
+        )
 
     def __enter__(self):
         return self
@@ -189,6 +195,7 @@ class CreditDeduct:
                     usage={
                         "prompt_unit_price": float(self.prompt_unit_price),
                         "completion_unit_price": float(self.completion_unit_price),
+                        "request_unit_price": float(self.request_unit_price),
                         **self.usage.model_dump(),
                     },
                     api_path=str(self.request.url),
@@ -214,25 +221,52 @@ class CreditDeduct:
         return self.completion_unit_price * self.usage.completion_tokens / 1000 / 1000
 
     @property
+    def request_price(self) -> Decimal:
+        return self.request_unit_price / 1000 / 1000
+
+    @property
     def total_price(self) -> Decimal:
+        if self.request_unit_price > 0:
+            return self.request_price
         return self.prompt_price + self.completion_price
 
     @property
     def usage_with_cost(self) -> dict:
         return {
-            "cost": float(self.total_price),
-            "prompt_unit_price": float(self.prompt_unit_price),
-            "completion_unit_price": float(self.completion_unit_price),
+            "total_cost": float(self.total_price),
+            "cost_detail": {
+                "prompt_price": float(self.prompt_price),
+                "completion_price": float(self.completion_price),
+                "request_price": float(self.request_price),
+            },
             **self.usage.model_dump(),
         }
 
-    def get_model_price(self) -> (Decimal, Decimal):
+    def get_model_price(self) -> (Decimal, Decimal, Decimal):
         model = Models.get_model_by_id(self.model["id"])
         if model is None:
-            return Decimal("0"), Decimal("0")
+            return (
+                Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
+                Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
+                Decimal(USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value),
+            )
         model_price = model.price or {}
-        return Decimal(model_price.get("prompt_price", "0")), Decimal(
-            model_price.get("completion_price", "0")
+        return (
+            Decimal(
+                model_price.get(
+                    "prompt_price", USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value
+                )
+            ),
+            Decimal(
+                model_price.get(
+                    "completion_price", USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value
+                )
+            ),
+            Decimal(
+                model_price.get(
+                    "request_price", USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value
+                )
+            ),
         )
 
     def run(self, response: Union[dict, bytes]) -> None:

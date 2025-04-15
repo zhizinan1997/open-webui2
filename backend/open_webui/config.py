@@ -2669,6 +2669,18 @@ USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = PersistentConfig(
     os.environ.get("USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE", ""),
 )
 
+USAGE_CALCULATE_DEFAULT_REQUEST_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_DEFAULT_REQUEST_PRICE",
+    "usage.calculate.default_request_price",
+    os.environ.get("USAGE_CALCULATE_DEFAULT_REQUEST_PRICE", "0"),
+)
+
+USAGE_CALCULATE_DEFAULT_TOKEN_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_DEFAULT_TOKEN_PRICE",
+    "usage.calculate.default_token_price",
+    os.environ.get("USAGE_CALCULATE_DEFAULT_TOKEN_PRICE", "0"),
+)
+
 USAGE_DEFAULT_ENCODING_MODEL = PersistentConfig(
     "USAGE_DEFAULT_ENCODING_MODEL",
     "usage.encoding.default_model",
