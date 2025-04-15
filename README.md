@@ -60,13 +60,13 @@ with CreditDeduct(
     body=body,
     is_stream=True,
 ) as credit_deduct:
-    
+
     # 唯一的区别是 yield 之前先调用 credit_deduct
-    # 如果你的 chunk 不是标准的 openai 格式，请自行转换 
+    # 如果你的 chunk 不是标准的 openai 格式，请自行转换
     async for chunk in content:
         credit_deduct.run(response=chunk)
         yield chunk
-    
+
     # 提交这个用于更新前端的 Usage 信息
     yield "data: " + json.dumps(
         {"usage": credit_deduct.usage_with_cost}
@@ -92,5 +92,3 @@ credit_deduct.run(
     }
 )
 ```
-
-
