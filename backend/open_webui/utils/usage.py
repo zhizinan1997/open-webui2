@@ -292,7 +292,7 @@ class CreditDeduct:
         try:
             self._run(response)
         except Exception as e:
-            logger.exception("[credit_deduct] unknown error %s", e)
+            logger.warning("[credit_deduct_failed] unknown error %s", e)
 
     def _run(self, response: Union[dict, bytes, str]) -> None:
         if not isinstance(response, (dict, bytes, str)):
@@ -316,9 +316,7 @@ class CreditDeduct:
                     "object": "chat.completion.chunk",
                 },
             )
-            if not _response or not _response.get("choices"):
-                return
-            if not _response.get("choices")[0].get("delta"):
+            if not _response:
                 return
             # validate
             _response["object"] = "chat.completion.chunk"
@@ -336,9 +334,7 @@ class CreditDeduct:
                     "object": "chat.completion",
                 },
             )
-            if not _response or not _response.get("choices"):
-                return
-            if not _response.get("choices")[0].get("message"):
+            if not _response:
                 return
             # validate
             response["object"] = "chat.completion"
