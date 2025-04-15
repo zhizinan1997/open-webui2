@@ -113,4 +113,4 @@ async def update_model_price(
             ModelPriceForm.model_validate(price).model_dump() if price else None
         )
         Models.update_model_by_id(id=model_id, model=model)
-    return "success"
+    return f"success update price for {len(form_data)} models"
