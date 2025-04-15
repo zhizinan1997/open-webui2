@@ -98,7 +98,7 @@
 
 			if (detail?.qrcode) {
 				document.getElementById('trade-qrcode').innerHTML = '';
-				new QRCode(document.getElementById('qrcode'), {
+				new QRCode(document.getElementById('trade-qrcode'), {
 					text: detail.qrcode,
 					width: 128,
 					height: 128,
@@ -197,6 +197,7 @@
 
 			<div id="trade-qrcode"></div>
 
+			{#if !tradeInfo?.detail?.qrcode}
 			<hr class=" border-gray-100 dark:border-gray-700/10 my-2.5 w-full" />
 
 			<div class="pt-0.5">
@@ -244,6 +245,7 @@
 					</div>
 				</div>
 			</div>
+			{/if}
 		</div>
 	</div>
 </div>
