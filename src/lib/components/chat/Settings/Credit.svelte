@@ -220,10 +220,22 @@
 								<table class="w-full text-center table-auto border-collapse border border-gray-400">
 									<thead>
 										<tr>
-											<th class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850">{$i18n.t('Date')}</th>
-											<th class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850">{$i18n.t('Credit')}</th>
-											<th class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850">{$i18n.t('Model')}</th>
-											<th class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850">{$i18n.t('Desc')}</th>
+											<th
+												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
+												>{$i18n.t('Date')}</th
+											>
+											<th
+												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
+												>{$i18n.t('Credit')}</th
+											>
+											<th
+												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
+												>{$i18n.t('Model')}</th
+											>
+											<th
+												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
+												>{$i18n.t('Desc')}</th
+											>
 										</tr>
 									</thead>
 									<tbody>
