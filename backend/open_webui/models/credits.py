@@ -81,6 +81,7 @@ class CreditLogSimpleDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     desc: str = Field(default_factory=lambda: "")
     api_params: CreditLogSimpleDetailAPIParams
+    usage: dict = Field(default_factory=lambda: {})
 
 
 class CreditLogSimpleModel(CreditLogModel):
