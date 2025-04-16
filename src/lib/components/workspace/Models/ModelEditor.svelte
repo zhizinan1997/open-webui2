@@ -504,7 +504,7 @@
 								{$i18n.t('Prompt Token Price')}
 							</span>
 							<input
-								class="w-full border-solid"
+								class="w-full border-solid bg-gray-50 mt-1"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.prompt_price}
@@ -517,7 +517,7 @@
 								{$i18n.t('Completion Token Price')}
 							</span>
 							<input
-								class="w-full border-solid"
+								class="w-full border-solid bg-gray-50 mt-1"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.completion_price}
@@ -530,7 +530,7 @@
 								{$i18n.t('Request Price')}
 							</span>
 							<input
-								class="w-full border-solid"
+								class="w-full border-solid bg-gray-50 mt-1"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.request_price}

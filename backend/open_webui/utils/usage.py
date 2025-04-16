@@ -17,6 +17,10 @@ from open_webui.config import (
     USAGE_CALCULATE_DEFAULT_REQUEST_PRICE,
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
     USAGE_DEFAULT_ENCODING_MODEL,
+    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
+    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
+    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
+    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
@@ -194,6 +198,9 @@ class CreditDeduct:
         self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
             self.get_model_price()
         )
+        self.features = {
+            k for k, v in body.get("metadata", {}).get("features", {}).items() if v
+        }
         self.is_official_usage = False
 
     def __enter__(self):
@@ -206,9 +213,12 @@ class CreditDeduct:
                 amount=Decimal(-self.total_price),
                 detail=SetCreditFormDetail(
                     usage={
+                        "total_price": float(self.total_price),
                         "prompt_unit_price": float(self.prompt_unit_price),
                         "completion_unit_price": float(self.completion_unit_price),
                         "request_unit_price": float(self.request_unit_price),
+                        "feature_price": float(self.feature_price),
+                        "features": list(self.features),
                         **self.usage.model_dump(exclude_unset=True, exclude_none=True),
                     },
                     api_params={
@@ -244,10 +254,43 @@ class CreditDeduct:
         return self.request_unit_price / 1000 / 1000
 
     @property
+    def feature_price(self) -> Decimal:
+        if not self.features:
+            return Decimal(0)
+        price = Decimal(0)
+        for feature in self.features:
+            match feature:
+                case "image_generation":
+                    price += (
+                        Decimal(USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE.value)
+                        / 1000
+                        / 1000
+                    )
+                case "code_interpreter":
+                    price += (
+                        Decimal(USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE.value)
+                        / 1000
+                        / 1000
+                    )
+                case "web_search":
+                    price += (
+                        Decimal(USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE.value)
+                        / 1000
+                        / 1000
+                    )
+                case "direct_tool_servers":
+                    price += (
+                        Decimal(USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE.value)
+                        / 1000
+                        / 1000
+                    )
+        return price
+
+    @property
     def total_price(self) -> Decimal:
         if self.request_unit_price > 0:
-            return self.request_price
-        return self.prompt_price + self.completion_price
+            return self.request_price + self.feature_price
+        return self.prompt_price + self.completion_price + self.feature_price
 
     @property
     def usage_with_cost(self) -> dict:
@@ -257,6 +300,7 @@ class CreditDeduct:
                 "prompt_price": float(self.prompt_price),
                 "completion_price": float(self.completion_price),
                 "request_price": float(self.request_price),
+                "feature_price": float(self.feature_price),
                 "is_calculate": not self.is_official_usage,
             },
             **self.usage.model_dump(exclude_unset=True, exclude_none=True),
