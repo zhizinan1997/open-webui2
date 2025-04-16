@@ -91,7 +91,7 @@ class EZFPClient:
         client = httpx.AsyncClient()
         try:
             resp = await client.post(
-                url=f"{EZFP_ENDPOINT.value.rstrip('/')}/mapi.php", params=payload
+                url=f"{EZFP_ENDPOINT.value.rstrip('/')}/mapi.php", data=payload
             )
             return resp.json()
         except Exception as err:
