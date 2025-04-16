@@ -2660,31 +2660,55 @@ LDAP_CIPHERS = PersistentConfig(
 CREDIT_NO_CREDIT_MSG = PersistentConfig(
     "CREDIT_NO_CREDIT_MSG",
     "credit.no_credit_msg",
-    os.environ.get("CREDIT_NO_CREDIT_MSG", "no credit"),
+    os.environ.get("CREDIT_NO_CREDIT_MSG", "余额不足，请前往 设置-积分 充值"),
 )
 
 USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = PersistentConfig(
     "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE",
-    "usage.calculate.model_prefix_to_remove",
+    "credit.calculate.model_prefix_to_remove",
     os.environ.get("USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE", ""),
+)
+
+USAGE_DEFAULT_ENCODING_MODEL = PersistentConfig(
+    "USAGE_DEFAULT_ENCODING_MODEL",
+    "credit.calculate.encoding.default_model",
+    os.environ.get("USAGE_DEFAULT_ENCODING_MODEL", "gpt-4o"),
 )
 
 USAGE_CALCULATE_DEFAULT_REQUEST_PRICE = PersistentConfig(
     "USAGE_CALCULATE_DEFAULT_REQUEST_PRICE",
-    "usage.calculate.default_request_price",
+    "credit.calculate.default_request_price",
     os.environ.get("USAGE_CALCULATE_DEFAULT_REQUEST_PRICE", "0"),
 )
 
 USAGE_CALCULATE_DEFAULT_TOKEN_PRICE = PersistentConfig(
     "USAGE_CALCULATE_DEFAULT_TOKEN_PRICE",
-    "usage.calculate.default_token_price",
+    "credit.calculate.default_token_price",
     os.environ.get("USAGE_CALCULATE_DEFAULT_TOKEN_PRICE", "0"),
 )
 
-USAGE_DEFAULT_ENCODING_MODEL = PersistentConfig(
-    "USAGE_DEFAULT_ENCODING_MODEL",
-    "usage.encoding.default_model",
-    os.environ.get("USAGE_DEFAULT_ENCODING_MODEL", "gpt-4o"),
+USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE",
+    "credit.calculate.feature.image_gen_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE",
+    "credit.calculate.feature.code_execute_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE",
+    "credit.calculate.feature.web_search_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE",
+    "credit.calculate.feature.tool_server_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
 )
 
 EZFP_ENDPOINT = PersistentConfig(
