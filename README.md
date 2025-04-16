@@ -1,19 +1,19 @@
 # Open WebUI 👋
 
-官方文档： [Open WebUI Documentation](https://docs.openwebui.com/).
+官方文档: [Open WebUI Documentation](https://docs.openwebui.com/).  
+官方更新日志: [CHANGELOG.md](./CHANGELOG.md)
 
 ## 拓展特性
 
-### 新功能
+完整特性请看更新日志 [CHANGELOG_EXTRA.md](./CHANGELOG_EXTRA.md)
 
-- 用户积分管理与充值
-- 按照 Token 或请求次数计费，并在对话 Usage 中显示扣费详情
-- 高级 Markdown 编辑器
-- 通过 API 批量修改模型价格
+### 用户积分管理与充值
 
-### 优化
+![user credit](./docs/user_credit.png)
 
-- 代码块样式
+### 按照 Token 或请求次数计费，并在对话 Usage 中显示扣费详情
+
+![usage](./docs/usage.png)
 
 ## 拓展环境变量
 

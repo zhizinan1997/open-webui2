@@ -14,9 +14,17 @@
 	type APIParams = {
 		model: Model;
 	};
+	type Usage = {
+		prompt_unit_price: number;
+		completion_unit_price: number;
+		request_unit_price: number;
+		completion_tokens: number;
+		prompt_tokens: number;
+	};
 	type LogDetail = {
 		desc: string;
 		api_params: APIParams;
+		usage: Usage;
 	};
 	type Log = {
 		id: string;
@@ -120,9 +128,23 @@
 		await handleAddCreditClick();
 	};
 
-	function formatDate(t: number) {
+	const formatDate = (t: number): string => {
 		return new Date(t * 1000).toLocaleString();
-	}
+	};
+
+	const formatDesc = (log: Log): string => {
+		const usage = log?.detail?.usage ?? {};
+		if (usage && Object.keys(usage).length > 0) {
+			if (usage.request_unit_price) {
+				return `-${usage.request_unit_price / 1000 / 1000}`;
+			}
+			if (usage.prompt_unit_price || usage.completion_unit_price) {
+				return `-${Math.round(usage.prompt_tokens * usage.prompt_unit_price) / 1e6} -${Math.round(usage.completion_tokens * usage.completion_unit_price) / 1e6}`;
+			}
+			return '-0';
+		}
+		return log?.detail?.desc;
+	};
 
 	onMount(async () => {
 		const sessionUser = await getSessionUser(localStorage.token).catch((error) => {
@@ -224,7 +246,7 @@
 														log.detail?.api_params?.model?.id ||
 														'- -'}</td
 												>
-												<td class="border border-gray-300">{log.detail.desc}</td>
+												<td class="border border-gray-300">{formatDesc(log)}</td>
 											</tr>
 										{/each}
 									</tbody>
