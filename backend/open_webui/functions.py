@@ -349,13 +349,30 @@ async def generate_function_chat_completion(
             log.error(f"Error: {e}")
             return {"error": {"detail": str(e)}}
 
+        async def to_stream(response):
+            with CreditDeduct(
+                user=user,
+                model_id=model_id,
+                body=form_data,
+                is_stream=True,
+            ) as credit_deduct:
+
+                async for data in response.body_iterator:
+                    credit_deduct.run(data)
+                    yield data
+
+                yield "data: " + json.dumps({"usage": credit_deduct.usage_with_cost})
+
+        if isinstance(res, StreamingResponse):
+            return StreamingResponse(to_stream(res), media_type="text/event-stream")
+
         with CreditDeduct(
             user=user,
             model_id=model_id,
             body=form_data,
             is_stream=False,
         ) as credit_deduct:
-            if isinstance(res, StreamingResponse) or isinstance(res, dict):
+            if isinstance(res, dict):
                 credit_deduct.run(res)
                 return res
 
