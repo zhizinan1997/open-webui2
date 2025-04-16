@@ -2690,7 +2690,7 @@ USAGE_DEFAULT_ENCODING_MODEL = PersistentConfig(
 EZFP_ENDPOINT = PersistentConfig(
     "EZFP_ENDPOINT",
     "credit.ezfp.endpoint",
-    os.environ.get("EZFP_ENDPOINT", "https://ezfp.cn/"),
+    os.environ.get("EZFP_ENDPOINT", ""),
 )
 
 EZFP_PID = PersistentConfig(
@@ -2709,4 +2709,10 @@ EZFP_CALLBACK_HOST = PersistentConfig(
     "EZFP_CALLBACK_HOST",
     "credit.ezfp.callback_host",
     os.environ.get("EZFP_CALLBACK_HOST", ""),
+)
+
+EZFP_AMOUNT_CONTROL = PersistentConfig(
+    "EZFP_AMOUNT_CONTROL",
+    "credit.ezfp.amount_control",
+    os.environ.get("EZFP_AMOUNT_CONTROL", ""),
 )

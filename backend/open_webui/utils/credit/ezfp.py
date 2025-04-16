@@ -9,6 +9,7 @@ from open_webui.config import (
     WEBUI_NAME,
     EZFP_CALLBACK_HOST,
     EZFP_KEY,
+    EZFP_AMOUNT_CONTROL,
 )
 
 
@@ -51,9 +52,30 @@ class EZFPClient:
             and payload["sign_type"] == payload2["sign_type"]
         )
 
+    def check_amount(self, amount: float) -> bool:
+        if not EZFP_AMOUNT_CONTROL.value:
+            return True
+        checks = EZFP_AMOUNT_CONTROL.value.split(",")
+        for check in checks:
+            values = check.strip().split("-")
+            if len(values) == 2:
+                if float(values[0].strip()) <= amount <= float(values[1].strip()):
+                    return True
+            if len(values) == 1:
+                if float(values[0].strip()) == amount:
+                    return True
+        return False
+
     async def create_trade(
         self, pay_type: str, out_trade_no: str, amount: float, client_ip: str, ua: str
     ) -> dict:
+        # check for amount
+        if not self.check_amount(amount):
+            return {
+                "code": -1,
+                "msg": f"amount invalid, allows {' '.join(EZFP_AMOUNT_CONTROL.value.split(','))}",
+            }
+        # submit
         payload = {
             "pid": int(EZFP_PID.value),
             "type": pay_type,

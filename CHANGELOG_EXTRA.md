@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.5.x] - 2025-04-16
+## [0.6.5.16] - 2025-04-16
 
 ### Added
 
@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 增加 Markdown 编辑器
 - 增加代码块折叠功能
 - 支持通过 API 批量修改模型价格
+- 支持设置允许充值的金额范围
 
 ### Changed
 
