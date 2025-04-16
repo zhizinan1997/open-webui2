@@ -499,12 +499,12 @@
 					</div>
 					<div class="my-2">
 						<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
-						<div class="flex justify-between text-xs">
+						<div class="mt-1 flex justify-between text-xs">
 							<span class="min-w-36">
 								{$i18n.t('Prompt Token Price')}
 							</span>
 							<input
-								class="w-full border-solid bg-gray-50 mt-1"
+								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.prompt_price}
@@ -512,12 +512,12 @@
 								required
 							/>
 						</div>
-						<div class="flex justify-between text-xs">
+						<div class="mt-1 flex justify-between text-xs">
 							<span class="min-w-36">
 								{$i18n.t('Completion Token Price')}
 							</span>
 							<input
-								class="w-full border-solid bg-gray-50 mt-1"
+								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.completion_price}
@@ -525,12 +525,12 @@
 								required
 							/>
 						</div>
-						<div class="flex justify-between text-xs">
+						<div class="mt-1 flex justify-between text-xs">
 							<span class="min-w-36">
 								{$i18n.t('Request Price')}
 							</span>
 							<input
-								class="w-full border-solid bg-gray-50 mt-1"
+								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 								type="number"
 								step="0.0001"
 								bind:value={info.price.request_price}
