@@ -18,6 +18,27 @@
 ## 拓展环境变量
 
 ```bash
+# 配置为任意非空值即可
+LICENSE_KEY: "enterprise"
+
+# 组织名称，填写你喜欢的名称
+ORGANIZATION_NAME: "XXX"
+
+# 网站名称
+CUSTOM_NAME: "XXX"
+
+# 网站 Logo，ICO 格式
+CUSTOM_ICO: "https://example.com/favicon.ico"
+
+# 网站 Logo，PNG 格式
+CUSTOM_PNG: "https://example.com/favicon.png"
+
+# 网站深色模式 LOGO，PNG 格式
+CUSTOM_DARK_PNG: "https://example.com/favicon.png"
+
+# 网站 Logo，SVG 格式
+CUSTOM_SVG: "https://example.com/favicon.svg"
+
 # 你的服务的地址，需要易支付能正常访问的
 # 不需要携带路径，HTTP协议加域名即可
 EZFP_CALLBACK_HOST: "https://my.openwebui.com"
