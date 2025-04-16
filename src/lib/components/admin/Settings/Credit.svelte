@@ -151,6 +151,7 @@
 							<SensitiveInput
 								outerClassName="w-full flex flex-1 rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 								bind:value={config.EZFP_KEY}
+								required={false}
 							/>
 						</div>
 						<div class="mt-2 flex w-full justify-between">
