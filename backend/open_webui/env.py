@@ -157,7 +157,9 @@ try:
         changelog_content = file.read()
 
 except Exception:
-    changelog_content = (pkgutil.get_data("open_webui", "CHANGELOG_EXTRA.md") or b"").decode()
+    changelog_content = (
+        pkgutil.get_data("open_webui", "CHANGELOG_EXTRA.md") or b""
+    ).decode()
 
 # Convert markdown content to HTML
 html_content = markdown.markdown(changelog_content)

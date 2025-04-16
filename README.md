@@ -1,6 +1,6 @@
 # Open WebUI 👋
 
-官方文档: [Open WebUI Documentation](https://docs.openwebui.com/).   
+官方文档: [Open WebUI Documentation](https://docs.openwebui.com/).  
 官方更新日志: [CHANGELOG.md](./CHANGELOG.md)
 
 ## 拓展特性
