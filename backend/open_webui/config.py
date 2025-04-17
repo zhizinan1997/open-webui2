@@ -41,6 +41,7 @@ class EndpointFilter(logging.Filter):
 # Filter out /endpoint
 logging.getLogger("uvicorn.access").addFilter(EndpointFilter())
 
+
 ####################################
 # Config helpers
 ####################################
@@ -326,7 +327,6 @@ API_KEY_ALLOWED_ENDPOINTS = PersistentConfig(
     os.environ.get("API_KEY_ALLOWED_ENDPOINTS", ""),
 )
 
-
 JWT_EXPIRES_IN = PersistentConfig(
     "JWT_EXPIRES_IN", "auth.jwt_expiry", os.environ.get("JWT_EXPIRES_IN", "-1")
 )
@@ -341,7 +341,6 @@ ENABLE_OAUTH_SIGNUP = PersistentConfig(
     "oauth.enable_signup",
     os.environ.get("ENABLE_OAUTH_SIGNUP", "False").lower() == "true",
 )
-
 
 OAUTH_MERGE_ACCOUNTS_BY_EMAIL = PersistentConfig(
     "OAUTH_MERGE_ACCOUNTS_BY_EMAIL",
@@ -362,7 +361,6 @@ GOOGLE_CLIENT_SECRET = PersistentConfig(
     "oauth.google.client_secret",
     os.environ.get("GOOGLE_CLIENT_SECRET", ""),
 )
-
 
 GOOGLE_OAUTH_SCOPE = PersistentConfig(
     "GOOGLE_OAUTH_SCOPE",
@@ -477,7 +475,6 @@ OAUTH_USERNAME_CLAIM = PersistentConfig(
     "oauth.oidc.username_claim",
     os.environ.get("OAUTH_USERNAME_CLAIM", "name"),
 )
-
 
 OAUTH_PICTURE_CLAIM = PersistentConfig(
     "OAUTH_PICTURE_CLAIM",
@@ -685,7 +682,6 @@ if frontend_loader.exists():
     except Exception as e:
         logging.error(f"An error occurred: {e}")
 
-
 ####################################
 # CUSTOM_NAME (Legacy)
 ####################################
@@ -730,7 +726,6 @@ if False:
         log.exception(e)
         pass
 
-
 ####################################
 # LICENSE_KEY
 ####################################
@@ -770,14 +765,12 @@ AZURE_STORAGE_KEY = os.environ.get("AZURE_STORAGE_KEY", None)
 UPLOAD_DIR = DATA_DIR / "uploads"
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
-
 ####################################
 # Cache DIR
 ####################################
 
 CACHE_DIR = DATA_DIR / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
-
 
 ####################################
 # DIRECT CONNECTIONS
@@ -810,7 +803,6 @@ if OLLAMA_BASE_URL:
         OLLAMA_BASE_URL[:-1] if OLLAMA_BASE_URL.endswith("/") else OLLAMA_BASE_URL
     )
 
-
 K8S_FLAG = os.environ.get("K8S_FLAG", "")
 USE_OLLAMA_DOCKER = os.environ.get("USE_OLLAMA_DOCKER", "false")
 
@@ -831,7 +823,6 @@ if ENV == "prod":
             OLLAMA_BASE_URL = "http://host.docker.internal:11434"
     elif K8S_FLAG:
         OLLAMA_BASE_URL = "http://ollama-service.open-webui.svc.cluster.local:11434"
-
 
 OLLAMA_BASE_URLS = os.environ.get("OLLAMA_BASE_URLS", "")
 OLLAMA_BASE_URLS = OLLAMA_BASE_URLS if OLLAMA_BASE_URLS != "" else OLLAMA_BASE_URL
@@ -858,13 +849,11 @@ ENABLE_OPENAI_API = PersistentConfig(
     os.environ.get("ENABLE_OPENAI_API", "True").lower() == "true",
 )
 
-
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY", "")
 OPENAI_API_BASE_URL = os.environ.get("OPENAI_API_BASE_URL", "")
 
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 GEMINI_API_BASE_URL = os.environ.get("GEMINI_API_BASE_URL", "")
-
 
 if OPENAI_API_BASE_URL == "":
     OPENAI_API_BASE_URL = "https://api.openai.com/v1"
@@ -926,7 +915,6 @@ WEBUI_URL = PersistentConfig(
     "WEBUI_URL", "webui.url", os.environ.get("WEBUI_URL", "http://localhost:3000")
 )
 
-
 ENABLE_SIGNUP = PersistentConfig(
     "ENABLE_SIGNUP",
     "ui.enable_signup",
@@ -942,7 +930,6 @@ ENABLE_LOGIN_FORM = PersistentConfig(
     "ui.ENABLE_LOGIN_FORM",
     os.environ.get("ENABLE_LOGIN_FORM", "True").lower() == "true",
 )
-
 
 DEFAULT_LOCALE = PersistentConfig(
     "DEFAULT_LOCALE",
@@ -1047,7 +1034,6 @@ USER_PERMISSIONS_WORKSPACE_TOOLS_ALLOW_PUBLIC_SHARING = (
     == "true"
 )
 
-
 USER_PERMISSIONS_CHAT_CONTROLS = (
     os.environ.get("USER_PERMISSIONS_CHAT_CONTROLS", "True").lower() == "true"
 )
@@ -1089,7 +1075,6 @@ USER_PERMISSIONS_CHAT_TEMPORARY_ENFORCED = (
     == "true"
 )
 
-
 USER_PERMISSIONS_FEATURES_DIRECT_TOOL_SERVERS = (
     os.environ.get("USER_PERMISSIONS_FEATURES_DIRECT_TOOL_SERVERS", "False").lower()
     == "true"
@@ -1108,7 +1093,6 @@ USER_PERMISSIONS_FEATURES_CODE_INTERPRETER = (
     os.environ.get("USER_PERMISSIONS_FEATURES_CODE_INTERPRETER", "True").lower()
     == "true"
 )
-
 
 DEFAULT_USER_PERMISSIONS = {
     "workspace": {
@@ -1154,7 +1138,6 @@ ENABLE_CHANNELS = PersistentConfig(
     "channels.enable",
     os.environ.get("ENABLE_CHANNELS", "False").lower() == "true",
 )
-
 
 ENABLE_EVALUATION_ARENA_MODELS = PersistentConfig(
     "ENABLE_EVALUATION_ARENA_MODELS",
@@ -1259,7 +1242,6 @@ except Exception as e:
 
 WEBUI_BANNERS = PersistentConfig("WEBUI_BANNERS", "ui.banners", banners)
 
-
 SHOW_ADMIN_DETAILS = PersistentConfig(
     "SHOW_ADMIN_DETAILS",
     "auth.admin.show",
@@ -1271,7 +1253,6 @@ ADMIN_EMAIL = PersistentConfig(
     "auth.admin.email",
     os.environ.get("ADMIN_EMAIL", None),
 )
-
 
 ####################################
 # TASKS
@@ -1379,7 +1360,6 @@ ENABLE_TITLE_GENERATION = PersistentConfig(
     os.environ.get("ENABLE_TITLE_GENERATION", "True").lower() == "true",
 )
 
-
 ENABLE_SEARCH_QUERY_GENERATION = PersistentConfig(
     "ENABLE_SEARCH_QUERY_GENERATION",
     "task.query.search.enable",
@@ -1391,7 +1371,6 @@ ENABLE_RETRIEVAL_QUERY_GENERATION = PersistentConfig(
     "task.query.retrieval.enable",
     os.environ.get("ENABLE_RETRIEVAL_QUERY_GENERATION", "True").lower() == "true",
 )
-
 
 QUERY_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     "QUERY_GENERATION_PROMPT_TEMPLATE",
@@ -1441,7 +1420,6 @@ AUTOCOMPLETE_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     os.environ.get("AUTOCOMPLETE_GENERATION_PROMPT_TEMPLATE", ""),
 )
 
-
 DEFAULT_AUTOCOMPLETE_GENERATION_PROMPT_TEMPLATE = """### Task:
 You are an autocompletion system. Continue the text in `<text>` based on the **completion type** in `<type>` and the given language.  
 
@@ -1490,7 +1468,6 @@ TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE = PersistentConfig(
     os.environ.get("TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE", ""),
 )
 
-
 DEFAULT_TOOLS_FUNCTION_CALLING_PROMPT_TEMPLATE = """Available Tools: {{TOOLS}}
 
 Your task is to choose and return the correct tool(s) from the list of available tools based on the query. Follow these guidelines:
@@ -1514,7 +1491,6 @@ The format for the JSON response is strictly:
   ]
 }"""
 
-
 DEFAULT_EMOJI_GENERATION_PROMPT_TEMPLATE = """Your task is to reflect the speaker's likely facial expression through a fitting emoji. Interpret emotions from the message and reflect their facial expression using fitting, diverse emojis (e.g., 😊, 😢, 😡, 😱).
 
 Message: ```{{prompt}}```"""
@@ -1524,7 +1500,6 @@ DEFAULT_MOA_GENERATION_PROMPT_TEMPLATE = """You have been provided with a set of
 Your task is to synthesize these responses into a single, high-quality response. It is crucial to critically evaluate the information provided in these responses, recognizing that some of it may be biased or incorrect. Your response should not simply replicate the given answers but should offer a refined, accurate, and comprehensive reply to the instruction. Ensure your response is well-structured, coherent, and adheres to the highest standards of accuracy and reliability.
 
 Responses from models: {{responses}}"""
-
 
 ####################################
 # Code Interpreter
@@ -1559,7 +1534,6 @@ CODE_EXECUTION_JUPYTER_AUTH_TOKEN = PersistentConfig(
     "code_execution.jupyter.auth_token",
     os.environ.get("CODE_EXECUTION_JUPYTER_AUTH_TOKEN", ""),
 )
-
 
 CODE_EXECUTION_JUPYTER_AUTH_PASSWORD = PersistentConfig(
     "CODE_EXECUTION_JUPYTER_AUTH_PASSWORD",
@@ -1617,7 +1591,6 @@ CODE_INTERPRETER_JUPYTER_AUTH_TOKEN = PersistentConfig(
     ),
 )
 
-
 CODE_INTERPRETER_JUPYTER_AUTH_PASSWORD = PersistentConfig(
     "CODE_INTERPRETER_JUPYTER_AUTH_PASSWORD",
     "code_interpreter.jupyter.auth_password",
@@ -1638,7 +1611,6 @@ CODE_INTERPRETER_JUPYTER_TIMEOUT = PersistentConfig(
     ),
 )
 
-
 DEFAULT_CODE_INTERPRETER_PROMPT = """
 #### Tools Available
 
@@ -1653,7 +1625,6 @@ DEFAULT_CODE_INTERPRETER_PROMPT = """
    - All responses should be communicated in the chat's primary language, ensuring seamless understanding. If the chat is multilingual, default to English for clarity.
 
 Ensure that the tools are effectively utilized to achieve the highest-quality analysis for the user."""
-
 
 ####################################
 # Vector Database
@@ -1805,7 +1776,6 @@ BYPASS_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
     os.environ.get("BYPASS_EMBEDDING_AND_RETRIEVAL", "False").lower() == "true",
 )
 
-
 RAG_TOP_K = PersistentConfig(
     "RAG_TOP_K", "rag.top_k", int(os.environ.get("RAG_TOP_K", "3"))
 )
@@ -1914,13 +1884,11 @@ RAG_RERANKING_MODEL_TRUST_REMOTE_CODE = (
     os.environ.get("RAG_RERANKING_MODEL_TRUST_REMOTE_CODE", "True").lower() == "true"
 )
 
-
 RAG_TEXT_SPLITTER = PersistentConfig(
     "RAG_TEXT_SPLITTER",
     "rag.text_splitter",
     os.environ.get("RAG_TEXT_SPLITTER", ""),
 )
-
 
 TIKTOKEN_CACHE_DIR = os.environ.get("TIKTOKEN_CACHE_DIR", f"{CACHE_DIR}/tiktoken")
 TIKTOKEN_ENCODING_NAME = PersistentConfig(
@@ -1928,7 +1896,6 @@ TIKTOKEN_ENCODING_NAME = PersistentConfig(
     "rag.tiktoken_encoding_name",
     os.environ.get("TIKTOKEN_ENCODING_NAME", "cl100k_base"),
 )
-
 
 CHUNK_SIZE = PersistentConfig(
     "CHUNK_SIZE", "rag.chunk_size", int(os.environ.get("CHUNK_SIZE", "1000"))
@@ -1998,7 +1965,6 @@ RAG_OLLAMA_API_KEY = PersistentConfig(
     os.getenv("RAG_OLLAMA_API_KEY", ""),
 )
 
-
 ENABLE_RAG_LOCAL_WEB_FETCH = (
     os.getenv("ENABLE_RAG_LOCAL_WEB_FETCH", "False").lower() == "true"
 )
@@ -2014,7 +1980,6 @@ YOUTUBE_LOADER_PROXY_URL = PersistentConfig(
     "rag.youtube_loader_proxy_url",
     os.getenv("YOUTUBE_LOADER_PROXY_URL", ""),
 )
-
 
 ####################################
 # Web Search (RAG)
@@ -2038,13 +2003,11 @@ BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
     os.getenv("BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL", "False").lower() == "true",
 )
 
-
 WEB_SEARCH_RESULT_COUNT = PersistentConfig(
     "WEB_SEARCH_RESULT_COUNT",
     "rag.web.search.result_count",
     int(os.getenv("WEB_SEARCH_RESULT_COUNT", "3")),
 )
-
 
 # You can provide a list of your own websites to filter after performing a web search.
 # This ensures the highest level of safety and reliability of the information sources.
@@ -2081,7 +2044,6 @@ WEB_SEARCH_TRUST_ENV = PersistentConfig(
     "rag.web.search.trust_env",
     os.getenv("WEB_SEARCH_TRUST_ENV", "False").lower() == "true",
 )
-
 
 SEARXNG_QUERY_URL = PersistentConfig(
     "SEARXNG_QUERY_URL",
@@ -2253,7 +2215,6 @@ FIRECRAWL_API_BASE_URL = PersistentConfig(
     os.environ.get("FIRECRAWL_API_BASE_URL", "https://api.firecrawl.dev"),
 )
 
-
 ####################################
 # Images
 ####################################
@@ -2296,7 +2257,6 @@ AUTOMATIC1111_CFG_SCALE = PersistentConfig(
         else None
     ),
 )
-
 
 AUTOMATIC1111_SAMPLER = PersistentConfig(
     "AUTOMATIC1111_SAMPLER",
@@ -2439,7 +2399,6 @@ COMFYUI_DEFAULT_WORKFLOW = """
   }
 }
 """
-
 
 COMFYUI_WORKFLOW = PersistentConfig(
     "COMFYUI_WORKFLOW",
@@ -2586,7 +2545,6 @@ AUDIO_TTS_ENGINE = PersistentConfig(
     os.getenv("AUDIO_TTS_ENGINE", ""),
 )
 
-
 AUDIO_TTS_MODEL = PersistentConfig(
     "AUDIO_TTS_MODEL",
     "audio.tts.model",
@@ -2618,7 +2576,6 @@ AUDIO_TTS_AZURE_SPEECH_OUTPUT_FORMAT = PersistentConfig(
         "AUDIO_TTS_AZURE_SPEECH_OUTPUT_FORMAT", "audio-24khz-160kbitrate-mono-mp3"
     ),
 )
-
 
 ####################################
 # LDAP
@@ -2694,4 +2651,92 @@ LDAP_CA_CERT_FILE = PersistentConfig(
 
 LDAP_CIPHERS = PersistentConfig(
     "LDAP_CIPHERS", "ldap.server.ciphers", os.environ.get("LDAP_CIPHERS", "ALL")
+)
+
+####################################
+# Credit and Usage
+####################################
+
+CREDIT_NO_CREDIT_MSG = PersistentConfig(
+    "CREDIT_NO_CREDIT_MSG",
+    "credit.no_credit_msg",
+    os.environ.get("CREDIT_NO_CREDIT_MSG", "余额不足，请前往 设置-积分 充值"),
+)
+
+USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = PersistentConfig(
+    "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE",
+    "credit.calculate.model_prefix_to_remove",
+    os.environ.get("USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE", ""),
+)
+
+USAGE_DEFAULT_ENCODING_MODEL = PersistentConfig(
+    "USAGE_DEFAULT_ENCODING_MODEL",
+    "credit.calculate.encoding.default_model",
+    os.environ.get("USAGE_DEFAULT_ENCODING_MODEL", "gpt-4o"),
+)
+
+USAGE_CALCULATE_DEFAULT_REQUEST_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_DEFAULT_REQUEST_PRICE",
+    "credit.calculate.default_request_price",
+    os.environ.get("USAGE_CALCULATE_DEFAULT_REQUEST_PRICE", "0"),
+)
+
+USAGE_CALCULATE_DEFAULT_TOKEN_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_DEFAULT_TOKEN_PRICE",
+    "credit.calculate.default_token_price",
+    os.environ.get("USAGE_CALCULATE_DEFAULT_TOKEN_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE",
+    "credit.calculate.feature.image_gen_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE",
+    "credit.calculate.feature.code_execute_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE",
+    "credit.calculate.feature.web_search_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE", "0"),
+)
+
+USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE",
+    "credit.calculate.feature.tool_server_price",
+    os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
+)
+
+EZFP_ENDPOINT = PersistentConfig(
+    "EZFP_ENDPOINT",
+    "credit.ezfp.endpoint",
+    os.environ.get("EZFP_ENDPOINT", ""),
+)
+
+EZFP_PID = PersistentConfig(
+    "EZFP_PID",
+    "credit.ezfp.pid",
+    os.environ.get("EZFP_PID", ""),
+)
+
+EZFP_KEY = PersistentConfig(
+    "EZFP_KEY",
+    "credit.ezfp.key",
+    os.environ.get("EZFP_KEY", ""),
+)
+
+EZFP_CALLBACK_HOST = PersistentConfig(
+    "EZFP_CALLBACK_HOST",
+    "credit.ezfp.callback_host",
+    os.environ.get("EZFP_CALLBACK_HOST", ""),
+)
+
+EZFP_AMOUNT_CONTROL = PersistentConfig(
+    "EZFP_AMOUNT_CONTROL",
+    "credit.ezfp.amount_control",
+    os.environ.get("EZFP_AMOUNT_CONTROL", ""),
 )

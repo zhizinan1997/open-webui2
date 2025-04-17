@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from typing import Optional
 
@@ -8,7 +8,6 @@ from open_webui.config import get_config, save_config
 from open_webui.config import BannerModel
 
 from open_webui.utils.tools import get_tool_server_data, get_tool_servers_data
-
 
 router = APIRouter()
 
@@ -183,7 +182,6 @@ async def get_code_execution_config(request: Request, user=Depends(get_admin_use
 async def set_code_execution_config(
     request: Request, form_data: CodeInterpreterConfigForm, user=Depends(get_admin_user)
 ):
-
     request.app.state.config.ENABLE_CODE_EXECUTION = form_data.ENABLE_CODE_EXECUTION
 
     request.app.state.config.CODE_EXECUTION_ENGINE = form_data.CODE_EXECUTION_ENGINE
@@ -320,3 +318,86 @@ async def get_banners(
     user=Depends(get_verified_user),
 ):
     return request.app.state.config.BANNERS
+
+
+############################
+# Usage
+############################
+
+
+class UsageConfigForm(BaseModel):
+    CREDIT_NO_CREDIT_MSG: str = Field(default="余额不足，请前往 设置-积分 充值")
+    USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE: str = Field(default="")
+    USAGE_DEFAULT_ENCODING_MODEL: str = Field(default="gpt-4o")
+    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE: float = Field(default=0)
+    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE: float = Field(default=0)
+    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE: float = Field(default=0)
+    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE: float = Field(default=0)
+    EZFP_ENDPOINT: Optional[str] = None
+    EZFP_PID: Optional[str] = None
+    EZFP_KEY: Optional[str] = None
+    EZFP_CALLBACK_HOST: Optional[str] = None
+    EZFP_AMOUNT_CONTROL: Optional[str] = None
+
+
+@router.get("/usage", response_model=UsageConfigForm)
+async def get_usage_config(request: Request, user=Depends(get_admin_user)):
+    return {
+        "CREDIT_NO_CREDIT_MSG": request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE": request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
+        "USAGE_DEFAULT_ENCODING_MODEL": request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL,
+        "USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
+        "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
+        "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
+        "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
+        "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
+        "EZFP_PID": request.app.state.config.EZFP_PID,
+        "EZFP_KEY": request.app.state.config.EZFP_KEY,
+        "EZFP_CALLBACK_HOST": request.app.state.config.EZFP_CALLBACK_HOST,
+        "EZFP_AMOUNT_CONTROL": request.app.state.config.EZFP_AMOUNT_CONTROL,
+    }
+
+
+@router.post("/usage", response_model=UsageConfigForm)
+async def set_usage_config(
+    request: Request, form_data: UsageConfigForm, user=Depends(get_admin_user)
+):
+    request.app.state.config.CREDIT_NO_CREDIT_MSG = form_data.CREDIT_NO_CREDIT_MSG
+    request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = (
+        form_data.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE
+    )
+    request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL = (
+        form_data.USAGE_DEFAULT_ENCODING_MODEL
+    )
+    request.app.state.config.USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE = (
+        form_data.USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE
+    )
+    request.app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE = (
+        form_data.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE
+    )
+    request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE = (
+        form_data.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE
+    )
+    request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = (
+        form_data.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE
+    )
+    request.app.state.config.EZFP_ENDPOINT = form_data.EZFP_ENDPOINT
+    request.app.state.config.EZFP_PID = form_data.EZFP_PID
+    request.app.state.config.EZFP_KEY = form_data.EZFP_KEY
+    request.app.state.config.EZFP_CALLBACK_HOST = form_data.EZFP_CALLBACK_HOST
+    request.app.state.config.EZFP_AMOUNT_CONTROL = form_data.EZFP_AMOUNT_CONTROL
+
+    return {
+        "CREDIT_NO_CREDIT_MSG": request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE": request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
+        "USAGE_DEFAULT_ENCODING_MODEL": request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL,
+        "USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
+        "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
+        "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
+        "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
+        "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
+        "EZFP_PID": request.app.state.config.EZFP_PID,
+        "EZFP_KEY": request.app.state.config.EZFP_KEY,
+        "EZFP_CALLBACK_HOST": request.app.state.config.EZFP_CALLBACK_HOST,
+        "EZFP_AMOUNT_CONTROL": request.app.state.config.EZFP_AMOUNT_CONTROL,
+    }

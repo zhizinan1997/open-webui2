@@ -9,16 +9,17 @@ import aiohttp
 from aiocache import cached
 import requests
 
-
 from fastapi import Depends, FastAPI, HTTPException, Request, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
 
+from open_webui.models.credits import Credits
 from open_webui.models.models import Models
 from open_webui.config import (
     CACHE_DIR,
+    CREDIT_NO_CREDIT_MSG,
 )
 from open_webui.env import (
     AIOHTTP_CLIENT_TIMEOUT,
@@ -31,7 +32,6 @@ from open_webui.models.users import UserModel
 from open_webui.constants import ERROR_MESSAGES
 from open_webui.env import ENV, SRC_LOG_LEVELS
 
-
 from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
     apply_model_system_prompt_to_body,
@@ -42,7 +42,7 @@ from open_webui.utils.misc import (
 
 from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.utils.access_control import has_access
-
+from open_webui.utils.usage import CreditDeduct
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OPENAI"])
@@ -406,7 +406,6 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
 
         for idx, models in enumerate(model_lists):
             if models is not None and "error" not in models:
-
                 merged_list.extend(
                     [
                         {
@@ -592,6 +591,12 @@ async def generate_chat_completion(
     user=Depends(get_verified_user),
     bypass_filter: Optional[bool] = False,
 ):
+    Credits.check_credit_by_user_id(
+        user_id=user.id,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
+        metadata=form_data.get("metadata"),
+    )
+
     if BYPASS_MODEL_ACCESS_CONTROL:
         bypass_filter = True
 
@@ -727,9 +732,25 @@ async def generate_chat_completion(
 
         # Check if response is SSE
         if "text/event-stream" in r.headers.get("Content-Type", ""):
+
+            async def consumer_content(content):
+                with CreditDeduct(
+                    user=user,
+                    model_id=model_id,
+                    body=form_data,
+                    is_stream=True,
+                ) as credit_deduct:
+                    async for chunk in content:
+                        credit_deduct.run(response=chunk)
+                        yield chunk
+
+                    yield "data: " + json.dumps(
+                        {"usage": credit_deduct.usage_with_cost}
+                    )
+
             streaming = True
             return StreamingResponse(
-                r.content,
+                consumer_content(r.content),
                 status_code=r.status,
                 headers=dict(r.headers),
                 background=BackgroundTask(
@@ -744,6 +765,18 @@ async def generate_chat_completion(
                 response = await r.text()
 
             r.raise_for_status()
+
+            with CreditDeduct(
+                user=user,
+                model_id=model_id,
+                body=form_data,
+                is_stream=False,
+            ) as credit_deduct:
+                credit_deduct.run(response=response)
+
+                if isinstance(response, dict):
+                    response.update({"usage": credit_deduct.usage_with_cost})
+
             return response
     except Exception as e:
         log.exception(e)

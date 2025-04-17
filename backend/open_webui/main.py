@@ -44,7 +44,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import Response, StreamingResponse
 
-
+from open_webui.models.credits import Credits
 from open_webui.utils import logger
 from open_webui.utils.audit import AuditLevel, AuditLoggingMiddleware
 from open_webui.utils.logger import start_logger
@@ -76,6 +76,7 @@ from open_webui.routers import (
     tools,
     users,
     utils,
+    credit,
 )
 
 from open_webui.routers.retrieval import (
@@ -322,6 +323,18 @@ from open_webui.config import (
     AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH,
     AppConfig,
     reset_config,
+    CREDIT_NO_CREDIT_MSG,
+    USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
+    USAGE_DEFAULT_ENCODING_MODEL,
+    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
+    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
+    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
+    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
+    EZFP_ENDPOINT,
+    EZFP_PID,
+    EZFP_KEY,
+    EZFP_CALLBACK_HOST,
+    EZFP_AMOUNT_CONTROL,
 )
 from open_webui.env import (
     AUDIT_EXCLUDED_PATHS,
@@ -572,7 +585,6 @@ app.state.config.LDAP_SEARCH_FILTERS = LDAP_SEARCH_FILTERS
 app.state.config.LDAP_USE_TLS = LDAP_USE_TLS
 app.state.config.LDAP_CA_CERT_FILE = LDAP_CA_CERT_FILE
 app.state.config.LDAP_CIPHERS = LDAP_CIPHERS
-
 
 app.state.AUTH_TRUSTED_EMAIL_HEADER = WEBUI_AUTH_TRUSTED_EMAIL_HEADER
 app.state.AUTH_TRUSTED_NAME_HEADER = WEBUI_AUTH_TRUSTED_NAME_HEADER
@@ -850,6 +862,33 @@ app.state.config.AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH = (
     AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH
 )
 
+########################################
+# Usage
+########################################
+
+app.state.config.CREDIT_NO_CREDIT_MSG = CREDIT_NO_CREDIT_MSG
+app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = (
+    USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE
+)
+app.state.config.USAGE_DEFAULT_ENCODING_MODEL = USAGE_DEFAULT_ENCODING_MODEL
+app.state.config.USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE = (
+    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE
+)
+app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE = (
+    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE
+)
+app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE = (
+    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE
+)
+app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = (
+    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE
+)
+app.state.config.EZFP_ENDPOINT = EZFP_ENDPOINT
+app.state.config.EZFP_PID = EZFP_PID
+app.state.config.EZFP_KEY = EZFP_KEY
+app.state.config.EZFP_CALLBACK_HOST = EZFP_CALLBACK_HOST
+app.state.config.EZFP_AMOUNT_CONTROL = EZFP_AMOUNT_CONTROL
+
 
 ########################################
 #
@@ -952,6 +991,7 @@ app.include_router(configs.router, prefix="/api/v1/configs", tags=["configs"])
 app.include_router(auths.router, prefix="/api/v1/auths", tags=["auths"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["users"])
 
+app.include_router(credit.router, prefix="/api/v1/credit", tags=["credit"])
 
 app.include_router(channels.router, prefix="/api/v1/channels", tags=["channels"])
 app.include_router(chats.router, prefix="/api/v1/chats", tags=["chats"])
@@ -1071,6 +1111,12 @@ async def chat_completion(
     form_data: dict,
     user=Depends(get_verified_user),
 ):
+    Credits.check_credit_by_user_id(
+        user_id=user.id,
+        error_msg=CREDIT_NO_CREDIT_MSG.value,
+        metadata=form_data,
+    )
+
     if not request.app.state.MODELS:
         await get_all_models(request, user=user)
 
@@ -1379,7 +1425,7 @@ async def get_app_latest_release_version(user=Depends(get_verified_user)):
         timeout = aiohttp.ClientTimeout(total=1)
         async with aiohttp.ClientSession(timeout=timeout, trust_env=True) as session:
             async with session.get(
-                "https://api.github.com/repos/open-webui/open-webui/releases/latest"
+                "https://api.github.com/repos/U8F69/open-webui/releases/latest"
             ) as response:
                 response.raise_for_status()
                 data = await response.json()
