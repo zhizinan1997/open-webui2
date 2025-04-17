@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 支持对特性按次计费 (如网页搜索、图片生成)
 - 模型选项增加模型价格提示
 - 支持配置默认用户积分
+- 支持通过代理加载模型
 
 ### Changed
 
