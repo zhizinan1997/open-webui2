@@ -287,6 +287,7 @@
 	"Default": "默认",
 	"Default (Open AI)": "默认 (OpenAI)",
 	"Default (SentenceTransformers)": "默认（SentenceTransformers）",
+	"Default Credit for User": "用户初始余额",
 	"Default Encoding Model": "默认计算模型",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "默认模式通过在执行前调用一次工具，能够兼容更广泛的模型。原生模式利用模型内置的工具调用能力，但需要模型本身具备该功能的原生支持。",
 	"Default Model": "默认模型",

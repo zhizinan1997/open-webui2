@@ -2663,6 +2663,12 @@ CREDIT_NO_CREDIT_MSG = PersistentConfig(
     os.environ.get("CREDIT_NO_CREDIT_MSG", "余额不足，请前往 设置-积分 充值"),
 )
 
+CREDIT_DEFAULT_CREDIT = PersistentConfig(
+    "CREDIT_DEFAULT_CREDIT",
+    "credit.default_credit",
+    os.environ.get("CREDIT_DEFAULT_CREDIT", "0"),
+)
+
 USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = PersistentConfig(
     "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE",
     "credit.calculate.model_prefix_to_remove",

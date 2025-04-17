@@ -287,6 +287,7 @@
 	"Default": "Predeterminado",
 	"Default (Open AI)": "Predeterminado (Open AI)",
 	"Default (SentenceTransformers)": "Predeterminado (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "El modo Predeterminado funciona con una amplia gama de modelos llamando a las herramientas antes de la ejecución. El modo Nativo aprovecha la capacidad de llamada a herramientas integrada en el modelo, pero requiere que el modelo soporte esta función de manera inherente.",
 	"Default Model": "Modelo Predeterminado",

@@ -287,6 +287,7 @@
 	"Default": "Per defecte",
 	"Default (Open AI)": "Per defecte (Open AI)",
 	"Default (SentenceTransformers)": "Per defecte (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "El mode predeterminat funciona amb una gamma més àmplia de models cridant a les eines una vegada abans de l'execució. El mode natiu aprofita les capacitats de crida d'eines integrades del model, però requereix que el model admeti aquesta funció de manera inherent.",
 	"Default Model": "Model per defecte",

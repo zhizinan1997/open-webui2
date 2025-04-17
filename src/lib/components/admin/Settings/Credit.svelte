@@ -11,7 +11,7 @@
 	let config = null;
 
 	const submitHandler = async () => {
-		const res = await setUsageConfig(localStorage.token, config);
+		await setUsageConfig(localStorage.token, config);
 	};
 
 	onMount(async () => {
@@ -43,6 +43,18 @@
 						<input
 							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 							bind:value={config.CREDIT_NO_CREDIT_MSG}
+							required
+						/>
+					</div>
+					<div class="flex mt-2 w-full justify-between">
+						<div class=" self-center text-xs font-medium">{$i18n.t('Default Credit for User')}</div>
+					</div>
+					<div class="flex mt-2 space-x-2">
+						<input
+							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+							bind:value={config.CREDIT_DEFAULT_CREDIT}
+							type="number"
+							step="1"
 							required
 						/>
 					</div>

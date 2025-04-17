@@ -287,6 +287,7 @@
 	"Default": "སྔོན་སྒྲིག",
 	"Default (Open AI)": "སྔོན་སྒྲིག (Open AI)",
 	"Default (SentenceTransformers)": "སྔོན་སྒྲིག (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "སྔོན་སྒྲིག་མ་དཔེ་ནི་ལག་བསྟར་མ་བྱས་སྔོན་དུ་ལག་ཆ་ཐེངས་གཅིག་འབོད་ནས་དཔེ་དབྱིབས་རྒྱ་ཆེ་བའི་ཁྱབ་ཁོངས་དང་མཉམ་ལས་བྱེད་ཐུབ། ས་སྐྱེས་མ་དཔེ་ཡིས་དཔེ་དབྱིབས་ཀྱི་ནང་འདྲེས་ལག་ཆ་འབོད་པའི་ནུས་པ་སྤྱོད་ཀྱི་ཡོད་མོད། འོན་ཀྱང་དཔེ་དབྱིབས་དེས་ཁྱད་ཆོས་འདི་ལ་ངོ་བོའི་ཐོག་ནས་རྒྱབ་སྐྱོར་བྱེད་དགོས།",
 	"Default Model": "སྔོན་སྒྲིག་དཔེ་དབྱིབས།",

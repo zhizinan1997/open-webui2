@@ -287,6 +287,7 @@
 	"Default": "기본값",
 	"Default (Open AI)": "기본값 (Open AI)",
 	"Default (SentenceTransformers)": "기본값 (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "",
 	"Default Model": "기본 모델",

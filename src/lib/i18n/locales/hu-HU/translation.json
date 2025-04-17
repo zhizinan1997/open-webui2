@@ -287,6 +287,7 @@
 	"Default": "Alapértelmezett",
 	"Default (Open AI)": "Alapértelmezett (Open AI)",
 	"Default (SentenceTransformers)": "Alapértelmezett (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Az alapértelmezett mód szélesebb modellválasztékkal működik az eszközök egyszeri meghívásával a végrehajtás előtt. A natív mód a modell beépített eszközhívási képességeit használja ki, de ehhez a modellnek eredendően támogatnia kell ezt a funkciót.",
 	"Default Model": "Alapértelmezett modell",
