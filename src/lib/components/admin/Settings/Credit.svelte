@@ -11,7 +11,7 @@
 	let config = null;
 
 	const submitHandler = async () => {
-		const res = await setUsageConfig(localStorage.token, config);
+		await setUsageConfig(localStorage.token, config);
 	};
 
 	onMount(async () => {
@@ -53,6 +53,8 @@
 						<input
 							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 							bind:value={config.CREDIT_DEFAULT_CREDIT}
+							type="number"
+							step="1"
 							required
 						/>
 					</div>
