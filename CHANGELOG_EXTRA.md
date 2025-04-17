@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 新增管理页面 (管理员面板-设置-积分)
 - 支持对特性按次计费 (如网页搜索、图片生成)
 
+### Changed
+
+- 优化积分日志内容
+- 优化充值二维码展示效果
+
 ### Fixed
 
 - 修复易支付的兼容问题
