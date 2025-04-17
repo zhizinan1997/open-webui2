@@ -8,7 +8,6 @@ from typing import List, Union, Optional
 import tiktoken
 from fastapi import HTTPException
 from openai.types import CompletionUsage
-from openai.types.chat import ChatCompletion, ChatCompletionChunk
 from pydantic import BaseModel, ConfigDict, Field
 from tiktoken import Encoding
 
@@ -29,6 +28,36 @@ from open_webui.models.users import UserModel
 
 logger = logging.getLogger(__name__)
 logger.setLevel(SRC_LOG_LEVELS["MAIN"])
+
+
+class ChatCompletionMessage(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    content: Optional[str] = None
+
+
+class ChoiceDelta(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    content: Optional[str] = None
+
+
+class Choice(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    message: Optional[ChatCompletionMessage] = Field(
+        default_factory=lambda: ChatCompletionMessage()
+    )
+    delta: Optional[ChoiceDelta] = Field(default_factory=lambda: ChoiceDelta())
+
+
+class ChatCompletion(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    choices: List[Choice]
+    usage: Optional[CompletionUsage] = None
+
+
+class ChatCompletionChunk(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    choices: List[Choice]
+    usage: Optional[CompletionUsage] = None
 
 
 class FileFile(BaseModel):
@@ -355,17 +384,12 @@ class CreditDeduct:
             _response = self.clean_response(
                 response=response,
                 default_response={
-                    "id": uuid.uuid4().hex,
-                    "choices": [{"delta": {"content": str(response)}, "index": 0}],
-                    "created": int(time.time()),
-                    "model": self.model_id,
-                    "object": "chat.completion.chunk",
+                    "choices": [{"delta": {"content": str(response)}}],
                 },
             )
             if not _response:
                 return
             # validate
-            _response["object"] = "chat.completion.chunk"
             response = ChatCompletionChunk.model_validate(_response)
 
         # non-stream
@@ -373,17 +397,12 @@ class CreditDeduct:
             _response = self.clean_response(
                 response=response,
                 default_response={
-                    "id": uuid.uuid4().hex,
-                    "choices": [{"message": {"content": str(response)}, "index": 0}],
-                    "created": int(time.time()),
-                    "model": self.model_id,
-                    "object": "chat.completion",
+                    "choices": [{"message": {"content": str(response)}}],
                 },
             )
             if not _response:
                 return
             # validate
-            response["object"] = "chat.completion"
             response = ChatCompletion.model_validate(_response)
 
         # calculate

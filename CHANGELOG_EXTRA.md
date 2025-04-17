@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - 修复易支付的兼容问题
+- 修复调用 chat.completion api 的兼容问题
 
 ## [0.6.5.16] - 2025-04-16
 
