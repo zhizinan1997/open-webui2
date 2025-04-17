@@ -199,7 +199,9 @@ class CreditDeduct:
             self.get_model_price()
         )
         self.features = {
-            k for k, v in body.get("metadata", {}).get("features", {}).items() if v
+            k
+            for k, v in (body.get("metadata", {}).get("features", {}) or {}).items()
+            if v
         }
         self.is_official_usage = False
 
