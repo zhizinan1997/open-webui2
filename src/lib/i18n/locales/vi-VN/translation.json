@@ -286,6 +286,7 @@
 	"Default": "Mặc định",
 	"Default (Open AI)": "Mặc định (Open AI)",
 	"Default (SentenceTransformers)": "Mặc định (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Chế độ mặc định hoạt động với nhiều loại mô hình hơn bằng cách gọi các công cụ một lần trước khi thực thi. Chế độ gốc tận dụng khả năng gọi công cụ tích hợp sẵn của mô hình, nhưng yêu cầu mô hình phải hỗ trợ tính năng này vốn có.",
 	"Default Model": "Model mặc định",

@@ -286,6 +286,7 @@
 	"Default": "Domyślny",
 	"Default (Open AI)": "Domyślny (Open AI)",
 	"Default (SentenceTransformers)": "Domyślny (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Tryb domyślny współpracuje z szerszym zakresem modeli, wywołując narzędzia raz przed wykonaniem. Tryb natywny wykorzystuje wbudowane możliwości wywoływania narzędzi przez model, ale wymaga, aby model wewnętrznie obsługiwał tę funkcję.",
 	"Default Model": "Model domyślny",

@@ -286,6 +286,7 @@
 	"Default": "Réamhshocraithe",
 	"Default (Open AI)": "Réamhshocraithe (Oscail AI)",
 	"Default (SentenceTransformers)": "Réamhshocraithe (SentenceTransFormers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Oibríonn mód réamhshocraithe le raon níos leithne samhlacha trí ghlaoch a chur ar uirlisí uair amháin roimh fhorghníomhú. Déanann mód dúchasach cumas glaoite uirlisí ionsuite an mhúnla a ghiaráil, ach éilíonn sé go dtacaíonn an tsamhail leis an ngné seo go bunúsach.",
 	"Default Model": "Múnla Réamhshocraithe",

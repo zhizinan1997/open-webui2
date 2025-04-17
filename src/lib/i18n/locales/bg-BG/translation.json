@@ -286,6 +286,7 @@
 	"Default": "По подразбиране",
 	"Default (Open AI)": "По подразбиране (Open AI)",
 	"Default (SentenceTransformers)": "По подразбиране (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Режимът по подразбиране работи с по-широк набор от модели, като извиква инструменти веднъж преди изпълнение. Нативният режим използва вградените възможности за извикване на инструменти на модела, но изисква моделът да поддържа тази функция по същество.",
 	"Default Model": "Модел по подразбиране",

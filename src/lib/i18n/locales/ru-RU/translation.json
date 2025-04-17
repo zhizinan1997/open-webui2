@@ -286,6 +286,7 @@
 	"Default": "По умолчанию",
 	"Default (Open AI)": "По умолчанию (Open AI)",
 	"Default (SentenceTransformers)": "По умолчанию (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Режим по умолчанию работает с более широким спектром моделей, вызывая инструменты один раз перед выполнением. Режим Native использует встроенные в модель возможности вызова инструментов, но требует, чтобы модель изначально поддерживала эту функцию.",
 	"Default Model": "Модель по умолчанию",

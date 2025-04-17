@@ -286,6 +286,7 @@
 	"Default": "Standard",
 	"Default (Open AI)": "Standard (Open AI)",
 	"Default (SentenceTransformers)": "Standard (SentenceTransformers)",
+	"Default Credit for User": "",
 	"Default Encoding Model": "",
 	"Default mode works with a wider range of models by calling tools once before execution. Native mode leverages the model’s built-in tool-calling capabilities, but requires the model to inherently support this feature.": "Der Standardmodus funktioniert mit einer breiteren Auswahl von Modellen, indem er Werkzeuge einmal vor der Ausführung aufruft. Der native Modus nutzt die integrierten Tool-Aufrufmöglichkeiten des Modells, erfordert jedoch, dass das Modell diese Funktion von Natur aus unterstützt.",
 	"Default Model": "Standardmodell",

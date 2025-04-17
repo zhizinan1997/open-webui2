@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import JSON, BigInteger, Column, Numeric, String
 
+from open_webui.config import CREDIT_DEFAULT_CREDIT
 from open_webui.internal.db import Base, get_db
 from open_webui.models.chats import Chats
 
@@ -125,7 +126,9 @@ class TradeTicketModel(BaseModel):
 class CreditsTable:
     def insert_new_credit(self, user_id: str) -> Optional[CreditModel]:
         try:
-            credit_model = CreditModel(user_id=user_id)
+            credit_model = CreditModel(
+                user_id=user_id, credit=Decimal(CREDIT_DEFAULT_CREDIT.value)
+            )
             with get_db() as db:
                 result = Credit(**credit_model.model_dump())
                 db.add(result)
