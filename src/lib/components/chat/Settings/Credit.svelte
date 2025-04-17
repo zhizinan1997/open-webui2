@@ -166,6 +166,7 @@
 
 		credit = $user?.credit ? $user?.credit : 0;
 		tradeInfo = {};
+		document.getElementById('trade-qrcode').innerHTML = '';
 
 		await loadLogs(false);
 	};
