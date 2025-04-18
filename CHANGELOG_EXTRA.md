@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 模型选项增加模型价格提示
 - 支持配置默认用户积分
 - 支持通过代理加载模型
+- 工作空间中配置的模型使用基础模型价格计费
 
 ### Changed
 

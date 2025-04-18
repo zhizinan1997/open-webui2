@@ -225,7 +225,7 @@ class CreditDeduct:
             prompt_tokens=0, completion_tokens=0, total_tokens=0
         )
         self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
-            self.get_model_price()
+            self.get_model_price(model=self.model)
         )
         self.features = {
             k
@@ -337,14 +337,23 @@ class CreditDeduct:
             **self.usage.model_dump(exclude_unset=True, exclude_none=True),
         }
 
-    def get_model_price(self) -> (Decimal, Decimal, Decimal):
-        if self.model is None or not isinstance(self.model, ModelModel):
+    def get_model_price(
+        self, model: Optional[ModelModel] = None
+    ) -> (Decimal, Decimal, Decimal):
+        # no model provide
+        if not model or not isinstance(model, ModelModel):
             return (
                 Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
                 Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
                 Decimal(USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value),
             )
-        model_price = self.model.price or {}
+        # base model
+        if model.base_model_id:
+            base_model = Models.get_model_by_id(model.base_model_id)
+            if base_model:
+                return self.get_model_price(base_model)
+        # model price
+        model_price = model.price or {}
         return (
             Decimal(
                 model_price.get(

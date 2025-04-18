@@ -492,53 +492,55 @@
 						</div>
 					{/if}
 
-					<div class="my-1">
-						<div class="mb-1 flex w-full justify-between items-center">
-							<div class=" self-center text-sm font-semibold">{$i18n.t('Price')}</div>
+					{#if !preset}
+						<div class="my-1">
+							<div class="mb-1 flex w-full justify-between items-center">
+								<div class=" self-center text-sm font-semibold">{$i18n.t('Price')}</div>
+							</div>
 						</div>
-					</div>
-					<div class="my-2">
-						<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
-						<div class="mt-1 flex justify-between text-xs">
-							<span class="min-w-36">
-								{$i18n.t('Prompt Token Price')}
-							</span>
-							<input
-								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
-								type="number"
-								step="0.0001"
-								bind:value={info.price.prompt_price}
-								autocomplete="off"
-								required
-							/>
+						<div class="my-2">
+							<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
+							<div class="mt-1 flex justify-between text-xs">
+								<span class="min-w-36">
+									{$i18n.t('Prompt Token Price')}
+								</span>
+								<input
+									class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+									type="number"
+									step="0.0001"
+									bind:value={info.price.prompt_price}
+									autocomplete="off"
+									required
+								/>
+							</div>
+							<div class="mt-1 flex justify-between text-xs">
+								<span class="min-w-36">
+									{$i18n.t('Completion Token Price')}
+								</span>
+								<input
+									class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+									type="number"
+									step="0.0001"
+									bind:value={info.price.completion_price}
+									autocomplete="off"
+									required
+								/>
+							</div>
+							<div class="mt-1 flex justify-between text-xs">
+								<span class="min-w-36">
+									{$i18n.t('Request Price')}
+								</span>
+								<input
+									class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+									type="number"
+									step="0.0001"
+									bind:value={info.price.request_price}
+									autocomplete="off"
+									required
+								/>
+							</div>
 						</div>
-						<div class="mt-1 flex justify-between text-xs">
-							<span class="min-w-36">
-								{$i18n.t('Completion Token Price')}
-							</span>
-							<input
-								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
-								type="number"
-								step="0.0001"
-								bind:value={info.price.completion_price}
-								autocomplete="off"
-								required
-							/>
-						</div>
-						<div class="mt-1 flex justify-between text-xs">
-							<span class="min-w-36">
-								{$i18n.t('Request Price')}
-							</span>
-							<input
-								class="w-full flex flex-1 text-xs bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
-								type="number"
-								step="0.0001"
-								bind:value={info.price.request_price}
-								autocomplete="off"
-								required
-							/>
-						</div>
-					</div>
+					{/if}
 
 					<div class="my-1">
 						<div class="mb-1 flex w-full justify-between items-center">
