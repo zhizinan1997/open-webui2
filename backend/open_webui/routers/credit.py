@@ -18,6 +18,7 @@ from open_webui.models.models import Models, ModelPriceForm
 from open_webui.models.users import UserModel
 from open_webui.utils.auth import get_current_user, get_admin_user
 from open_webui.utils.credit.ezfp import ezfp_client
+from open_webui.utils.models import get_all_models
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -93,11 +94,13 @@ async def ticket_callback_redirect() -> RedirectResponse:
 
 
 @router.get("/models/price")
-async def get_model_price(_: UserModel = Depends(get_admin_user)):
+async def get_model_price(request: Request, user: UserModel = Depends(get_admin_user)):
+    # no info means not saved in db, which cannot be updated
+    # preset model is always using base model's price
     return {
-        model.id: model.price if model.price else {}
-        for model in Models.get_all_models()
-        if model.id
+        model["id"]: model.get("info", {}).get("price") or {}
+        for model in await get_all_models(request, user)
+        if model.get("info") and not model.get("info", {}).get("base_model_id")
     }
 
 

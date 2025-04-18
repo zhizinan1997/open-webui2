@@ -1059,6 +1059,17 @@ async def get_models(request: Request, user=Depends(get_verified_user)):
 
         return filtered_models
 
+    def change_preset_model_price(models: list[dict]):
+        for model in models:
+            base_model_id = model.get("info", {}).get("base_model_id")
+            if not base_model_id:
+                continue
+            base_model = Models.get_model_by_id(model["info"]["base_model_id"])
+            if not base_model:
+                continue
+            model["info"]["price"] = base_model.price
+        return models
+
     all_models = await get_all_models(request, user=user)
 
     models = []
@@ -1098,7 +1109,7 @@ async def get_models(request: Request, user=Depends(get_verified_user)):
     log.debug(
         f"/api/models returned filtered models accessible to the user: {json.dumps([model['id'] for model in models])}"
     )
-    return {"data": models}
+    return {"data": change_preset_model_price(models)}
 
 
 @app.get("/api/models/base")
