@@ -144,7 +144,7 @@
 	const formatDesc = (log: Log): string => {
 		const usage = log?.detail?.usage ?? {};
 		if (usage && Object.keys(usage).length > 0) {
-			if (usage.total_price !== undefined) {
+			if (usage.total_price !== undefined && usage.total_price !== null) {
 				return `-${Math.round(usage.total_price * 1e6) / 1e6}`;
 			}
 			if (usage.request_unit_price) {
