@@ -746,9 +746,7 @@ async def generate_chat_completion(
                         credit_deduct.run(response=chunk)
                         yield chunk
 
-                    yield "data: " + json.dumps(
-                        {"usage": credit_deduct.usage_with_cost}
-                    )
+                    yield credit_deduct.usage_message
 
             streaming = True
             return StreamingResponse(

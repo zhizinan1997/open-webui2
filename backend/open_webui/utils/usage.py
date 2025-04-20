@@ -216,6 +216,7 @@ class CreditDeduct:
         body: dict,
         is_stream: bool,
     ) -> None:
+        self.remote_id = ""
         self.user = user
         self.model_id = model_id
         self.model = Models.get_model_by_id(self.model_id)
@@ -337,6 +338,21 @@ class CreditDeduct:
             **self.usage.model_dump(exclude_unset=True, exclude_none=True),
         }
 
+    @property
+    def usage_message(self) -> str:
+        return "data: %s\n\n" % json.dumps(
+            {
+                "id": self.remote_id,
+                "created": int(time.time()),
+                "model": self.model_id,
+                "choices": [],
+                "object": (
+                    "chat.completion.chunk" if self.is_stream else "chat.completion"
+                ),
+                "usage": self.usage_with_cost,
+            }
+        )
+
     def get_model_price(
         self, model: Optional[ModelModel] = None
     ) -> (Decimal, Decimal, Decimal):
@@ -413,6 +429,9 @@ class CreditDeduct:
                 return
             # validate
             response = ChatCompletion.model_validate(_response)
+
+        # record is
+        self.remote_id = getattr(response, "id", "")
 
         # calculate
         is_official_usage, usage = calculator.calculate_usage(
