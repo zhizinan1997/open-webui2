@@ -327,7 +327,7 @@ async def get_banners(
 
 class UsageConfigForm(BaseModel):
     CREDIT_NO_CREDIT_MSG: str = Field(default="余额不足，请前往 设置-积分 充值")
-    CREDIT_DEFAULT_CREDIT: int = Field(default=0)
+    CREDIT_DEFAULT_CREDIT: float = Field(default=0)
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE: str = Field(default="")
     USAGE_DEFAULT_ENCODING_MODEL: str = Field(default="gpt-4o")
     USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE: float = Field(default=0)

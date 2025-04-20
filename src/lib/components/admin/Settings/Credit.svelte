@@ -54,7 +54,7 @@
 							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
 							bind:value={config.CREDIT_DEFAULT_CREDIT}
 							type="number"
-							step="1"
+							step="0.0001"
 							required
 						/>
 					</div>
