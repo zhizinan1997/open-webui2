@@ -187,7 +187,7 @@
 				<div class=" self-center truncate">{$i18n.t('Sign Out')}</div>
 			</button>
 
-			{#if $activeUserIds?.length > 0}
+			{#if false}
 				<hr class=" border-gray-100 dark:border-gray-850 my-1 p-0" />
 
 				<Tooltip

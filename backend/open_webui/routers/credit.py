@@ -1,10 +1,12 @@
 import datetime
 import logging
 import uuid
+from collections import defaultdict
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import PlainTextResponse, RedirectResponse
+from pydantic import BaseModel
 
 from open_webui.config import EZFP_CALLBACK_HOST
 from open_webui.env import SRC_LOG_LEVELS
@@ -15,7 +17,7 @@ from open_webui.models.credits import (
     CreditLogs,
 )
 from open_webui.models.models import Models, ModelPriceForm
-from open_webui.models.users import UserModel
+from open_webui.models.users import UserModel, Users
 from open_webui.utils.auth import get_current_user, get_admin_user
 from open_webui.utils.credit.ezfp import ezfp_client
 from open_webui.utils.models import get_all_models
@@ -117,3 +119,56 @@ async def update_model_price(
         )
         Models.update_model_by_id(id=model_id, model=model)
     return f"success update price for {len(form_data)} models"
+
+
+class StatisticRequest(BaseModel):
+    start_time: int
+    end_time: int
+
+
+@router.post("/statistics")
+async def get_statistics(
+    form_data: StatisticRequest, _: UserModel = Depends(get_admin_user)
+):
+    # load credit data
+    logs = CreditLogs.get_log_by_time(form_data.start_time, form_data.end_time)
+
+    # load user data
+    users = Users.get_users()
+    user_map = {user.id: user.name for user in users}
+
+    # build graph data
+    model_cost_pie = defaultdict(int)
+    model_token_pie = defaultdict(int)
+    user_cost_pie = defaultdict(int)
+    user_token_pie = defaultdict(int)
+    for log in logs:
+        if not log.detail.usage or log.detail.usage.total_price is None:
+            continue
+        model = log.detail.api_params.model
+        if not model:
+            continue
+        model_key = log.detail.api_params.model.name or log.detail.api_params.model.id
+        user_key = f"{log.user_id}:{user_map.get(log.user_id, log.user_id)}"
+        model_cost_pie[model_key] += log.detail.usage.total_price
+        model_token_pie[model_key] += log.detail.usage.total_tokens
+        user_cost_pie[user_key] += log.detail.usage.total_price
+        user_token_pie[user_key] += log.detail.usage.total_tokens
+
+    # response
+    return {
+        "model_cost_pie": [
+            {"name": model, "value": total} for model, total in model_cost_pie.items()
+        ],
+        "model_token_pie": [
+            {"name": model, "value": total} for model, total in model_token_pie.items()
+        ],
+        "user_cost_pie": [
+            {"name": user.split(":", 1)[1], "value": total}
+            for user, total in user_cost_pie.items()
+        ],
+        "user_token_pie": [
+            {"name": user.split(":", 1)[1], "value": total}
+            for user, total in user_token_pie.items()
+        ],
+    }

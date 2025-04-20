@@ -7,6 +7,10 @@
 
 完整特性请看更新日志 [CHANGELOG_EXTRA.md](./CHANGELOG_EXTRA.md)
 
+### 积分报表
+
+![usage panel](./docs/usage_panel.png)
+
 ### 全局积分设置
 
 ![credit config](./docs/credit_config.png)
