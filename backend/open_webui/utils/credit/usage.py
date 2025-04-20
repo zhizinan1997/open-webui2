@@ -219,9 +219,12 @@ class CreditDeduct:
         self.usage = CompletionUsage(
             prompt_tokens=0, completion_tokens=0, total_tokens=0
         )
-        self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
-            get_model_price(model=self.model)
-        )
+        (
+            self.prompt_unit_price,
+            self.completion_unit_price,
+            self.request_unit_price,
+            _,
+        ) = get_model_price(model=self.model)
         self.features = {
             k
             for k, v in (body.get("metadata", {}).get("features", {}) or {}).items()

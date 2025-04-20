@@ -743,6 +743,7 @@
 	"Message rating should be enabled to use this feature": "يجب تفعيل تقييم الرسائل لاستخدام هذه الميزة",
 	"Messages you send after creating your link won't be shared. Users with the URL will be able to view the shared chat.": "لن تتم مشاركة الرسائل التي ترسلها بعد إنشاء الرابط الخاص بك. سيتمكن المستخدمون الذين لديهم عنوان URL من عرض الدردشة المشتركة",
 	"Min P": "الحد الأدنى P",
+	"Minimum Credit Required": "",
 	"Mirostat": "Mirostat",
 	"Mirostat Eta": "Mirostat Eta",
 	"Mirostat Tau": "Mirostat Tau",

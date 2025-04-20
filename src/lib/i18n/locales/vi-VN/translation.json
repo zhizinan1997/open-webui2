@@ -743,6 +743,7 @@
 	"Message rating should be enabled to use this feature": "Cần bật tính năng đánh giá tin nhắn để sử dụng tính năng này",
 	"Messages you send after creating your link won't be shared. Users with the URL will be able to view the shared chat.": "Tin nhắn bạn gửi sau khi tạo liên kết sẽ không được chia sẻ. Người dùng có URL sẽ có thể xem cuộc trò chuyện được chia sẻ.",
 	"Min P": "Min P",
+	"Minimum Credit Required": "",
 	"Mirostat": "Mirostat",
 	"Mirostat Eta": "Mirostat Eta",
 	"Mirostat Tau": "Mirostat Tau",

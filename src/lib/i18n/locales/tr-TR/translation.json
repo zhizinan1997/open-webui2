@@ -743,6 +743,7 @@
 	"Message rating should be enabled to use this feature": "Bu özelliği kullanmak için mesaj derecelendirmesi etkinleştirilmelidir",
 	"Messages you send after creating your link won't be shared. Users with the URL will be able to view the shared chat.": "Bağlantınızı oluşturduktan sonra gönderdiğiniz mesajlar paylaşılmayacaktır. URL'ye sahip kullanıcılar paylaşılan sohbeti görüntüleyebilecektir.",
 	"Min P": "Min P",
+	"Minimum Credit Required": "",
 	"Mirostat": "Mirostat",
 	"Mirostat Eta": "Mirostat Eta",
 	"Mirostat Tau": "Mirostat Tau",

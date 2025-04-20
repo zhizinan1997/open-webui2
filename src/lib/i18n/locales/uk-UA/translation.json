@@ -743,6 +743,7 @@
 	"Message rating should be enabled to use this feature": "Оцінювання повідомлень має бути увімкнено для використання цієї функції.",
 	"Messages you send after creating your link won't be shared. Users with the URL will be able to view the shared chat.": "Повідомлення, які ви надішлете після створення посилання, не будуть доступні для інших. Користувачі, які мають URL, зможуть переглядати спільний чат.",
 	"Min P": "Min P",
+	"Minimum Credit Required": "",
 	"Mirostat": "Mirostat",
 	"Mirostat Eta": "Mirostat Eta",
 	"Mirostat Tau": "Mirostat Tau",
