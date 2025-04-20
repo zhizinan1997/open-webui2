@@ -1,35 +1,59 @@
-<script>
+<script lang="ts">
 	import { getContext, onMount } from 'svelte';
 	import { getCreditStats } from '$lib/apis/credit';
 	import { toast } from 'svelte-sonner';
 	import * as echarts from 'echarts';
+	import type { EChartsType } from 'echarts';
+	import { theme } from '$lib/stores';
 
-	let modelTokenPie;
+	const maxDimensions = 15;
+	const echartsTheme = $theme.includes('dark') ? 'dark' : 'light';
+
+	let modelTokenPie: HTMLDivElement;
 	let modelTokenPieOption = {};
-	let modelTokenPieChart;
+	let modelTokenPieChart: EChartsType;
 
-	let modelCostPie;
+	let modelCostPie: HTMLDivElement;
 	let modelCostPieOption = {};
-	let modelCostPieChart;
+	let modelCostPieChart: EChartsType;
 
-	let userTokenPie;
+	let userTokenPie: HTMLDivElement;
 	let userTokenPieOption = {};
-	let userTokenPieChart;
+	let userTokenPieChart: EChartsType;
 
-	let userCostPie;
+	let userCostPie: HTMLDivElement;
 	let userCostPieOption = {};
-	let userCostPieChart;
+	let userCostPieChart: EChartsType;
 
 	const i18n = getContext('i18n');
+
+	type ChartItem = {
+		name: string;
+		value: number;
+	};
+	type Data = {
+		model_cost_pie: Array<ChartItem>;
+		model_token_pie: Array<ChartItem>;
+		user_cost_pie: Array<ChartItem>;
+		user_token_pie: Array<ChartItem>;
+	};
 
 	let period = 7;
 
 	let endTime = new Date();
 	let startTime = new Date();
 
-	const onChangePeriod = async (p) => {
+	const onChangePeriod = async (p: number) => {
 		period = p;
 		await doQuery();
+	};
+
+	const mergeData = (data: Array<ChartItem>) => {
+		let sorted = data.sort((a, b) => b.value - a.value);
+		let topItems = sorted.slice(0, maxDimensions);
+		let rest = sorted.slice(maxDimensions);
+		let restSum = rest.reduce((sum, item) => sum + item.value, 0);
+		return [...topItems, ...(restSum > 0 ? [{ name: $i18n.t('Other'), value: restSum }] : [])];
 	};
 
 	const doQuery = async () => {
@@ -50,9 +74,9 @@
 		}
 	};
 
-	const drawChart = (data) => {
+	const drawChart = (data: Data) => {
 		if (!modelTokenPieChart) {
-			modelTokenPieChart = echarts.init(modelTokenPie);
+			modelTokenPieChart = echarts.init(modelTokenPie, echartsTheme);
 		}
 		modelTokenPieOption = {
 			title: {
@@ -64,10 +88,9 @@
 			},
 			legend: {
 				type: 'scroll',
-				orient: 'vertical',
-				right: '10px',
-				top: '10px',
-				bottom: '10px'
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
 			},
 			tooltip: {
 				show: true
@@ -75,15 +98,15 @@
 			series: [
 				{
 					type: 'pie',
-					data: data.model_token_pie,
-					radius: ['50%', '70%']
+					data: mergeData(data.model_token_pie),
+					radius: ['40%', '60%']
 				}
 			]
 		};
 		modelTokenPieChart.setOption(modelTokenPieOption);
 
 		if (!modelCostPieChart) {
-			modelCostPieChart = echarts.init(modelCostPie);
+			modelCostPieChart = echarts.init(modelCostPie, echartsTheme);
 		}
 		modelCostPieOption = {
 			title: {
@@ -95,10 +118,9 @@
 			},
 			legend: {
 				type: 'scroll',
-				orient: 'vertical',
-				right: '10px',
-				top: '10px',
-				bottom: '10px'
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
 			},
 			tooltip: {
 				show: true
@@ -106,15 +128,15 @@
 			series: [
 				{
 					type: 'pie',
-					data: data.model_cost_pie,
-					radius: ['50%', '70%']
+					data: mergeData(data.model_cost_pie),
+					radius: ['40%', '60%']
 				}
 			]
 		};
 		modelCostPieChart.setOption(modelCostPieOption);
 
 		if (!userTokenPieChart) {
-			userTokenPieChart = echarts.init(userTokenPie);
+			userTokenPieChart = echarts.init(userTokenPie, echartsTheme);
 		}
 		userTokenPieOption = {
 			title: {
@@ -126,10 +148,9 @@
 			},
 			legend: {
 				type: 'scroll',
-				orient: 'vertical',
-				right: '10px',
-				top: '10px',
-				bottom: '10px'
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
 			},
 			tooltip: {
 				show: true
@@ -137,15 +158,15 @@
 			series: [
 				{
 					type: 'pie',
-					data: data.user_token_pie,
-					radius: ['50%', '70%']
+					data: mergeData(data.user_token_pie),
+					radius: ['40%', '60%']
 				}
 			]
 		};
 		userTokenPieChart.setOption(userTokenPieOption);
 
 		if (!userCostPieChart) {
-			userCostPieChart = echarts.init(userCostPie);
+			userCostPieChart = echarts.init(userCostPie, echartsTheme);
 		}
 		userCostPieOption = {
 			title: {
@@ -157,10 +178,9 @@
 			},
 			legend: {
 				type: 'scroll',
-				orient: 'vertical',
-				right: '10px',
-				top: '10px',
-				bottom: '10px'
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
 			},
 			tooltip: {
 				show: true
@@ -168,8 +188,8 @@
 			series: [
 				{
 					type: 'pie',
-					data: data.user_cost_pie,
-					radius: ['50%', '70%']
+					data: mergeData(data.user_cost_pie),
+					radius: ['40%', '60%']
 				}
 			]
 		};
@@ -188,7 +208,9 @@
 
 	<div class="mt-2 flex justify-around h-[36px] white">
 		<button
-			class="bg-gray-50 w-full mr-2 rounded-md"
+			class="w-full mr-2 rounded-md {period === 30
+				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
+				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
 			on:click={async () => {
 				await onChangePeriod(30);
 			}}
@@ -196,7 +218,9 @@
 			{$i18n.t('Last 30 Days')}
 		</button>
 		<button
-			class="bg-gray-50 w-full mr-2 rounded-md"
+			class="w-full mr-2 rounded-md {period === 14
+				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
+				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
 			on:click={async () => {
 				await onChangePeriod(14);
 			}}
@@ -204,7 +228,9 @@
 			{$i18n.t('Last 14 Days')}
 		</button>
 		<button
-			class="bg-gray-50 w-full mr-2 rounded-md"
+			class="w-full mr-2 rounded-md {period === 7
+				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
+				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
 			on:click={async () => {
 				await onChangePeriod(7);
 			}}
@@ -212,7 +238,9 @@
 			{$i18n.t('Last 7 Days')}
 		</button>
 		<button
-			class="bg-gray-50 w-full rounded-md"
+			class="w-full rounded-md {period === 1
+				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
+				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
 			on:click={async () => {
 				await onChangePeriod(1);
 			}}
@@ -222,22 +250,22 @@
 	</div>
 
 	<div
-		class="mt-2 bg-gray-50 rounded-md"
+		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
 		bind:this={modelTokenPie}
 		style="width: 100%; height: 300px;"
 	></div>
 	<div
-		class="mt-2 bg-gray-50 rounded-md"
+		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
 		bind:this={modelCostPie}
 		style="width: 100%; height: 300px;"
 	></div>
 	<div
-		class="mt-2 bg-gray-50 rounded-md"
+		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
 		bind:this={userTokenPie}
 		style="width: 100%; height: 300px;"
 	></div>
 	<div
-		class="mt-2 bg-gray-50 rounded-md"
+		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
 		bind:this={userCostPie}
 		style="width: 100%; height: 300px;"
 	></div>
