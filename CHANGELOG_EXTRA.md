@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 优化积分日志内容
 - 优化充值二维码展示效果
 - 优化响应数据的 Usage 格式
+- 优化初始积分的小数位数
 
 ### Fixed
 
