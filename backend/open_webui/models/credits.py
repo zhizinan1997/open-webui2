@@ -7,7 +7,6 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import JSON, BigInteger, Column, Numeric, String
 
-from open_webui.config import CREDIT_DEFAULT_CREDIT
 from open_webui.internal.db import Base, get_db
 
 
@@ -35,7 +34,7 @@ class CreditLog(Base):
     credit = Column(Numeric(precision=24, scale=12))
     detail = Column(JSON, nullable=True)
 
-    created_at = Column(BigInteger)
+    created_at = Column(BigInteger, index=True)
 
 
 class TradeTicket(Base):
@@ -72,16 +71,34 @@ class CreditLogModel(BaseModel):
     created_at: int = Field(default_factory=lambda: int(time.time()))
 
 
+class CreditLogUsage(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra="allow")
+    total_price: Optional[Decimal] = None
+    prompt_unit_price: Optional[Decimal] = None
+    completion_unit_price: Optional[Decimal] = None
+    request_unit_price: Optional[Decimal] = None
+    feature_price: Optional[Decimal] = None
+    completion_tokens: Optional[int] = None
+    prompt_tokens: Optional[int] = None
+    total_tokens: Optional[int] = None
+
+
+class SimpleModelModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: Optional[str]
+    name: Optional[str]
+
+
 class CreditLogSimpleDetailAPIParams(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    model: dict = Field(default_factory=lambda: {})
+    model: SimpleModelModel = Field(default_factory=lambda: {})
 
 
 class CreditLogSimpleDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     desc: str = Field(default_factory=lambda: "")
     api_params: CreditLogSimpleDetailAPIParams
-    usage: dict = Field(default_factory=lambda: {})
+    usage: CreditLogUsage = Field(default_factory=lambda: {})
 
 
 class CreditLogSimpleModel(CreditLogModel):
@@ -124,6 +141,8 @@ class TradeTicketModel(BaseModel):
 
 class CreditsTable:
     def insert_new_credit(self, user_id: str) -> Optional[CreditModel]:
+        from open_webui.config import CREDIT_DEFAULT_CREDIT
+
         try:
             credit_model = CreditModel(
                 user_id=user_id, credit=Decimal(CREDIT_DEFAULT_CREDIT.value)
@@ -263,6 +282,20 @@ class CreditLogTable:
                 query = query.limit(limit)
             all_logs = query.all()
             return [CreditLogSimpleModel.model_validate(log) for log in all_logs]
+
+    def get_log_by_time(
+        self, start_time: int, end_time: int
+    ) -> list[CreditLogSimpleModel]:
+        try:
+            with get_db() as db:
+                logs = (
+                    db.query(CreditLog)
+                    .filter(CreditLog.created_at >= start_time)
+                    .filter(CreditLog.created_at < end_time)
+                )
+                return [CreditLogSimpleModel.model_validate(log) for log in logs]
+        except Exception:
+            return []
 
 
 CreditLogs = CreditLogTable()
