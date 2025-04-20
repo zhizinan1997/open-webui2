@@ -1,7 +1,6 @@
 import json
 import logging
 import time
-import uuid
 from decimal import Decimal
 from typing import List, Union, Optional
 
@@ -12,19 +11,14 @@ from pydantic import BaseModel, ConfigDict, Field
 from tiktoken import Encoding
 
 from open_webui.config import (
-    USAGE_CALCULATE_DEFAULT_TOKEN_PRICE,
-    USAGE_CALCULATE_DEFAULT_REQUEST_PRICE,
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
     USAGE_DEFAULT_ENCODING_MODEL,
-    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
-    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
-    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
-    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
-from open_webui.models.models import ModelModel, Models
+from open_webui.models.models import Models
 from open_webui.models.users import UserModel
+from open_webui.utils.credit.utils import get_model_price, get_feature_price
 
 logger = logging.getLogger(__name__)
 logger.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -226,7 +220,7 @@ class CreditDeduct:
             prompt_tokens=0, completion_tokens=0, total_tokens=0
         )
         self.prompt_unit_price, self.completion_unit_price, self.request_unit_price = (
-            self.get_model_price(model=self.model)
+            get_model_price(model=self.model)
         )
         self.features = {
             k
@@ -287,36 +281,7 @@ class CreditDeduct:
 
     @property
     def feature_price(self) -> Decimal:
-        if not self.features:
-            return Decimal(0)
-        price = Decimal(0)
-        for feature in self.features:
-            match feature:
-                case "image_generation":
-                    price += (
-                        Decimal(USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE.value)
-                        / 1000
-                        / 1000
-                    )
-                case "code_interpreter":
-                    price += (
-                        Decimal(USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE.value)
-                        / 1000
-                        / 1000
-                    )
-                case "web_search":
-                    price += (
-                        Decimal(USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE.value)
-                        / 1000
-                        / 1000
-                    )
-                case "direct_tool_servers":
-                    price += (
-                        Decimal(USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE.value)
-                        / 1000
-                        / 1000
-                    )
-        return price
+        return get_feature_price(self.features)
 
     @property
     def total_price(self) -> Decimal:
@@ -351,41 +316,6 @@ class CreditDeduct:
                 ),
                 "usage": self.usage_with_cost,
             }
-        )
-
-    def get_model_price(
-        self, model: Optional[ModelModel] = None
-    ) -> (Decimal, Decimal, Decimal):
-        # no model provide
-        if not model or not isinstance(model, ModelModel):
-            return (
-                Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
-                Decimal(USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value),
-                Decimal(USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value),
-            )
-        # base model
-        if model.base_model_id:
-            base_model = Models.get_model_by_id(model.base_model_id)
-            if base_model:
-                return self.get_model_price(base_model)
-        # model price
-        model_price = model.price or {}
-        return (
-            Decimal(
-                model_price.get(
-                    "prompt_price", USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value
-                )
-            ),
-            Decimal(
-                model_price.get(
-                    "completion_price", USAGE_CALCULATE_DEFAULT_TOKEN_PRICE.value
-                )
-            ),
-            Decimal(
-                model_price.get(
-                    "request_price", USAGE_CALCULATE_DEFAULT_REQUEST_PRICE.value
-                )
-            ),
         )
 
     def run(self, response: Union[dict, bytes, str]) -> None:

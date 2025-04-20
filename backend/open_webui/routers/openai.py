@@ -2,24 +2,20 @@ import asyncio
 import hashlib
 import json
 import logging
-from pathlib import Path
-from typing import Literal, Optional, overload
+from typing import Optional
 
 import aiohttp
 from aiocache import cached
 import requests
 
-from fastapi import Depends, FastAPI, HTTPException, Request, APIRouter
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Depends, HTTPException, Request, APIRouter
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 from starlette.background import BackgroundTask
 
-from open_webui.models.credits import Credits
 from open_webui.models.models import Models
 from open_webui.config import (
     CACHE_DIR,
-    CREDIT_NO_CREDIT_MSG,
 )
 from open_webui.env import (
     AIOHTTP_CLIENT_TIMEOUT,
@@ -30,7 +26,8 @@ from open_webui.env import (
 from open_webui.models.users import UserModel
 
 from open_webui.constants import ERROR_MESSAGES
-from open_webui.env import ENV, SRC_LOG_LEVELS
+from open_webui.env import SRC_LOG_LEVELS
+from open_webui.utils.credit.utils import check_credit_by_user_id
 
 from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
@@ -42,7 +39,7 @@ from open_webui.utils.misc import (
 
 from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.utils.access_control import has_access
-from open_webui.utils.usage import CreditDeduct
+from open_webui.utils.credit.usage import CreditDeduct
 
 log = logging.getLogger(__name__)
 log.setLevel(SRC_LOG_LEVELS["OPENAI"])
@@ -593,11 +590,7 @@ async def generate_chat_completion(
     user=Depends(get_verified_user),
     bypass_filter: Optional[bool] = False,
 ):
-    Credits.check_credit_by_user_id(
-        user_id=user.id,
-        error_msg=CREDIT_NO_CREDIT_MSG.value,
-        metadata=form_data.get("metadata"),
-    )
+    check_credit_by_user_id(user_id=user.id, form_data=form_data)
 
     if BYPASS_MODEL_ACCESS_CONTROL:
         bypass_filter = True
