@@ -743,6 +743,7 @@
 	"Message rating should be enabled to use this feature": "要使用此功能，应先启用回复评价功能",
 	"Messages you send after creating your link won't be shared. Users with the URL will be able to view the shared chat.": "创建链接后发送的消息不会被共享。具有 URL 的用户将能够查看共享对话。",
 	"Min P": "Min P",
+	"Minimum Credit Required": "最低余额要求",
 	"Mirostat": "Mirostat",
 	"Mirostat Eta": "Mirostat Eta",
 	"Mirostat Tau": "Mirostat Tau",

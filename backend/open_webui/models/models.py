@@ -135,12 +135,15 @@ class ModelResponse(ModelModel):
 
 class ModelPriceForm(BaseModel):
     prompt_price: float = Field(
-        default=0, description="prompt token price for 1m tokens"
+        default=0, description="prompt token price for 1m tokens", ge=0
     )
     completion_price: float = Field(
-        default=0, description="completion token price for 1m tokens"
+        default=0, description="completion token price for 1m tokens", ge=0
     )
-    request_price: float = Field(default=0, description="price for 1m request")
+    request_price: float = Field(default=0, description="price for 1m request", ge=0)
+    minimum_credit: float = Field(
+        default=0, description="min credit required for this model", ge=0
+    )
 
 
 class ModelForm(BaseModel):
