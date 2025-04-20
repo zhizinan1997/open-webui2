@@ -85,8 +85,8 @@ class CreditLogUsage(BaseModel):
 
 class SimpleModelModel(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: Optional[str]
-    name: Optional[str]
+    id: Optional[str] = None
+    name: Optional[str] = None
 
 
 class CreditLogSimpleDetailAPIParams(BaseModel):
@@ -97,7 +97,7 @@ class CreditLogSimpleDetailAPIParams(BaseModel):
 class CreditLogSimpleDetail(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     desc: str = Field(default_factory=lambda: "")
-    api_params: CreditLogSimpleDetailAPIParams
+    api_params: CreditLogSimpleDetailAPIParams = Field(default_factory=lambda: {})
     usage: CreditLogUsage = Field(default_factory=lambda: {})
 
 
