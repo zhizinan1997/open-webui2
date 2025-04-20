@@ -281,9 +281,8 @@ async def generate_function_chat_completion(
                             credit_deduct.run(data)
                             yield data
 
-                        yield "data: " + json.dumps(
-                            {"usage": credit_deduct.usage_with_cost}
-                        )
+                        yield credit_deduct.usage_message
+
                     return
 
                 if isinstance(res, dict):
@@ -338,7 +337,7 @@ async def generate_function_chat_completion(
                     yield f"data: {json.dumps(finish_message)}\n\n"
                     yield "data: [DONE]"
 
-                yield "data: " + json.dumps({"usage": credit_deduct.usage_with_cost})
+                yield credit_deduct.usage_message
 
         return StreamingResponse(stream_content(), media_type="text/event-stream")
     else:
@@ -361,7 +360,7 @@ async def generate_function_chat_completion(
                     credit_deduct.run(data)
                     yield data
 
-                yield "data: " + json.dumps({"usage": credit_deduct.usage_with_cost})
+                yield credit_deduct.usage_message
 
         if isinstance(res, StreamingResponse):
             return StreamingResponse(to_stream(res), media_type="text/event-stream")
@@ -378,16 +377,10 @@ async def generate_function_chat_completion(
                 return res
 
             if isinstance(res, BaseModel):
-                with CreditDeduct(
-                    user=user,
-                    model_id=model_id,
-                    body=form_data,
-                    is_stream=False,
-                ) as credit_deduct:
-                    res = res.model_dump()
-                    credit_deduct.run(res)
-                    res.update({"usage": credit_deduct.usage_with_cost})
-                    return res
+                res = res.model_dump()
+                credit_deduct.run(res)
+                res.update({"usage": credit_deduct.usage_with_cost})
+                return res
 
             message = await get_message_content(res)
             res = openai_chat_completion_message_template(form_data["model"], message)
