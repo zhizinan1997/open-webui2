@@ -8,7 +8,7 @@
 > [!TIP]
 > 部署后，不能直接回退到官方镜像；如需使用官方镜像，请参考此篇 [Wiki](https://github.com/U8F69/open-webui/wiki/%E9%87%8D%E6%96%B0%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9%E9%95%9C%E5%83%8F) 处理
 
-部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/U8F69/open-webui/releases/latest) 中查看
+部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/U8F69/open-webui/releases/latest) 中查看，环境变量参考下方 [拓展环境变量](#%E6%8B%93%E5%B1%95%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F)
 
 ```
 ghcr.io/u8f69/open-webui:<版本号>
