@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "Режим захтева",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Модел поновног рангирања",
 	"Reranking model disabled": "Модел поновног рангирања онемогућен",
 	"Reranking model set to \"{{reranking_model}}\"": "Модел поновног рангирања подешен на \"{{reranking_model}}\"",

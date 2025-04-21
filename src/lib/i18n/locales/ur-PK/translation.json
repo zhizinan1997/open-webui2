@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "درخواست کا موڈ",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "دوبارہ درجہ بندی کا ماڈل",
 	"Reranking model disabled": "دوبارہ درجہ بندی کا ماڈل غیر فعال کر دیا گیا",
 	"Reranking model set to \"{{reranking_model}}\"": "دوبارہ درجہ بندی کا ماڈل \"{{reranking_model}}\" پر مقرر کر دیا گیا ہے",

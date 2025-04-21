@@ -952,6 +952,7 @@
 	"Reply in Thread": "Konuya Yanıtla",
 	"Request Mode": "İstek Modu",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Yeniden Sıralama Modeli",
 	"Reranking model disabled": "Yeniden sıralama modeli devre dışı bırakıldı",
 	"Reranking model set to \"{{reranking_model}}\"": "Yeniden sıralama modeli \"{{reranking_model}}\" olarak ayarlandı",

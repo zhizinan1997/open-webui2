@@ -952,6 +952,7 @@
 	"Reply in Thread": "བརྗོད་གཞིའི་ནང་ལན་འདེབས།",
 	"Request Mode": "རེ་ཞུའི་མ་དཔེ།",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "བསྐྱར་སྒྲིག་དཔེ་དབྱིབས།",
 	"Reranking model disabled": "བསྐྱར་སྒྲིག་དཔེ་དབྱིབས་ནུས་མེད་བཏང་།",
 	"Reranking model set to \"{{reranking_model}}\"": "བསྐྱར་སྒྲིག་དཔེ་དབྱིབས་ \"{{reranking_model}}\" ལ་བཀོད་སྒྲིག་བྱས།",

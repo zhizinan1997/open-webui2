@@ -952,6 +952,7 @@
 	"Reply in Thread": "Отговори в тред",
 	"Request Mode": "Режим на заявка",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Модел за преподреждане",
 	"Reranking model disabled": "Моделът за преподреждане е деактивиран",
 	"Reranking model set to \"{{reranking_model}}\"": "Моделът за преподреждане е зададен на \"{{reranking_model}}\"",

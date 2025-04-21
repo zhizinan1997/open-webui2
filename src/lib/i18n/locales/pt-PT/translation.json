@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "Modo de Pedido",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Modelo de Reranking",
 	"Reranking model disabled": "Modelo de Reranking desativado",
 	"Reranking model set to \"{{reranking_model}}\"": "Modelo de Reranking definido como \"{{reranking_model}}\"",

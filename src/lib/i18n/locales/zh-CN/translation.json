@@ -952,6 +952,7 @@
 	"Reply in Thread": "在主题中回复",
 	"Request Mode": "请求模式",
 	"Request Price": "请求价格",
+	"Request price has higher priority than token price": "请求价格大于 0 时，使用请求价格计费，否则使用 Token 价格计费，两者不会同时计费",
 	"Reranking Model": "重排模型",
 	"Reranking model disabled": "重排模型已禁用",
 	"Reranking model set to \"{{reranking_model}}\"": "重排模型设置为 \"{{reranking_model}}\"",

@@ -501,7 +501,10 @@
 							</div>
 						</div>
 						<div class="my-2">
-							<div class="text-xs text-gray-500">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
+							<div class="text-xs text-orange-600">{$i18n.t('Unit: 1M tokens or 1M requests')}</div>
+							<div class="text-xs text-gray-500">
+								{$i18n.t('Request price has higher priority than token price')}
+							</div>
 							<div class="mt-1 flex justify-between text-xs">
 								<span class="min-w-36">
 									{$i18n.t('Prompt Token Price')}

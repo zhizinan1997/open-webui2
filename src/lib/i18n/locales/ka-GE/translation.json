@@ -952,6 +952,7 @@
 	"Reply in Thread": "ნაკადში პასუხი",
 	"Request Mode": "მოთხოვნის რეჟიმი",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Reranking მოდელი",
 	"Reranking model disabled": "Reranking მოდელი გათიშულია",
 	"Reranking model set to \"{{reranking_model}}\"": "Reranking model set to \"{{reranking_model}}\"",

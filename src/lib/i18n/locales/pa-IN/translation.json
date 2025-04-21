@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "ਬੇਨਤੀ ਮੋਡ",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "ਮਾਡਲ ਮੁੜ ਰੈਂਕਿੰਗ",
 	"Reranking model disabled": "ਮਾਡਲ ਮੁੜ ਰੈਂਕਿੰਗ ਅਯੋਗ ਕੀਤਾ ਗਿਆ",
 	"Reranking model set to \"{{reranking_model}}\"": "ਮਾਡਲ ਮੁੜ ਰੈਂਕਿੰਗ ਨੂੰ \"{{reranking_model}}\" 'ਤੇ ਸੈੱਟ ਕੀਤਾ ਗਿਆ",

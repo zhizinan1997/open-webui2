@@ -952,6 +952,7 @@
 	"Reply in Thread": "Trả lời trong Luồng",
 	"Request Mode": "Chế độ Yêu cầu",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Reranking Model",
 	"Reranking model disabled": "Đã tắt mô hình reranking",
 	"Reranking model set to \"{{reranking_model}}\"": "Reranking model được đặt thành \"{{reranking_model}}\"",

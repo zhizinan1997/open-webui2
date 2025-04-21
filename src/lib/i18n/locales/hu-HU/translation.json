@@ -952,6 +952,7 @@
 	"Reply in Thread": "Válasz szálban",
 	"Request Mode": "Kérési mód",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Újrarangsoroló modell",
 	"Reranking model disabled": "Újrarangsoroló modell letiltva",
 	"Reranking model set to \"{{reranking_model}}\"": "Újrarangsoroló modell beállítva erre: \"{{reranking_model}}\"",

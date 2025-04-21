@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "Užklausos rėžimas",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Reranking modelis",
 	"Reranking model disabled": "Reranking modelis neleidžiamas",
 	"Reranking model set to \"{{reranking_model}}\"": "Nustatytas rereanking modelis: \"{{reranking_model}}\"",
