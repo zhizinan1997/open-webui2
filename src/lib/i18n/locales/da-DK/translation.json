@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "Forespørgselstilstand",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Omarrangeringsmodel",
 	"Reranking model disabled": "Omarrangeringsmodel deaktiveret",
 	"Reranking model set to \"{{reranking_model}}\"": "Omarrangeringsmodel sat til \"{{reranking_model}}\"",

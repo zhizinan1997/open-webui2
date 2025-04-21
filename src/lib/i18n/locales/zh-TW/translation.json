@@ -952,6 +952,7 @@
 	"Reply in Thread": "在討論串中回覆",
 	"Request Mode": "請求模式",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "重新排序模型",
 	"Reranking model disabled": "已停用重新排序模型",
 	"Reranking model set to \"{{reranking_model}}\"": "重新排序模型已設定為 \"{{reranking_model}}\"",

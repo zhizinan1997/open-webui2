@@ -952,6 +952,7 @@
 	"Reply in Thread": "Svar i tråd",
 	"Request Mode": "Forespørselsmodus",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Omrangeringsmodell",
 	"Reranking model disabled": "Omrangeringsmodell deaktivert",
 	"Reranking model set to \"{{reranking_model}}\"": "Omrangeringsmodell er angitt til \"{{reranking_model}}\"",

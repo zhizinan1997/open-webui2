@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "حالت درخواست",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "مدل ری\u200cشناسی مجدد غیرفعال است",
 	"Reranking model disabled": "مدل ری\u200cشناسی مجدد غیرفعال است",
 	"Reranking model set to \"{{reranking_model}}\"": "مدل ری\u200cشناسی مجدد به \"{{reranking_model}}\" تنظیم شده است",

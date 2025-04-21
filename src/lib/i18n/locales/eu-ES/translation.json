@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "Eskaera modua",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Berrantolatze modeloa",
 	"Reranking model disabled": "Berrantolatze modeloa desgaituta",
 	"Reranking model set to \"{{reranking_model}}\"": "Berrantolatze modeloa \"{{reranking_model}}\"-era ezarrita",

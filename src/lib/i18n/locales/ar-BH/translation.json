@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "وضع الطلب",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "إعادة تقييم النموذج",
 	"Reranking model disabled": "تم تعطيل نموذج إعادة الترتيب",
 	"Reranking model set to \"{{reranking_model}}\"": "تم ضبط نموذج إعادة الترتيب على \"{{reranking_model}}\"",

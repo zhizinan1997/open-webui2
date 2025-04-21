@@ -952,6 +952,7 @@
 	"Reply in Thread": "Ответить в обсуждении",
 	"Request Mode": "Режим запроса",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Модель реранжирования",
 	"Reranking model disabled": "Модель реранжирования отключена",
 	"Reranking model set to \"{{reranking_model}}\"": "Модель реранжирования установлена на \"{{reranking_model}}\"",

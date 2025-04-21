@@ -952,6 +952,7 @@
 	"Reply in Thread": "",
 	"Request Mode": "リクエストモード",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "モデルの再ランキング",
 	"Reranking model disabled": "再ランキングモデルが無効です",
 	"Reranking model set to \"{{reranking_model}}\"": "再ランキングモデルを \"{{reranking_model}}\" に設定しました",

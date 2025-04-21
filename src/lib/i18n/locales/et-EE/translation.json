@@ -952,6 +952,7 @@
 	"Reply in Thread": "Vasta lõimes",
 	"Request Mode": "Päringu režiim",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Ümberjärjestamise mudel",
 	"Reranking model disabled": "Ümberjärjestamise mudel keelatud",
 	"Reranking model set to \"{{reranking_model}}\"": "Ümberjärjestamise mudel määratud kui \"{{reranking_model}}\"",

@@ -952,6 +952,7 @@
 	"Reply in Thread": "Freagra i Snáithe",
 	"Request Mode": "Mód Iarratais",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Múnla Athrangú",
 	"Reranking model disabled": "Samhail athrangú faoi mhíchumas",
 	"Reranking model set to \"{{reranking_model}}\"": "Samhail athrangú socraithe go \"{{reranking_model}}\"",

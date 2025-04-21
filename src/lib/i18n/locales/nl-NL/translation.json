@@ -952,6 +952,7 @@
 	"Reply in Thread": "Antwoord in draad",
 	"Request Mode": "Request Modus",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Reranking Model",
 	"Reranking model disabled": "Reranking model uitgeschakeld",
 	"Reranking model set to \"{{reranking_model}}\"": "Reranking model ingesteld op \"{{reranking_model}}\"",

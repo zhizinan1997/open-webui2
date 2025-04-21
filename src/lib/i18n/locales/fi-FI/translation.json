@@ -952,6 +952,7 @@
 	"Reply in Thread": "Vastauksia ",
 	"Request Mode": "Pyyntötila",
 	"Request Price": "",
+	"Request price has higher priority than token price": "",
 	"Reranking Model": "Uudelleenpisteytymismalli",
 	"Reranking model disabled": "Uudelleenpisteytymismalli poistettu käytöstä",
 	"Reranking model set to \"{{reranking_model}}\"": "\"{{reranking_model}}\" valittu uudelleenpisteytysmalliksi",
