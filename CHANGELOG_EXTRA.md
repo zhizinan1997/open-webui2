@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 新增管理页面 (管理员面板-设置-积分)
 - 新增报表页面 (管理员面板-用户-积分统计)
+- 支持对 Ollama 模型计费
 - 支持对特性按次计费 (如网页搜索、图片生成)
 - 模型选项增加模型价格提示
 - 支持配置默认用户积分

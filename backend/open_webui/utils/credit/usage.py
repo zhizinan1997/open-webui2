@@ -294,6 +294,12 @@ class CreditDeduct:
             return self.request_price + self.feature_price
         return self.prompt_price + self.completion_price + self.feature_price
 
+    def add_usage_to_resp(self, response: dict) -> dict:
+        if not isinstance(response, dict):
+            return response
+        response["usage"] = self.usage_with_cost
+        return response
+
     @property
     def usage_with_cost(self) -> dict:
         return {
