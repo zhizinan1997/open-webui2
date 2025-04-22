@@ -225,14 +225,13 @@ class CreditDeduct:
             self.request_unit_price,
             _,
         ) = get_model_price(model=self.model)
-        if self.body.get("metadata", {}).get("ignore_features_cost"):
-            self.features = set()
-        else:
-            self.features = {
-                k
-                for k, v in (body.get("metadata", {}).get("features", {}) or {}).items()
-                if v
-            }
+        self.features = {
+            k
+            for k, v in (
+                body.get("metadata", {}).get("features_for_credit", {}) or {}
+            ).items()
+            if v
+        }
         self.is_official_usage = False
 
     def __enter__(self):
