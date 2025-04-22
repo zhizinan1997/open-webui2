@@ -1165,6 +1165,8 @@ async def chat_completion(
             detail=str(e),
         )
 
+    form_data["metadata"]["features_for_credit"] = form_data["metadata"]["features"]
+
     try:
         response = await chat_completion_handler(request, form_data, user)
 

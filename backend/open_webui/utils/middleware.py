@@ -130,10 +130,7 @@ async def chat_completion_tools_handler(
                 {"role": "user", "content": f"Query: {prompt}"},
             ],
             "stream": False,
-            "metadata": {
-                "task": str(TASKS.FUNCTION_CALLING),
-                "ignore_features_cost": True,
-            },
+            "metadata": {"task": str(TASKS.FUNCTION_CALLING)},
         }
 
     event_caller = extra_params["__event_call__"]
