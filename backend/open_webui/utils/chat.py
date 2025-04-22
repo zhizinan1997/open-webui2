@@ -1,3 +1,4 @@
+import copy
 import time
 import logging
 import sys
@@ -38,7 +39,7 @@ from open_webui.routers.pipelines import (
 
 from open_webui.models.functions import Functions
 from open_webui.models.models import Models
-
+from open_webui.utils.credit.usage import CreditDeduct
 
 from open_webui.utils.plugin import load_function_module_by_id
 from open_webui.utils.models import get_all_models, check_model_access
@@ -255,6 +256,7 @@ async def generate_chat_completion(
             )
         if model.get("owned_by") == "ollama":
             # Using /ollama/api/chat endpoint
+            payload = copy.deepcopy(form_data)
             form_data = convert_payload_openai_to_ollama(form_data)
             response = await generate_ollama_chat_completion(
                 request=request,
@@ -265,12 +267,22 @@ async def generate_chat_completion(
             if form_data.get("stream"):
                 response.headers["content-type"] = "text/event-stream"
                 return StreamingResponse(
-                    convert_streaming_response_ollama_to_openai(response),
+                    convert_streaming_response_ollama_to_openai(
+                        user, model_id, payload, response
+                    ),
                     headers=dict(response.headers),
                     background=response.background,
                 )
             else:
-                return convert_response_ollama_to_openai(response)
+                with CreditDeduct(
+                    user=user,
+                    model_id=model_id,
+                    body=payload,
+                    is_stream=False,
+                ) as credit_deduct:
+                    response = convert_response_ollama_to_openai(response)
+                    credit_deduct.run(response)
+                    return credit_deduct.add_usage_to_resp(response)
         else:
             return await generate_openai_chat_completion(
                 request=request,

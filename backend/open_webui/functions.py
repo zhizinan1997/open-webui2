@@ -282,8 +282,7 @@ async def generate_function_chat_completion(
                         is_stream=False,
                     ) as credit_deduct:
                         credit_deduct.run(res)
-                        res.update({"usage": credit_deduct.usage_with_cost})
-
+                        res = credit_deduct.add_usage_to_resp(res)
                         yield f"data: {json.dumps(res)}\n\n"
                     return
 
@@ -362,17 +361,14 @@ async def generate_function_chat_completion(
         ) as credit_deduct:
             if isinstance(res, dict):
                 credit_deduct.run(res)
-                res.update({"usage": credit_deduct.usage_with_cost})
-                return res
+                return credit_deduct.add_usage_to_resp(res)
 
             if isinstance(res, BaseModel):
                 res = res.model_dump()
                 credit_deduct.run(res)
-                res.update({"usage": credit_deduct.usage_with_cost})
-                return res
+                return credit_deduct.add_usage_to_resp(res)
 
             message = await get_message_content(res)
             res = openai_chat_completion_message_template(form_data["model"], message)
             credit_deduct.run(res)
-            res.update({"usage": credit_deduct.usage_with_cost})
-            return res
+            return credit_deduct.add_usage_to_resp(res)

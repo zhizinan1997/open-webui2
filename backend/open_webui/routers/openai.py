@@ -766,11 +766,7 @@ async def generate_chat_completion(
                 is_stream=False,
             ) as credit_deduct:
                 credit_deduct.run(response=response)
-
-                if isinstance(response, dict):
-                    response.update({"usage": credit_deduct.usage_with_cost})
-
-            return response
+                return credit_deduct.add_usage_to_resp(response)
     except Exception as e:
         log.exception(e)
 
