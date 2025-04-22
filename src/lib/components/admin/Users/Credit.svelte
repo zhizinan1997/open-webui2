@@ -9,6 +9,10 @@
 	const maxDimensions = 15;
 	const echartsTheme = $theme.includes('dark') ? 'dark' : 'light';
 
+	let userPaymentLine: HTMLDivElement;
+	let userPaymentLineOption = {};
+	let userPaymentLineChart: EChartsType;
+
 	let modelTokenPie: HTMLDivElement;
 	let modelTokenPieOption = {};
 	let modelTokenPieChart: EChartsType;
@@ -36,6 +40,8 @@
 		model_token_pie: Array<ChartItem>;
 		user_cost_pie: Array<ChartItem>;
 		user_token_pie: Array<ChartItem>;
+		user_payment_stats_x: Array<String>;
+		user_payment_stats_y: Array<Number>;
 	};
 
 	let period = 7;
@@ -75,6 +81,44 @@
 	};
 
 	const drawChart = (data: Data) => {
+		if (!userPaymentLineChart) {
+			userPaymentLineChart = echarts.init(userPaymentLine, echartsTheme);
+		}
+		userPaymentLineOption = {
+			title: {
+				text: $i18n.t('User Payment Stats'),
+				textStyle: {
+					fontSize: 14,
+					fontWeight: '400'
+				}
+			},
+			legend: {
+				type: 'scroll',
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
+			},
+			tooltip: {
+				show: true,
+				trigger: 'axis'
+			},
+			xAxis: {
+				type: 'category',
+				data: data.user_payment_stats_x
+			},
+			yAxis: {
+				type: 'value'
+			},
+			series: [
+				{
+					data: data.user_payment_stats_y,
+					type: 'line',
+					areaStyle: {}
+				}
+			]
+		};
+		userPaymentLineChart.setOption(userPaymentLineOption);
+
 		if (!modelTokenPieChart) {
 			modelTokenPieChart = echarts.init(modelTokenPie, echartsTheme);
 		}
@@ -249,6 +293,11 @@
 		</button>
 	</div>
 
+	<div
+		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
+		bind:this={userPaymentLine}
+		style="width: 100%; height: 300px;"
+	></div>
 	<div
 		class="mt-2 bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
 		bind:this={modelTokenPie}
