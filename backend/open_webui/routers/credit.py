@@ -2,6 +2,7 @@ import datetime
 import logging
 import uuid
 from collections import defaultdict
+from decimal import Decimal
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
@@ -132,6 +133,9 @@ async def get_statistics(
 ):
     # load credit data
     logs = CreditLogs.get_log_by_time(form_data.start_time, form_data.end_time)
+    trade_logs = TradeTickets.get_ticket_by_time(
+        form_data.start_time, form_data.end_time
+    )
 
     # load user data
     users = Users.get_users()
@@ -145,15 +149,34 @@ async def get_statistics(
     for log in logs:
         if not log.detail.usage or log.detail.usage.total_price is None:
             continue
+
         model = log.detail.api_params.model
         if not model:
             continue
-        model_key = log.detail.api_params.model.name or log.detail.api_params.model.id
-        user_key = f"{log.user_id}:{user_map.get(log.user_id, log.user_id)}"
+
+        model_key = log.detail.api_params.model.id
         model_cost_pie[model_key] += log.detail.usage.total_price
         model_token_pie[model_key] += log.detail.usage.total_tokens
+
+        user_key = f"{log.user_id}:{user_map.get(log.user_id, log.user_id)}"
         user_cost_pie[user_key] += log.detail.usage.total_price
         user_token_pie[user_key] += log.detail.usage.total_tokens
+
+    # build trade data
+    user_payment_data = defaultdict(Decimal)
+    for log in trade_logs:
+        callback = log.detail.get("callback")
+        if not callback:
+            continue
+        if callback.get("trade_status") != "TRADE_SUCCESS":
+            continue
+        time_key = datetime.datetime.fromtimestamp(log.created_at).strftime("%Y-%m-%d")
+        user_payment_data[time_key] += log.amount
+    user_payment_stats_x = []
+    user_payment_stats_y = []
+    for key, val in user_payment_data.items():
+        user_payment_stats_x.append(key)
+        user_payment_stats_y.append(val)
 
     # response
     return {
@@ -171,4 +194,6 @@ async def get_statistics(
             {"name": user.split(":", 1)[1], "value": total}
             for user, total in user_token_pie.items()
         ],
+        "user_payment_stats_x": user_payment_stats_x,
+        "user_payment_stats_y": user_payment_stats_y,
     }

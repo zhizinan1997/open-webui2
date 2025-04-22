@@ -45,7 +45,7 @@ class TradeTicket(Base):
     amount = Column(Numeric(precision=24, scale=12))
     detail = Column(JSON, nullable=True)
 
-    created_at = Column(BigInteger)
+    created_at = Column(BigInteger, index=True)
 
 
 ####################
@@ -247,7 +247,22 @@ class TradeTicketTable:
         except Exception:
             return None
 
-    def update_credit_by_id(self, id: str, detail: dict) -> Optional[TradeTicketModel]:
+    def get_ticket_by_time(
+        self, start_time: int, end_time: int
+    ) -> list[TradeTicketModel]:
+        try:
+            with get_db() as db:
+                logs = (
+                    db.query(TradeTicket)
+                    .filter(TradeTicket.created_at >= start_time)
+                    .filter(TradeTicket.created_at < end_time)
+                    .order_by(TradeTicket.created_at.asc())
+                )
+                return [TradeTicketModel.model_validate(log) for log in logs]
+        except Exception:
+            return []
+
+    def update_credit_by_id(self, id: str, detail: dict) -> None:
         try:
             with get_db() as db:
                 db.query(TradeTicket).filter(TradeTicket.id == id).update(
@@ -262,6 +277,7 @@ class TradeTicketTable:
                         detail=SetCreditFormDetail(desc="payment success"),
                     )
                 )
+                return None
         except Exception:
             return None
 
@@ -292,6 +308,7 @@ class CreditLogTable:
                     db.query(CreditLog)
                     .filter(CreditLog.created_at >= start_time)
                     .filter(CreditLog.created_at < end_time)
+                    .order_by(CreditLog.created_at.asc())
                 )
                 return [CreditLogSimpleModel.model_validate(log) for log in logs]
         except Exception:
