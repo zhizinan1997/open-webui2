@@ -2,12 +2,10 @@ import json
 import logging
 import time
 from decimal import Decimal
-from typing import List, Union, Optional
+from typing import List, Union
 
 import tiktoken
 from fastapi import HTTPException
-from openai.types import CompletionUsage
-from pydantic import BaseModel, ConfigDict, Field
 from tiktoken import Encoding
 
 from open_webui.config import (
@@ -18,79 +16,17 @@ from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
 from open_webui.models.models import Models
 from open_webui.models.users import UserModel
+from open_webui.utils.credit.models import (
+    MessageContent,
+    CompletionUsage,
+    ChatCompletion,
+    ChatCompletionChunk,
+    MessageItem,
+)
 from open_webui.utils.credit.utils import get_model_price, get_feature_price
 
 logger = logging.getLogger(__name__)
 logger.setLevel(SRC_LOG_LEVELS["MAIN"])
-
-
-class ChatCompletionMessage(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    content: Optional[str] = None
-
-
-class ChoiceDelta(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    content: Optional[str] = None
-
-
-class Choice(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    message: Optional[ChatCompletionMessage] = Field(
-        default_factory=lambda: ChatCompletionMessage()
-    )
-    delta: Optional[ChoiceDelta] = Field(default_factory=lambda: ChoiceDelta())
-
-
-class ChatCompletion(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    choices: List[Choice]
-    usage: Optional[CompletionUsage] = None
-
-
-class ChatCompletionChunk(BaseModel):
-    model_config = ConfigDict(extra="allow")
-    choices: List[Choice]
-    usage: Optional[CompletionUsage] = None
-
-
-class FileFile(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    file_data: Optional[str] = Field(default="")
-    file_id: Optional[str] = Field(default="")
-    filename: Optional[str] = Field(default="")
-
-
-class InputAudio(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    data: Optional[str] = Field(default="")
-    format: Optional[str] = Field(default="")
-
-
-class ImageURL(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    url: Optional[str] = Field(default="")
-    detail: Optional[str] = Field(default="")
-
-
-class MessageContent(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    type: Optional[str] = Field(default="")
-    text: Optional[str] = Field(default="")
-    image_url: Optional[ImageURL] = Field(default_factory=lambda: ImageURL())
-    input_audio: Optional[InputAudio] = Field(default_factory=lambda: InputAudio())
-    file: Optional[FileFile] = Field(default_factory=lambda: FileFile())
-
-
-class MessageItem(BaseModel):
-    model_config = ConfigDict(extra="allow")
-
-    role: str
-    content: Union[str, list[MessageContent]] = Field(default="")
 
 
 class Calculator:
