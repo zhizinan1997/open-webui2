@@ -72,13 +72,13 @@ class Choice(BaseModel):
 
 class ChatCompletion(BaseModel):
     model_config = ConfigDict(extra="allow")
-    choices: List[Choice]
+    choices: List[Choice] = Field(default_factory=lambda: [])
     usage: Optional[CompletionUsage] = None
 
 
 class ChatCompletionChunk(BaseModel):
     model_config = ConfigDict(extra="allow")
-    choices: List[Choice]
+    choices: List[Choice] = Field(default_factory=lambda: [])
     usage: Optional[CompletionUsage] = None
 
 
