@@ -40,7 +40,7 @@ ghcr.io/u8f69/open-webui:<版本号>
 支付相关的配置请在 管理员面板-设置-积分 中配置
 
 > [!WARNING]
-> 我们鼓励大家支持开源项目，保留 Open WebUI 的标识，非必要请勿配置下方的环境变量   
+> 我们鼓励大家支持开源项目，保留 Open WebUI 的标识，非必要请勿配置下方的环境变量  
 > 您应当通过购买商业授权的方式获取许可，从而使用自己的品牌名称或者 Logo，详见 [Open WebUI for Enterprises](https://docs.openwebui.com/enterprise)
 
 ```bash
