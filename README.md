@@ -9,7 +9,7 @@
 
 部署后，不能直接回退到官方镜像；如需使用官方镜像，请参考此篇 [Wiki](https://github.com/U8F69/open-webui/wiki/%E9%87%8D%E6%96%B0%E4%BD%BF%E7%94%A8%E5%AE%98%E6%96%B9%E9%95%9C%E5%83%8F) 处理
 
-部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/U8F69/open-webui/releases/latest) 中查看，环境变量参考下方 [拓展配置](#拓展配置)
+部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/U8F69/open-webui/releases/latest) 中查看
 
 ```
 ghcr.io/u8f69/open-webui:<版本号>
@@ -37,32 +37,12 @@ ghcr.io/u8f69/open-webui:<版本号>
 
 ## 拓展配置
 
-支付相关的配置请在 管理员面板-设置-积分 中配置
+### 品牌/LOGO定制能力说明
 
-> [!WARNING]
-> 我们鼓励大家支持开源项目，保留 Open WebUI 的标识，非必要请勿配置下方的环境变量  
-> 您应当通过购买商业授权的方式获取许可，从而使用自己的品牌名称或者 Logo，详见 [Open WebUI for Enterprises](https://docs.openwebui.com/enterprise)  
-> 若您通过配置环境变量移除 Open WebUI 标识，请确保满足 [Open WebUI License](https://docs.openwebui.com/license#9-what-about-forks-can-i-start-one-and-remove-all-open-webui-mentions) 中标注的条件
+本项目尊重并遵守 [Open WebUI License](https://docs.openwebui.com/license) 的品牌保护条款；我们鼓励社区用户尽量保留原有 Open WebUI 品牌，支持开源生态！
 
-```bash
-# 配置为任意非空值即可
-LICENSE_KEY: "enterprise"
+如需自定义品牌标识（如 LOGO、名称等）：
 
-# 组织名称，填写你喜欢的名称
-ORGANIZATION_NAME: "XXX"
-
-# 网站名称
-CUSTOM_NAME: "XXX"
-
-# 网站 Logo，ICO 格式
-CUSTOM_ICO: "https://example.com/favicon.ico"
-
-# 网站 Logo，PNG 格式
-CUSTOM_PNG: "https://example.com/favicon.png"
-
-# 网站深色模式 LOGO，PNG 格式
-CUSTOM_DARK_PNG: "https://example.com/favicon.png"
-
-# 网站 Logo，SVG 格式
-CUSTOM_SVG: "https://example.com/favicon.svg"
-```
+- 请务必确保您的实际部署满足 License 所要求的用户规模、授权条件等（详见 [官方说明#9](https://docs.openwebui.com/license#9-what-about-forks-can-i-start-one-and-remove-all-open-webui-mentions)）。
+- 未经授权的商用或大规模去除品牌属于违规，由使用者自行承担法律风险。
+- 具体自定义方法见 [docs/BRANDING.md](./docs/BRANDING.md)。
