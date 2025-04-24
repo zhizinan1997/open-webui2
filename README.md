@@ -41,7 +41,8 @@ ghcr.io/u8f69/open-webui:<版本号>
 
 > [!WARNING]
 > 我们鼓励大家支持开源项目，保留 Open WebUI 的标识，非必要请勿配置下方的环境变量  
-> 您应当通过购买商业授权的方式获取许可，从而使用自己的品牌名称或者 Logo，详见 [Open WebUI for Enterprises](https://docs.openwebui.com/enterprise)
+> 您应当通过购买商业授权的方式获取许可，从而使用自己的品牌名称或者 Logo，详见 [Open WebUI for Enterprises](https://docs.openwebui.com/enterprise)  
+> 若您通过配置环境变量移除 Open WebUI 标识，请确保满足 [Open WebUI License](https://docs.openwebui.com/license#9-what-about-forks-can-i-start-one-and-remove-all-open-webui-mentions) 中标注的条件
 
 ```bash
 # 配置为任意非空值即可
