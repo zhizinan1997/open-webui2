@@ -49,6 +49,9 @@
 				<div>
 					{$WEBUI_NAME}
 					{$i18n.t('Version')}
+					(<a href="https://github.com/U8F69/open-webui" target="_blank" style="color: unset"
+						>{$i18n.t('Second revision by U8F69')}</a
+					>)
 				</div>
 			</div>
 			<div class="flex w-full justify-between items-center">
