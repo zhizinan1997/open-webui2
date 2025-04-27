@@ -277,7 +277,7 @@
 				</div>
 			</div>
 
-			<div class="max-h-[15rem] flex justify-center w-full">
+			<div class="max-h-[14rem] flex justify-center w-full">
 				<div id="trade-qrcode" class="max-h-[128px]"></div>
 				{#if tradeInfo?.detail?.img}
 					<img
@@ -294,7 +294,7 @@
 				<div class="pt-0.5">
 					<div class="flex flex-col w-full">
 						<div class="mb-1 text-base font-medium">{$i18n.t('Credit Log')}</div>
-						<div class="overflow-y-scroll max-h-[15rem] flex flex-col">
+						<div class="overflow-y-scroll max-h-[14rem] flex flex-col">
 							{#if logs.length > 0}
 								<table class="w-full text-center table-auto border-collapse border border-gray-400">
 									<thead>
