@@ -318,6 +318,7 @@ from open_webui.config import (
     EZFP_CALLBACK_HOST,
     EZFP_AMOUNT_CONTROL,
     CREDIT_DEFAULT_CREDIT,
+    CREDIT_EXCHANGE_RATIO,
 )
 from open_webui.env import (
     AUDIT_EXCLUDED_PATHS,
@@ -833,6 +834,7 @@ app.state.config.AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH = (
 ########################################
 
 app.state.config.CREDIT_NO_CREDIT_MSG = CREDIT_NO_CREDIT_MSG
+app.state.config.CREDIT_EXCHANGE_RATIO = CREDIT_EXCHANGE_RATIO
 app.state.config.CREDIT_DEFAULT_CREDIT = CREDIT_DEFAULT_CREDIT
 app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = (
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE

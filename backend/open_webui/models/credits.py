@@ -7,6 +7,7 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import JSON, BigInteger, Column, Numeric, String
 
+from open_webui.config import CREDIT_EXCHANGE_RATIO
 from open_webui.internal.db import Base, get_db
 
 
@@ -273,7 +274,7 @@ class TradeTicketTable:
                 Credits.add_credit_by_user_id(
                     AddCreditForm(
                         user_id=ticket.user_id,
-                        amount=ticket.amount,
+                        amount=ticket.amount * Decimal(CREDIT_EXCHANGE_RATIO.value),
                         detail=SetCreditFormDetail(desc="payment success"),
                     )
                 )

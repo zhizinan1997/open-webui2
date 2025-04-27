@@ -2435,14 +2435,12 @@ WHISPER_VAD_FILTER = PersistentConfig(
     os.getenv("WHISPER_VAD_FILTER", "False").lower() == "true",
 )
 
-
 # Add Deepgram configuration
 DEEPGRAM_API_KEY = PersistentConfig(
     "DEEPGRAM_API_KEY",
     "audio.stt.deepgram.api_key",
     os.getenv("DEEPGRAM_API_KEY", ""),
 )
-
 
 AUDIO_STT_OPENAI_API_BASE_URL = PersistentConfig(
     "AUDIO_STT_OPENAI_API_BASE_URL",
@@ -2625,6 +2623,12 @@ CREDIT_NO_CREDIT_MSG = PersistentConfig(
     "CREDIT_NO_CREDIT_MSG",
     "credit.no_credit_msg",
     os.environ.get("CREDIT_NO_CREDIT_MSG", "余额不足，请前往 设置-积分 充值"),
+)
+
+CREDIT_EXCHANGE_RATIO = PersistentConfig(
+    "CREDIT_EXCHANGE_RATIO",
+    "credit.exchange.ratio",
+    os.environ.get("CREDIT_EXCHANGE_RATIO", "1"),
 )
 
 CREDIT_DEFAULT_CREDIT = PersistentConfig(

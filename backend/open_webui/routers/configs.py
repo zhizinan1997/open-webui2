@@ -327,6 +327,7 @@ async def get_banners(
 
 class UsageConfigForm(BaseModel):
     CREDIT_NO_CREDIT_MSG: str = Field(default="余额不足，请前往 设置-积分 充值")
+    CREDIT_EXCHANGE_RATIO: float = Field(default=1)
     CREDIT_DEFAULT_CREDIT: float = Field(default=0)
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE: str = Field(default="")
     USAGE_DEFAULT_ENCODING_MODEL: str = Field(default="gpt-4o")
@@ -345,6 +346,7 @@ class UsageConfigForm(BaseModel):
 async def get_usage_config(request: Request, user=Depends(get_admin_user)):
     return {
         "CREDIT_NO_CREDIT_MSG": request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        "CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO,
         "CREDIT_DEFAULT_CREDIT": request.app.state.config.CREDIT_DEFAULT_CREDIT,
         "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE": request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
         "USAGE_DEFAULT_ENCODING_MODEL": request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL,
@@ -365,6 +367,7 @@ async def set_usage_config(
     request: Request, form_data: UsageConfigForm, user=Depends(get_admin_user)
 ):
     request.app.state.config.CREDIT_NO_CREDIT_MSG = form_data.CREDIT_NO_CREDIT_MSG
+    request.app.state.config.CREDIT_EXCHANGE_RATIO = form_data.CREDIT_EXCHANGE_RATIO
     request.app.state.config.CREDIT_DEFAULT_CREDIT = form_data.CREDIT_DEFAULT_CREDIT
     request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE = (
         form_data.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE

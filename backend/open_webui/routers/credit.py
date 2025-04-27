@@ -29,6 +29,11 @@ log.setLevel(SRC_LOG_LEVELS["MAIN"])
 router = APIRouter()
 
 
+@router.get("/config")
+async def get_config(request: Request):
+    return {"CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO}
+
+
 @router.get("/logs", response_model=list[CreditLogSimpleModel])
 async def list_credit_logs(
     page: Optional[int] = None, user: UserModel = Depends(get_current_user)

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 工作空间中配置的模型使用基础模型价格计费
 - 忽略免费请求的积分余额校验
 - 支持配置请求模型需要的最低余额
+- 支持配置积分兑换比例 (用于充值折扣)
 
 ### Changed
 

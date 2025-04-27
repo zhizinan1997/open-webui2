@@ -47,6 +47,23 @@
 						/>
 					</div>
 					<div class="flex mt-2 w-full justify-between">
+						<div class=" self-center text-xs font-medium">{$i18n.t('Credit Exchange Ratio')}</div>
+					</div>
+					<div class="text-xs text-gray-400 dark:text-gray-500">
+						{$i18n.t(
+							'The exchange ratio of legal currency to credit. If you need a discount, please set it to be greater than 1'
+						)}
+					</div>
+					<div class="flex mt-2 space-x-2">
+						<input
+							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+							bind:value={config.CREDIT_EXCHANGE_RATIO}
+							type="number"
+							step="0.0001"
+							required
+						/>
+					</div>
+					<div class="flex mt-2 w-full justify-between">
 						<div class=" self-center text-xs font-medium">{$i18n.t('Default Credit for User')}</div>
 					</div>
 					<div class="flex mt-2 space-x-2">
