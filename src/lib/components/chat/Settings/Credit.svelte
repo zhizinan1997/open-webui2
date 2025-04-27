@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
 	import { user } from '$lib/stores';
-	import { createTradeTicket, listCreditLog } from '$lib/apis/credit';
+	import { createTradeTicket, getCreditConfig, listCreditLog } from '$lib/apis/credit';
 	import { toast } from 'svelte-sonner';
 	import { getSessionUser } from '$lib/apis/auths';
 
@@ -67,7 +67,11 @@
 			title: $i18n.t('WXPay')
 		}
 	];
-	let amount = 10;
+	let amount = null;
+
+	let config = {
+		CREDIT_EXCHANGE_RATIO: 0
+	};
 
 	let tradeInfo = {
 		detail: {
@@ -164,6 +168,14 @@
 		});
 		await user.set(sessionUser);
 
+		const res = await getCreditConfig(localStorage.token).catch((error) => {
+			toast.error(`${error}`);
+			return null;
+		});
+		if (res) {
+			config = res;
+		}
+
 		credit = $user?.credit ? $user?.credit : 0;
 		tradeInfo = {};
 		document.getElementById('trade-qrcode').innerHTML = '';
@@ -207,45 +219,61 @@
 				<div class="flex flex-col w-full">
 					<div class="mb-1 text-base font-medium">{$i18n.t('Add Credit')}</div>
 
-					<div class="flex w-full justify-between">
-						<div class=" self-center text-xs font-medium">{$i18n.t('Pay Type')}</div>
-						<div class="flex items-center relative">
-							<select
-								class=" dark:bg-gray-900 w-fit pr-8 rounded-sm py-2 px-2 text-xs bg-transparent outline-hidden text-right"
-								bind:value={payType}
-								placeholder="Select a pay type"
+					<div class="text-xs text-orange-400 dark:text-orange-500">
+						{$i18n.t(
+							'The exchange ratio of legal currency to credit: 1:{{ratio}}; Currently Equal to {{credit}} credit',
+							{
+								ratio: config.CREDIT_EXCHANGE_RATIO,
+								credit: (amount ?? 0) * config.CREDIT_EXCHANGE_RATIO
+							}
+						)}
+					</div>
+
+					<form
+						class="flex flex-col h-full justify-between text-sm"
+						on:submit|preventDefault={async () => {
+							await handleAddCreditClick();
+						}}
+					>
+						<div class="flex w-full justify-between">
+							<div class="w-[80px] self-center text-xs font-medium">{$i18n.t('Pay Type')}</div>
+							<div class="mt-2 w-full flex items-center relative justify-end">
+								<select
+									class="pt-[2px] pb-[2px] w-full pr-8 rounded-sm text-xs outline-hidden text-right bg-gray-50 dark:text-gray-300 dark:bg-gray-850"
+									bind:value={payType}
+								>
+									{#each payTypes as payType}
+										<option value={payType['code']}>{payType['title']}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+
+						<div class="mt-2 flex w-full justify-between">
+							<div class="w-[80px] self-center text-xs font-medium">
+								{$i18n.t('Currency Amount')}
+							</div>
+							<div class="w-full flex items-center relative">
+								<input
+									class="w-full text-sm placeholder:text-gray-300 dark:placeholder:text-gray-700 bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden text-end"
+									type="number"
+									bind:value={amount}
+									autocomplete="off"
+									required
+									placeholder={$i18n.t('Please input amount')}
+								/>
+							</div>
+						</div>
+
+						<div class="flex w-full justify-end mt-6">
+							<button
+								class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full flex flex-row space-x-1 items-center"
+								type="submit"
 							>
-								{#each payTypes as payType}
-									<option value={payType['code']}>{payType['title']}</option>
-								{/each}
-							</select>
+								{$i18n.t('Submit')}
+							</button>
 						</div>
-					</div>
-
-					<div class="flex w-full justify-between">
-						<div class=" self-center text-xs font-medium">{$i18n.t('Amount')}</div>
-						<div class="flex items-center relative">
-							<input
-								class="w-full text-sm bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-700 outline-hidden text-end"
-								type="number"
-								bind:value={amount}
-								autocomplete="off"
-								required
-							/>
-						</div>
-					</div>
-
-					<div class="flex w-full justify-end mt-6">
-						<button
-							class="px-3.5 py-1.5 text-sm font-medium bg-black hover:bg-gray-900 text-white dark:bg-white dark:text-black dark:hover:bg-gray-100 transition rounded-full flex flex-row space-x-1 items-center"
-							type="button"
-							on:click={() => {
-								handleAddCreditClick();
-							}}
-						>
-							{$i18n.t('Submit')}
-						</button>
-					</div>
+					</form>
 				</div>
 			</div>
 
