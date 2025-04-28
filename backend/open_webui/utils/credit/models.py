@@ -18,9 +18,9 @@ class PromptTokensDetails(BaseModel):
 
 class CompletionUsage(BaseModel):
     model_config = ConfigDict(extra="allow")
-    completion_tokens: int
-    prompt_tokens: int
     total_tokens: int
+    prompt_tokens: int
+    completion_tokens: int
     completion_tokens_details: Optional[CompletionTokensDetails] = None
     prompt_tokens_details: Optional[PromptTokensDetails] = None
 
@@ -29,26 +29,30 @@ class CompletionUsage(BaseModel):
     def format_input(cls, data: dict) -> dict:
         if not isinstance(data, dict):
             return data
-        # format gemini usage
-        if "promptTokenCount" in data:
-            data.update(
-                {
-                    "prompt_tokens": data.pop("promptTokenCount"),
-                    "completion_tokens": data.pop("candidatesTokenCount"),
-                    "total_tokens": data.pop("totalTokenCount"),
-                }
-            )
-        # format claude usage
-        elif "input_tokens" in data:
-            data.update(
-                {
-                    "prompt_tokens": data.pop("input_tokens"),
-                    "completion_tokens": data.pop("output_tokens"),
-                }
-            )
-            data["total_tokens"] = data.pop(
-                "total_tokens", data["prompt_tokens"] + data["completion_tokens"]
-            )
+        # standard tokens
+        prompt_tokens = (
+            data.pop("prompt_tokens", 0)
+            or data.pop("promptTokenCount", 0)
+            or data.pop("input_tokens", 0)
+        )
+        completion_tokens = (
+            data.pop("completion_tokens", 0)
+            or data.pop("candidatesTokenCount", 0)
+            or data.pop("output_tokens", 0)
+        )
+        total_tokens = (
+            data.pop("total_tokens", 0)
+            or data.pop("totalTokenCount", 0)
+            or (prompt_tokens + completion_tokens)
+        )
+        # update data
+        data.update(
+            {
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": total_tokens,
+            }
+        )
         return data
 
 
