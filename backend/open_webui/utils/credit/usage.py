@@ -286,7 +286,7 @@ class CreditDeduct:
             _response = self.clean_response(
                 response=response,
                 default_response={
-                    "choices": [{"delta": {"content": str(response)}}],
+                    "choices": [{"delta": {"content": self.to_str(response)}}],
                 },
             )
             if not _response:
@@ -299,7 +299,7 @@ class CreditDeduct:
             _response = self.clean_response(
                 response=response,
                 default_response={
-                    "choices": [{"message": {"content": str(response)}}],
+                    "choices": [{"message": {"content": self.to_str(response)}}],
                 },
             )
             if not _response:
@@ -347,10 +347,17 @@ class CreditDeduct:
             _response = response
         # remove prefix
         _response = _response.strip().lstrip("data: ")
-        if _response.startswith("[DONE]"):
+        if _response.startswith("[DONE]") or not _response:
             return {}
         try:
             _response = json.loads(_response)
         except json.decoder.JSONDecodeError:
             _response = default_response
         return _response
+
+    def to_str(self, data: any) -> str:
+        if isinstance(data, str):
+            return data.strip()
+        if isinstance(data, bytes):
+            return data.decode("utf-8").strip()
+        return str(data)
