@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 优化响应数据的 Usage 格式
 - 优化初始积分的小数位数
 - 优化免费请求的积分余额校验
-- 优化 Token 计算精确度 
+- 优化 Token 计算精确度
 
 ### Fixed
 
