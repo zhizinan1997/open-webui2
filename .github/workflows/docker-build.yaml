@@ -3,6 +3,8 @@ name: Create and publish Docker images with specific build args
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - v*
 
