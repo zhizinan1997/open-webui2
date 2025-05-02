@@ -80,7 +80,8 @@
 			payurl: '',
 			qrcode: '',
 			urlscheme: '',
-			img: ''
+			img: '',
+			imgDisplayUrl: ''
 		}
 	};
 
@@ -102,7 +103,18 @@
 				return;
 			}
 
+			if (detail?.payurl) {
+				window.location.href = detail.payurl;
+				return;
+			}
+
+			if (detail?.urlscheme) {
+				window.location.href = detail.urlscheme;
+				return;
+			}
+
 			if (detail?.img) {
+				tradeInfo.detail.imgDisplayUrl = detail.img;
 				return;
 			}
 
@@ -116,16 +128,6 @@
 					colorLight: '#ffffff',
 					correctLevel: QRCode.CorrectLevel.H
 				});
-				return;
-			}
-
-			if (detail?.payurl) {
-				window.location.href = detail.payurl;
-				return;
-			}
-
-			if (detail?.urlscheme) {
-				window.location.href = detail.urlscheme;
 				return;
 			}
 		}
@@ -279,16 +281,16 @@
 
 			<div class="max-h-[14rem] flex justify-center w-full">
 				<div id="trade-qrcode" class="max-h-[128px]"></div>
-				{#if tradeInfo?.detail?.img}
+				{#if tradeInfo?.detail?.imgDisplayUrl}
 					<img
-						src={tradeInfo?.detail?.img}
+						src={tradeInfo?.detail?.imgDisplayUrl}
 						alt="trade qrcode"
 						class="object-contain max-h-[128px]"
 					/>
 				{/if}
 			</div>
 
-			{#if !tradeInfo?.detail?.qrcode && !tradeInfo?.detail?.img}
+			{#if !tradeInfo?.detail?.qrcode && !tradeInfo?.detail?.imgDisplayUrl}
 				<hr class=" border-gray-100 dark:border-gray-700/10 my-2.5 w-full" />
 
 				<div class="pt-0.5">
