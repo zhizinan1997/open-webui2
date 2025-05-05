@@ -333,9 +333,9 @@
 					<div class="flex gap-1.5 items-center">
 						{$i18n.t('Credit')}
 
-						{#if sortKey === 'credit'}
+						{#if orderBy === 'credit'}
 							<span class="font-normal"
-								>{#if sortOrder === 'asc'}
+								>{#if direction === 'asc'}
 									<ChevronUp className="size-2" />
 								{:else}
 									<ChevronDown className="size-2" />

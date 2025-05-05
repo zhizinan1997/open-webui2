@@ -119,7 +119,7 @@
 			<UserList />
 		{:else if selectedTab === 'groups'}
 			<Groups />
-			{:else if selectedTab === 'credit'}
+		{:else if selectedTab === 'credit'}
 			<Credit />
 		{/if}
 	</div>

@@ -67,7 +67,8 @@ async def get_users(
     if direction:
         filter["direction"] = direction
 
-    users = Users.get_users(filter=filter, skip=skip, limit=limit)
+    user_data = Users.get_users(filter=filter, skip=skip, limit=limit)
+    users = user_data["users"]
     credit_map = {
         credit.user_id: {"credit": "%.4f" % credit.credit}
         for credit in Credits.list_credits_by_user_id(
@@ -76,14 +77,15 @@ async def get_users(
     }
     for user in users:
         setattr(user, "credit", credit_map.get(user.id, {}).get("credit", 0))
-    return users
+    return user_data
 
 
 @router.get("/all", response_model=UserListResponse)
 async def get_all_users(
     user=Depends(get_admin_user),
 ):
-    users: List[UserModel] = Users.get_users()
+    user_data = Users.get_users()
+    users = user_data["users"]
     credit_map = {
         credit.user_id: {"credit": "%.4f" % credit.credit}
         for credit in Credits.list_credits_by_user_id(
@@ -92,7 +94,7 @@ async def get_all_users(
     }
     for user in users:
         setattr(user, "credit", credit_map.get(user.id, {}).get("credit", 0))
-    return users
+    return user_data
 
 
 ############################

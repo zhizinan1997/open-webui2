@@ -143,7 +143,7 @@ async def get_statistics(
     )
 
     # load user data
-    users = Users.get_users()
+    users = Users.get_users()["users"]
     user_map = {user.id: user.name for user in users}
 
     # build graph data
