@@ -35,7 +35,28 @@ ghcr.io/u8f69/open-webui:<版本号>
 
 ![usage](./docs/usage.png)
 
+### 支持注册邮箱验证
+
+![email](./docs/sign_verify_user.png)
+
 ## 拓展配置
+
+### 注册邮箱验证
+
+![verify email](./docs/signup_verify.png)
+
+请在管理端打开注册邮箱验证，配置 WebUI URL，同时配置如下环境变量
+
+```
+# 缓存
+REDIS_URL=redis://:<password>@<host>:6379/0
+
+# 邮件相关
+SMTP_HOST=smtp.email.qq.com
+SMTP_PORT=465
+SMTP_USERNAME=example@qq.com
+SMTP_PASSWORD=password
+```
 
 ### 品牌/LOGO定制能力说明
 
