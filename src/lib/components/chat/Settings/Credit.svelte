@@ -103,16 +103,6 @@
 				return;
 			}
 
-			if (detail?.payurl) {
-				window.location.href = detail.payurl;
-				return;
-			}
-
-			if (detail?.urlscheme) {
-				window.location.href = detail.urlscheme;
-				return;
-			}
-
 			if (detail?.img) {
 				tradeInfo.detail.imgDisplayUrl = detail.img;
 				return;
@@ -128,6 +118,16 @@
 					colorLight: '#ffffff',
 					correctLevel: QRCode.CorrectLevel.H
 				});
+				return;
+			}
+
+			if (detail?.payurl) {
+				window.location.href = detail.payurl;
+				return;
+			}
+
+			if (detail?.urlscheme) {
+				window.location.href = detail.urlscheme;
 				return;
 			}
 		}
@@ -279,14 +279,19 @@
 				</div>
 			</div>
 
-			<div class="max-h-[14rem] flex justify-center w-full">
-				<div id="trade-qrcode" class="max-h-[128px]"></div>
+			<div class="max-h-[14rem] flex flex-col items-center w-full">
+				<div id="trade-qrcode" class="max-h-[128px] max-w-[128px]"></div>
 				{#if tradeInfo?.detail?.imgDisplayUrl}
 					<img
 						src={tradeInfo?.detail?.imgDisplayUrl}
 						alt="trade qrcode"
-						class="object-contain max-h-[128px]"
+						class="object-contain max-h-[128px] max-w-[128px]"
 					/>
+				{/if}
+				{#if tradeInfo?.detail?.qrcode || tradeInfo?.detail?.imgDisplayUrl}
+					<div class="mt-2">
+						{$i18n.t('Please refresh after payment')}
+					</div>
 				{/if}
 			</div>
 
