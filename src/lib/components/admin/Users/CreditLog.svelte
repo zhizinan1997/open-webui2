@@ -7,7 +7,7 @@
 	const i18n = getContext('i18n');
 
 	let page = 1;
-	let limit = 100;
+	let limit = 10;
 	let total = 0;
 
 	$: if (page) {
@@ -16,13 +16,13 @@
 
 	let userID = '';
 
-	$: if (userID) {
+	$: if (userID !== undefined) {
 		doQuery();
 	}
 
 	let logs = [];
 	const doQuery = async () => {
-		const data = await listAllCreditLog(localStorage.token, page, userID).catch((error) => {
+		const data = await listAllCreditLog(localStorage.token, page, limit, userID).catch((error) => {
 			toast.error(`${error}`);
 			return null;
 		});

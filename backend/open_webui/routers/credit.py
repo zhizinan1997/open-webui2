@@ -42,7 +42,7 @@ async def list_credit_logs(
     page: Optional[int] = None, user: UserModel = Depends(get_current_user)
 ) -> TradeTicketModel:
     if page:
-        limit = 100
+        limit = 10
         offset = (page - 1) * limit
         return CreditLogs.get_credit_log_by_page(
             user_id=user.id, offset=offset, limit=limit
@@ -59,7 +59,7 @@ async def get_all_logs(
     _: UserModel = Depends(get_admin_user),
 ):
     page = page or 1
-    limit = limit or 100
+    limit = limit or 10
     offset = (page - 1) * limit
     results = CreditLogs.get_credit_log_by_page(
         user_id=user_id, offset=offset, limit=limit
