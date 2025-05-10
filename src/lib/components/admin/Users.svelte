@@ -8,6 +8,7 @@
 	import UserList from './Users/UserList.svelte';
 	import Groups from './Users/Groups.svelte';
 	import Credit from './Users/Credit.svelte';
+	import CreditLog from '$lib/components/admin/Users/CreditLog.svelte';
 
 	const i18n = getContext('i18n');
 
@@ -112,6 +113,32 @@
 			</div>
 			<div class=" self-center">{$i18n.t('Credit Statistics')}</div>
 		</button>
+
+		<button
+			class="px-0.5 py-1 min-w-fit rounded-lg lg:flex-none flex text-right transition {selectedTab ===
+			'creditLog'
+				? ''
+				: ' text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'}"
+			on:click={() => {
+				selectedTab = 'creditLog';
+			}}
+		>
+			<div class=" self-center mr-2">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 16 16"
+					fill="currentColor"
+					class="w-4 h-4"
+				>
+					<path
+						fill-rule="evenodd"
+						d="M2 4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1h1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4zm10 0H4v8h8V4zm2 2h-1v4h1V6zm-3 2a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+			</div>
+			<div class=" self-center">{$i18n.t('Credit Log')}</div>
+		</button>
 	</div>
 
 	<div class="flex-1 mt-1 lg:mt-0 overflow-y-scroll">
@@ -121,6 +148,8 @@
 			<Groups />
 		{:else if selectedTab === 'credit'}
 			<Credit />
+		{:else if selectedTab === 'creditLog'}
+			<CreditLog />
 		{/if}
 	</div>
 </div>
