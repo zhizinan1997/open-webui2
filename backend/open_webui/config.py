@@ -914,6 +914,42 @@ ENABLE_LOGIN_FORM = PersistentConfig(
     os.environ.get("ENABLE_LOGIN_FORM", "True").lower() == "true",
 )
 
+ENABLE_SIGNUP_VERIFY = PersistentConfig(
+    "ENABLE_SIGNUP_VERIFY",
+    "ui.signup_verify.enabled",
+    os.environ.get("ENABLE_SIGNUP_VERIFY", "False").lower() == "true",
+)
+
+SIGNUP_EMAIL_DOMAIN_WHITELIST = PersistentConfig(
+    "SIGNUP_EMAIL_DOMAIN_WHITELIST",
+    "ui.signup.email_domain_whitelist",
+    os.environ.get("SIGNUP_EMAIL_DOMAIN_WHITELIST", ""),
+)
+
+SMTP_HOST = PersistentConfig(
+    "SMTP_HOST",
+    "ui.smtp.host",
+    os.environ.get("SMTP_HOST", ""),
+)
+
+SMTP_PORT = PersistentConfig(
+    "SMTP_PORT",
+    "ui.smtp.port",
+    os.environ.get("SMTP_PORT", "465"),
+)
+
+SMTP_USERNAME = PersistentConfig(
+    "SMTP_USERNAME",
+    "ui.smtp.username",
+    os.environ.get("SMTP_USERNAME", ""),
+)
+
+SMTP_PASSWORD = PersistentConfig(
+    "SMTP_PASSWORD",
+    "ui.smtp.password",
+    os.environ.get("SMTP_PASSWORD", ""),
+)
+
 DEFAULT_LOCALE = PersistentConfig(
     "DEFAULT_LOCALE",
     "ui.default_locale",
