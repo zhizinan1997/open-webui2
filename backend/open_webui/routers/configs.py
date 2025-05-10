@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 
-from typing import Optional
+from typing import Optional, Literal
 
 from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.config import get_config, save_config
@@ -336,6 +336,7 @@ class UsageConfigForm(BaseModel):
     USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE: float = Field(default=0, ge=0)
     USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE: float = Field(default=0, ge=0)
     USAGE_CALCULATE_MINIMUM_COST: float = Field(default=0, ge=0)
+    EZFP_PAY_PRIORITY: Literal["qrcode", "link"] = Field(default="qrcode")
     EZFP_ENDPOINT: Optional[str] = None
     EZFP_PID: Optional[str] = None
     EZFP_KEY: Optional[str] = None
@@ -356,6 +357,7 @@ async def get_usage_config(request: Request, user=Depends(get_admin_user)):
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
         "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,
         "EZFP_KEY": request.app.state.config.EZFP_KEY,
@@ -392,6 +394,7 @@ async def set_usage_config(
     request.app.state.config.USAGE_CALCULATE_MINIMUM_COST = (
         form_data.USAGE_CALCULATE_MINIMUM_COST
     )
+    request.app.state.config.EZFP_PAY_PRIORITY = form_data.EZFP_PAY_PRIORITY
     request.app.state.config.EZFP_ENDPOINT = form_data.EZFP_ENDPOINT
     request.app.state.config.EZFP_PID = form_data.EZFP_PID
     request.app.state.config.EZFP_KEY = form_data.EZFP_KEY
@@ -407,6 +410,7 @@ async def set_usage_config(
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
         "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,
         "EZFP_KEY": request.app.state.config.EZFP_KEY,
