@@ -512,7 +512,6 @@ ENABLE_OAUTH_GROUP_CREATION = PersistentConfig(
     os.environ.get("ENABLE_OAUTH_GROUP_CREATION", "False").lower() == "true",
 )
 
-
 OAUTH_BLOCKED_GROUPS = PersistentConfig(
     "OAUTH_BLOCKED_GROUPS",
     "oauth.blocked_groups",
@@ -884,7 +883,6 @@ except Exception as e:
     log.exception(f"Error loading TOOL_SERVER_CONNECTIONS: {e}")
     tool_server_connections = []
 
-
 TOOL_SERVER_CONNECTIONS = PersistentConfig(
     "TOOL_SERVER_CONNECTIONS",
     "tool_server.connections",
@@ -1100,7 +1098,6 @@ USER_PERMISSIONS_FEATURES_CODE_INTERPRETER = (
 USER_PERMISSIONS_FEATURES_NOTES = (
     os.environ.get("USER_PERMISSIONS_FEATURES_NOTES", "True").lower() == "true"
 )
-
 
 DEFAULT_USER_PERMISSIONS = {
     "workspace": {
@@ -1771,7 +1768,6 @@ ONEDRIVE_SHAREPOINT_URL = PersistentConfig(
     "onedrive.sharepoint_url",
     os.environ.get("ONEDRIVE_SHAREPOINT_URL", ""),
 )
-
 
 # RAG Content Extraction
 CONTENT_EXTRACTION_ENGINE = PersistentConfig(
@@ -2833,6 +2829,12 @@ USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
     "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE",
     "credit.calculate.feature.tool_server_price",
     os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
+)
+
+EZFP_PAY_PRIORITY = PersistentConfig(
+    "EZFP_PAY_PRIORITY",
+    "credit.ezfp.pay_priority",
+    os.environ.get("EZFP_PAY_PRIORITY", "qrcode"),
 )
 
 EZFP_ENDPOINT = PersistentConfig(
