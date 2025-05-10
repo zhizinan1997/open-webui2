@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- 支持配置单次请求最低消费
 - 支持配置支付方式优先级 (二维码或者跳转)
 
 ### Fixed
