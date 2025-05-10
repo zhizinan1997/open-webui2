@@ -48,7 +48,7 @@ async def list_credit_logs(
             user_id=user.id, offset=offset, limit=limit
         )
     else:
-        return CreditLogs.get_credit_log_by_page(user_id=user.id, offset=0, limit=100)
+        return CreditLogs.get_credit_log_by_page(user_id=user.id, offset=0, limit=10)
 
 
 @router.get("/all_logs")
