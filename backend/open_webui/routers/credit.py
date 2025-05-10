@@ -31,7 +31,10 @@ router = APIRouter()
 
 @router.get("/config")
 async def get_config(request: Request):
-    return {"CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO}
+    return {
+        "CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO,
+        "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
+    }
 
 
 @router.get("/logs", response_model=list[CreditLogSimpleModel])

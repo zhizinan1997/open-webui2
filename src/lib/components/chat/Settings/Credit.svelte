@@ -70,7 +70,8 @@
 	let amount = null;
 
 	let config = {
-		CREDIT_EXCHANGE_RATIO: 0
+		CREDIT_EXCHANGE_RATIO: 0,
+		EZFP_PAY_PRIORITY: 'qrcode'
 	};
 
 	let tradeInfo = {
@@ -83,6 +84,42 @@
 			img: '',
 			imgDisplayUrl: ''
 		}
+	};
+
+	const showQRCode = (detail: object): Boolean => {
+		if (detail?.img) {
+			tradeInfo.detail.imgDisplayUrl = detail.img;
+			return true;
+		}
+
+		if (detail?.qrcode) {
+			document.getElementById('trade-qrcode').innerHTML = '';
+			new QRCode(document.getElementById('trade-qrcode'), {
+				text: detail.qrcode,
+				width: 128,
+				height: 128,
+				colorDark: '#000000',
+				colorLight: '#ffffff',
+				correctLevel: QRCode.CorrectLevel.H
+			});
+			return true;
+		}
+
+		return false;
+	};
+
+	const redirectLink = (detail: object): Boolean => {
+		if (detail?.payurl) {
+			window.location.href = detail.payurl;
+			return true;
+		}
+
+		if (detail?.urlscheme) {
+			window.location.href = detail.urlscheme;
+			return true;
+		}
+
+		return false;
 	};
 
 	const handleAddCreditClick = async () => {
@@ -103,32 +140,16 @@
 				return;
 			}
 
-			if (detail?.img) {
-				tradeInfo.detail.imgDisplayUrl = detail.img;
-				return;
-			}
-
-			if (detail?.qrcode) {
-				document.getElementById('trade-qrcode').innerHTML = '';
-				new QRCode(document.getElementById('trade-qrcode'), {
-					text: detail.qrcode,
-					width: 128,
-					height: 128,
-					colorDark: '#000000',
-					colorLight: '#ffffff',
-					correctLevel: QRCode.CorrectLevel.H
-				});
-				return;
-			}
-
-			if (detail?.payurl) {
-				window.location.href = detail.payurl;
-				return;
-			}
-
-			if (detail?.urlscheme) {
-				window.location.href = detail.urlscheme;
-				return;
+			if (config.EZFP_PAY_PRIORITY === 'qrcode') {
+				if (showQRCode(detail)) {
+					return;
+				}
+				redirectLink(detail);
+			} else {
+				if (redirectLink(detail)) {
+					return;
+				}
+				showQRCode(detail);
 			}
 		}
 	};
