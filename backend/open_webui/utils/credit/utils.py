@@ -1,7 +1,13 @@
+import base64
+import math
 from decimal import Decimal
+from io import BytesIO
 from typing import Optional, Union
 
+import httpx
+from PIL import Image
 from fastapi import HTTPException
+from pydantic import BaseModel
 
 from open_webui.config import (
     USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE,
@@ -121,3 +127,64 @@ def check_credit_by_user_id(user_id: str, form_data: dict) -> None:
                     {"error": {"content": CREDIT_NO_CREDIT_MSG.value}},
                 )
         raise HTTPException(status_code=403, detail=CREDIT_NO_CREDIT_MSG.value)
+
+
+class ImageURL(BaseModel):
+    url: str
+    detail: str
+
+
+def calculate_image_token(model_id: str, image: ImageURL) -> int:
+    if not image or not image.url:
+        return 0
+
+    base_tokens = 85
+
+    if image.detail == "low":
+        return 85
+
+    if image.detail == "auto" or not image.detail:
+        image.detail = "high"
+
+    tile_tokens = 170
+
+    if model_id.find("gpt-4o-mini") != -1:
+        tile_tokens = 5667
+        base_tokens = 2833
+
+    if model_id.find("gemini") != -1 or model_id.find("claude") != -1:
+        return 3 * base_tokens
+
+    if image.url.startswith("http"):
+        with httpx.Client(trust_env=True, timeout=60) as client:
+            response = client.get(image.url)
+        response.raise_for_status()
+        image_data = base64.b64encode(response.content).decode("utf-8")
+    else:
+        if "," in image.url:
+            image_data = image.url.split(",", 1)[1]
+        else:
+            image_data = image.url
+
+    image_data = base64.b64decode(image_data.encode("utf-8"))
+    image = Image.open(BytesIO(image_data))
+    width, height = image.size
+
+    short_side = width
+    other_side = height
+
+    scale = 1.0
+
+    if height < short_side:
+        short_side = height
+        other_side = width
+
+    if short_side > 768:
+        scale = short_side / 768
+        short_side = 768
+
+    other_side = math.ceil(other_side / scale)
+
+    tiles = (short_side + 511) / 512 * ((other_side + 511) / 512)
+
+    return math.ceil(tiles * tile_tokens + base_tokens)
