@@ -17,6 +17,7 @@
 	let userID = '';
 
 	$: if (userID !== undefined) {
+		page = 1;
 		doQuery();
 	}
 
