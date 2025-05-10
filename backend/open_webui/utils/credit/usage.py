@@ -11,6 +11,7 @@ from tiktoken import Encoding
 from open_webui.config import (
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
     USAGE_DEFAULT_ENCODING_MODEL,
+    USAGE_CALCULATE_MINIMUM_COST,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
@@ -227,8 +228,10 @@ class CreditDeduct:
     @property
     def total_price(self) -> Decimal:
         if self.request_unit_price > 0:
-            return self.request_price + self.feature_price
-        return self.prompt_price + self.completion_price + self.feature_price
+            total_price = self.request_price + self.feature_price
+        else:
+            total_price = self.prompt_price + self.completion_price + self.feature_price
+        return max(total_price, Decimal(USAGE_CALCULATE_MINIMUM_COST.value))
 
     def add_usage_to_resp(self, response: dict) -> dict:
         if not isinstance(response, dict):

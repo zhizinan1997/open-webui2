@@ -2835,6 +2835,12 @@ USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
     os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
 )
 
+USAGE_CALCULATE_MINIMUM_COST = PersistentConfig(
+    "USAGE_CALCULATE_MINIMUM_COST",
+    "credit.calculate.minimum_cost",
+    os.environ.get("USAGE_CALCULATE_MINIMUM_COST", "0"),
+)
+
 EZFP_ENDPOINT = PersistentConfig(
     "EZFP_ENDPOINT",
     "credit.ezfp.endpoint",
