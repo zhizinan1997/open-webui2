@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 
-from typing import Optional
+from typing import Optional, Literal
 
 from open_webui.utils.auth import get_admin_user, get_verified_user
 from open_webui.config import get_config, save_config
@@ -327,14 +327,16 @@ async def get_banners(
 
 class UsageConfigForm(BaseModel):
     CREDIT_NO_CREDIT_MSG: str = Field(default="余额不足，请前往 设置-积分 充值")
-    CREDIT_EXCHANGE_RATIO: float = Field(default=1)
-    CREDIT_DEFAULT_CREDIT: float = Field(default=0)
+    CREDIT_EXCHANGE_RATIO: float = Field(default=1, gt=0)
+    CREDIT_DEFAULT_CREDIT: float = Field(default=0, ge=0)
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE: str = Field(default="")
     USAGE_DEFAULT_ENCODING_MODEL: str = Field(default="gpt-4o")
-    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE: float = Field(default=0)
-    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE: float = Field(default=0)
-    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE: float = Field(default=0)
-    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE: float = Field(default=0)
+    USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE: float = Field(default=0, ge=0)
+    USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE: float = Field(default=0, ge=0)
+    USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE: float = Field(default=0, ge=0)
+    USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE: float = Field(default=0, ge=0)
+    USAGE_CALCULATE_MINIMUM_COST: float = Field(default=0, ge=0)
+    EZFP_PAY_PRIORITY: Literal["qrcode", "link"] = Field(default="qrcode")
     EZFP_ENDPOINT: Optional[str] = None
     EZFP_PID: Optional[str] = None
     EZFP_KEY: Optional[str] = None
@@ -354,6 +356,8 @@ async def get_usage_config(request: Request, user=Depends(get_admin_user)):
         "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
+        "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,
         "EZFP_KEY": request.app.state.config.EZFP_KEY,
@@ -387,6 +391,10 @@ async def set_usage_config(
     request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = (
         form_data.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE
     )
+    request.app.state.config.USAGE_CALCULATE_MINIMUM_COST = (
+        form_data.USAGE_CALCULATE_MINIMUM_COST
+    )
+    request.app.state.config.EZFP_PAY_PRIORITY = form_data.EZFP_PAY_PRIORITY
     request.app.state.config.EZFP_ENDPOINT = form_data.EZFP_ENDPOINT
     request.app.state.config.EZFP_PID = form_data.EZFP_PID
     request.app.state.config.EZFP_KEY = form_data.EZFP_KEY
@@ -401,6 +409,8 @@ async def set_usage_config(
         "USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_CODE_EXECUTE_PRICE,
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
+        "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,
         "EZFP_KEY": request.app.state.config.EZFP_KEY,

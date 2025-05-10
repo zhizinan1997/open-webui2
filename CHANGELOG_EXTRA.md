@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - 注册邮箱验证及邮箱域名白名单
+- 支持配置单次请求最低消费
+- 支持配置支付方式优先级 (二维码或者跳转)
+
+### Fixed
+
+- 修复图片 Token 计算异常
 
 ## [0.6.7.2] - 2025.05.08
 

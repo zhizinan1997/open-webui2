@@ -883,7 +883,6 @@ except Exception as e:
     log.exception(f"Error loading TOOL_SERVER_CONNECTIONS: {e}")
     tool_server_connections = []
 
-
 TOOL_SERVER_CONNECTIONS = PersistentConfig(
     "TOOL_SERVER_CONNECTIONS",
     "tool_server.connections",
@@ -2866,6 +2865,18 @@ USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
     "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE",
     "credit.calculate.feature.tool_server_price",
     os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
+)
+
+USAGE_CALCULATE_MINIMUM_COST = PersistentConfig(
+    "USAGE_CALCULATE_MINIMUM_COST",
+    "credit.calculate.minimum_cost",
+    os.environ.get("USAGE_CALCULATE_MINIMUM_COST", "0"),
+)
+
+EZFP_PAY_PRIORITY = PersistentConfig(
+    "EZFP_PAY_PRIORITY",
+    "credit.ezfp.pay_priority",
+    os.environ.get("EZFP_PAY_PRIORITY", "qrcode"),
 )
 
 EZFP_ENDPOINT = PersistentConfig(
