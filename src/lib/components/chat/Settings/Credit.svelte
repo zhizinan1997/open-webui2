@@ -322,7 +322,9 @@
 				<div class="pt-0.5">
 					<div class="flex flex-col w-full">
 						<div class="mb-1 text-base font-medium">{$i18n.t('Credit Log')}</div>
-						<div class="overflow-y-scroll max-h-[14rem] flex flex-col scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm">
+						<div
+							class="overflow-y-scroll max-h-[14rem] flex flex-col scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm"
+						>
 							{#if logs.length > 0}
 								<table
 									class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm}"
