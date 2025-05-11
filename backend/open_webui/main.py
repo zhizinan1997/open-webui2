@@ -95,6 +95,7 @@ from open_webui.config import (
     ENABLE_OPENAI_API,
     ONEDRIVE_CLIENT_ID,
     ONEDRIVE_SHAREPOINT_URL,
+    ONEDRIVE_SHAREPOINT_TENANT_ID,
     OPENAI_API_BASE_URLS,
     OPENAI_API_KEYS,
     OPENAI_API_CONFIGS,
@@ -175,7 +176,11 @@ from open_webui.config import (
     BYPASS_EMBEDDING_AND_RETRIEVAL,
     RAG_EMBEDDING_MODEL,
     RAG_EMBEDDING_MODEL_AUTO_UPDATE,
+    RAG_EMBEDDING_MODEL_TRUST_REMOTE_CODE,
+    RAG_RERANKING_ENGINE,
     RAG_RERANKING_MODEL,
+    RAG_EXTERNAL_RERANKER_URL,
+    RAG_EXTERNAL_RERANKER_API_KEY,
     RAG_RERANKING_MODEL_AUTO_UPDATE,
     RAG_EMBEDDING_ENGINE,
     RAG_EMBEDDING_BATCH_SIZE,
@@ -242,6 +247,7 @@ from open_webui.config import (
     GOOGLE_DRIVE_API_KEY,
     ONEDRIVE_CLIENT_ID,
     ONEDRIVE_SHAREPOINT_URL,
+    ONEDRIVE_SHAREPOINT_TENANT_ID,
     ENABLE_RAG_HYBRID_SEARCH,
     ENABLE_WEB_LOADER_SSL_VERIFICATION,
     ENABLE_GOOGLE_DRIVE_INTEGRATION,
@@ -341,6 +347,14 @@ from open_webui.config import (
     EZFP_AMOUNT_CONTROL,
     CREDIT_DEFAULT_CREDIT,
     CREDIT_EXCHANGE_RATIO,
+    ENABLE_SIGNUP_VERIFY,
+    SIGNUP_EMAIL_DOMAIN_WHITELIST,
+    SMTP_HOST,
+    SMTP_PORT,
+    SMTP_USERNAME,
+    SMTP_PASSWORD,
+    USAGE_CALCULATE_MINIMUM_COST,
+    EZFP_PAY_PRIORITY,
 )
 from open_webui.env import (
     AUDIT_EXCLUDED_PATHS,
@@ -456,10 +470,9 @@ async def lifespan(app: FastAPI):
     log.info("Installing external dependencies of functions and tools...")
     install_tool_and_function_dependencies()
 
-    pool_size = THREAD_POOL_SIZE
-    if pool_size and pool_size > 0:
+    if THREAD_POOL_SIZE and THREAD_POOL_SIZE > 0:
         limiter = anyio.to_thread.current_default_thread_limiter()
-        limiter.total_tokens = pool_size
+        limiter.total_tokens = THREAD_POOL_SIZE
 
     asyncio.create_task(periodic_usage_pool_cleanup())
 
@@ -547,6 +560,13 @@ app.state.config.ENABLE_DIRECT_CONNECTIONS = ENABLE_DIRECT_CONNECTIONS
 app.state.config.WEBUI_URL = WEBUI_URL
 app.state.config.ENABLE_SIGNUP = ENABLE_SIGNUP
 app.state.config.ENABLE_LOGIN_FORM = ENABLE_LOGIN_FORM
+
+app.state.config.ENABLE_SIGNUP_VERIFY = ENABLE_SIGNUP_VERIFY
+app.state.config.SIGNUP_EMAIL_DOMAIN_WHITELIST = SIGNUP_EMAIL_DOMAIN_WHITELIST
+app.state.config.SMTP_HOST = SMTP_HOST
+app.state.config.SMTP_PORT = SMTP_PORT
+app.state.config.SMTP_USERNAME = SMTP_USERNAME
+app.state.config.SMTP_PASSWORD = SMTP_PASSWORD
 
 app.state.config.ENABLE_API_KEY = ENABLE_API_KEY
 app.state.config.ENABLE_API_KEY_ENDPOINT_RESTRICTIONS = (
@@ -645,7 +665,12 @@ app.state.config.CHUNK_OVERLAP = CHUNK_OVERLAP
 app.state.config.RAG_EMBEDDING_ENGINE = RAG_EMBEDDING_ENGINE
 app.state.config.RAG_EMBEDDING_MODEL = RAG_EMBEDDING_MODEL
 app.state.config.RAG_EMBEDDING_BATCH_SIZE = RAG_EMBEDDING_BATCH_SIZE
+
+app.state.config.RAG_RERANKING_ENGINE = RAG_RERANKING_ENGINE
 app.state.config.RAG_RERANKING_MODEL = RAG_RERANKING_MODEL
+app.state.config.RAG_EXTERNAL_RERANKER_URL = RAG_EXTERNAL_RERANKER_URL
+app.state.config.RAG_EXTERNAL_RERANKER_API_KEY = RAG_EXTERNAL_RERANKER_API_KEY
+
 app.state.config.RAG_TEMPLATE = RAG_TEMPLATE
 
 app.state.config.RAG_OPENAI_API_BASE_URL = RAG_OPENAI_API_BASE_URL
@@ -723,7 +748,10 @@ try:
     )
 
     app.state.rf = get_rf(
+        app.state.config.RAG_RERANKING_ENGINE,
         app.state.config.RAG_RERANKING_MODEL,
+        app.state.config.RAG_EXTERNAL_RERANKER_URL,
+        app.state.config.RAG_EXTERNAL_RERANKER_API_KEY,
         RAG_RERANKING_MODEL_AUTO_UPDATE,
     )
 except Exception as e:
@@ -901,6 +929,8 @@ app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE = (
 app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = (
     USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE
 )
+app.state.config.USAGE_CALCULATE_MINIMUM_COST = USAGE_CALCULATE_MINIMUM_COST
+app.state.config.EZFP_PAY_PRIORITY = EZFP_PAY_PRIORITY
 app.state.config.EZFP_ENDPOINT = EZFP_ENDPOINT
 app.state.config.EZFP_PID = EZFP_PID
 app.state.config.EZFP_KEY = EZFP_KEY
@@ -1351,6 +1381,7 @@ async def get_app_config(request: Request):
             "enable_api_key": app.state.config.ENABLE_API_KEY,
             "enable_signup": app.state.config.ENABLE_SIGNUP,
             "enable_login_form": app.state.config.ENABLE_LOGIN_FORM,
+            "enable_signup_verify": app.state.config.ENABLE_SIGNUP_VERIFY,
             "enable_websocket": ENABLE_WEBSOCKET_SUPPORT,
             **(
                 {
@@ -1404,6 +1435,7 @@ async def get_app_config(request: Request):
                 "onedrive": {
                     "client_id": ONEDRIVE_CLIENT_ID.value,
                     "sharepoint_url": ONEDRIVE_SHAREPOINT_URL.value,
+                    "sharepoint_tenant_id": ONEDRIVE_SHAREPOINT_TENANT_ID.value,
                 },
                 "license_metadata": app.state.LICENSE_METADATA,
                 **(

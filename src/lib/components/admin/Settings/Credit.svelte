@@ -75,6 +75,20 @@
 							required
 						/>
 					</div>
+					<div class="flex mt-2 w-full justify-between">
+						<div class=" self-center text-xs font-medium">
+							{$i18n.t('Minimum Cost Per Request')}
+						</div>
+					</div>
+					<div class="flex mt-2 space-x-2">
+						<input
+							class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+							bind:value={config.USAGE_CALCULATE_MINIMUM_COST}
+							type="number"
+							step="0.0001"
+							required
+						/>
+					</div>
 				</div>
 
 				<div class="mb-3">
@@ -155,6 +169,20 @@
 					<div class="mb-3">
 						<div class=" mb-2.5 text-base font-medium">{$i18n.t('Payment')}</div>
 						<hr class=" border-gray-100 dark:border-gray-850 my-2" />
+						<div class="mt-2 flex w-full justify-between">
+							<div class=" self-center text-xs font-medium">
+								{$i18n.t('EZFP Pay Type Priority')}
+							</div>
+						</div>
+						<div class="flex mt-2 space-x-2">
+							<select
+								class="w-full rounded-lg py-2 px-4 text-sm bg-gray-50 dark:text-gray-300 dark:bg-gray-850 outline-hidden"
+								bind:value={config.EZFP_PAY_PRIORITY}
+							>
+								<option value="qrcode">{$i18n.t('QRCode')}</option>
+								<option value="link">{$i18n.t('Redirect Link')}</option>
+							</select>
+						</div>
 						<div class="mt-2 flex w-full justify-between">
 							<div class=" self-center text-xs font-medium">{$i18n.t('EZFP Endpoint')}</div>
 						</div>

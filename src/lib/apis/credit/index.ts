@@ -84,6 +84,40 @@ export const listCreditLog = async (token: string, page: number) => {
 	return res;
 };
 
+export const listAllCreditLog = async (
+	token: string,
+	page: number,
+	limit: number,
+	user_id: string
+) => {
+	let error = null;
+
+	const res = await fetch(
+		`${WEBUI_API_BASE_URL}/credit/all_logs?page=${page}&limit=${limit}&user_id=${user_id}`,
+		{
+			method: 'GET',
+			headers: {
+				Authorization: `Bearer ${token}`
+			}
+		}
+	)
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
+		})
+		.catch((err) => {
+			console.log(err);
+			error = err.detail;
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res;
+};
+
 export const getCreditStats = async (token: string, data: object) => {
 	let error = null;
 

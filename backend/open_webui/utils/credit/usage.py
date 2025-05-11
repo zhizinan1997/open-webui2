@@ -11,6 +11,7 @@ from tiktoken import Encoding
 from open_webui.config import (
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
     USAGE_DEFAULT_ENCODING_MODEL,
+    USAGE_CALCULATE_MINIMUM_COST,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
@@ -23,7 +24,11 @@ from open_webui.utils.credit.models import (
     ChatCompletionChunk,
     MessageItem,
 )
-from open_webui.utils.credit.utils import get_model_price, get_feature_price
+from open_webui.utils.credit.utils import (
+    get_model_price,
+    get_feature_price,
+    calculate_image_token,
+)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(SRC_LOG_LEVELS["MAIN"])
@@ -57,18 +62,6 @@ class Calculator:
             return self.get_encoder(default_model_for_encoding)
         return self.get_encoder(model_id)
 
-    def get_message_content(self, content: Union[str, list[MessageContent]]):
-        if isinstance(content, str):
-            return content
-        if isinstance(content, list):
-            return "".join(
-                [
-                    item.model_dump_json(exclude_none=True, exclude_unset=True)
-                    for item in content
-                ]
-            )
-        return str(content)
-
     def calculate_usage(
         self,
         cached_usage: CompletionUsage,
@@ -98,12 +91,24 @@ class Calculator:
             if cached_usage.prompt_tokens:
                 usage.prompt_tokens = cached_usage.prompt_tokens
             else:
-                usage.prompt_tokens += sum(
-                    len(encoder.encode(self.get_message_content(message.content) or ""))
-                    for message in [
-                        MessageItem.model_validate(message) for message in messages
-                    ]
-                )
+                for message in [
+                    MessageItem.model_validate(message) for message in messages
+                ]:
+                    if isinstance(message.content, str):
+                        usage.prompt_tokens += len(
+                            encoder.encode(message.content or "")
+                        )
+                    if isinstance(message.content, list):
+                        for item in message.content:
+                            item: MessageContent
+                            if item.type == "text":
+                                usage.prompt_tokens += len(
+                                    encoder.encode(item.text or "")
+                                )
+                            elif item.type == "image_url":
+                                usage.prompt_tokens += calculate_image_token(
+                                    model_id, item.image_url
+                                )
 
             # completion tokens
             choices = response.choices
@@ -227,8 +232,10 @@ class CreditDeduct:
     @property
     def total_price(self) -> Decimal:
         if self.request_unit_price > 0:
-            return self.request_price + self.feature_price
-        return self.prompt_price + self.completion_price + self.feature_price
+            total_price = self.request_price + self.feature_price
+        else:
+            total_price = self.prompt_price + self.completion_price + self.feature_price
+        return max(total_price, Decimal(USAGE_CALCULATE_MINIMUM_COST.value))
 
     def add_usage_to_resp(self, response: dict) -> dict:
         if not isinstance(response, dict):

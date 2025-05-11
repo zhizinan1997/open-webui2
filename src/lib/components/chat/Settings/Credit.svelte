@@ -70,7 +70,8 @@
 	let amount = null;
 
 	let config = {
-		CREDIT_EXCHANGE_RATIO: 0
+		CREDIT_EXCHANGE_RATIO: 0,
+		EZFP_PAY_PRIORITY: 'qrcode'
 	};
 
 	let tradeInfo = {
@@ -83,6 +84,42 @@
 			img: '',
 			imgDisplayUrl: ''
 		}
+	};
+
+	const showQRCode = (detail: object): Boolean => {
+		if (detail?.img) {
+			tradeInfo.detail.imgDisplayUrl = detail.img;
+			return true;
+		}
+
+		if (detail?.qrcode) {
+			document.getElementById('trade-qrcode').innerHTML = '';
+			new QRCode(document.getElementById('trade-qrcode'), {
+				text: detail.qrcode,
+				width: 128,
+				height: 128,
+				colorDark: '#000000',
+				colorLight: '#ffffff',
+				correctLevel: QRCode.CorrectLevel.H
+			});
+			return true;
+		}
+
+		return false;
+	};
+
+	const redirectLink = (detail: object): Boolean => {
+		if (detail?.payurl) {
+			window.location.href = detail.payurl;
+			return true;
+		}
+
+		if (detail?.urlscheme) {
+			window.location.href = detail.urlscheme;
+			return true;
+		}
+
+		return false;
 	};
 
 	const handleAddCreditClick = async () => {
@@ -103,32 +140,16 @@
 				return;
 			}
 
-			if (detail?.img) {
-				tradeInfo.detail.imgDisplayUrl = detail.img;
-				return;
-			}
-
-			if (detail?.qrcode) {
-				document.getElementById('trade-qrcode').innerHTML = '';
-				new QRCode(document.getElementById('trade-qrcode'), {
-					text: detail.qrcode,
-					width: 128,
-					height: 128,
-					colorDark: '#000000',
-					colorLight: '#ffffff',
-					correctLevel: QRCode.CorrectLevel.H
-				});
-				return;
-			}
-
-			if (detail?.payurl) {
-				window.location.href = detail.payurl;
-				return;
-			}
-
-			if (detail?.urlscheme) {
-				window.location.href = detail.urlscheme;
-				return;
+			if (config.EZFP_PAY_PRIORITY === 'qrcode') {
+				if (showQRCode(detail)) {
+					return;
+				}
+				redirectLink(detail);
+			} else {
+				if (redirectLink(detail)) {
+					return;
+				}
+				showQRCode(detail);
 			}
 		}
 	};
@@ -301,46 +322,71 @@
 				<div class="pt-0.5">
 					<div class="flex flex-col w-full">
 						<div class="mb-1 text-base font-medium">{$i18n.t('Credit Log')}</div>
-						<div class="overflow-y-scroll max-h-[14rem] flex flex-col">
+						<div
+							class="overflow-y-scroll max-h-[14rem] flex flex-col scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm"
+						>
 							{#if logs.length > 0}
-								<table class="w-full text-center table-auto border-collapse border border-gray-400">
-									<thead>
+								<table
+									class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm}"
+								>
+									<thead
+										class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 -translate-y-0.5"
+									>
 										<tr>
-											<th
-												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
-												>{$i18n.t('Date')}</th
-											>
-											<th
-												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
-												>{$i18n.t('Credit')}</th
-											>
-											<th
-												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
-												>{$i18n.t('Model')}</th
-											>
-											<th
-												class="border border-gray-300 bg-stone-100 dark:text-gray-300 dark:bg-gray-850"
-												>{$i18n.t('Desc')}</th
-											>
+											<th scope="col" class="px-3 py-1.5 select-none w-3">
+												{$i18n.t('Date')}
+											</th>
+											<th scope="col" class="px-3 py-1.5 select-none w-3">
+												{$i18n.t('Credit')}
+											</th>
+											<th scope="col" class="px-3 py-1.5 select-none w-3">
+												{$i18n.t('Model')}
+											</th>
+											<th scope="col" class="px-3 py-1.5 select-none w-3">
+												{$i18n.t('Desc')}
+											</th>
 										</tr>
 									</thead>
 									<tbody>
 										{#each logs as log}
-											<tr>
-												<td class="border border-gray-300">{formatDate(log.created_at)}</td>
-												<td class="border border-gray-300">{parseFloat(log.credit).toFixed(6)}</td>
-												<td class="border border-gray-300"
-													>{log.detail?.api_params?.model?.name ||
-														log.detail?.api_params?.model?.id ||
-														'- -'}</td
+											<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs group">
+												<td
+													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
 												>
-												<td class="border border-gray-300">{formatDesc(log)}</td>
+													<div class=" line-clamp-1">
+														{formatDate(log.created_at)}
+													</div>
+												</td>
+												<td
+													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
+												>
+													<div class=" line-clamp-1">
+														{parseFloat(log.credit).toFixed(6)}
+													</div>
+												</td>
+												<td
+													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
+												>
+													<div class=" line-clamp-1">
+														{log.detail?.api_params?.model?.name ||
+															log.detail?.api_params?.model?.id ||
+															'- -'}
+													</div>
+												</td>
+												<td
+													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
+												>
+													<div class=" line-clamp-1">
+														{formatDesc(log)}
+													</div>
+												</td>
 											</tr>
 										{/each}
 									</tbody>
 								</table>
 								{#if hasMore}
 									<button
+										class="text-xs mt-2"
 										type="button"
 										on:click={() => {
 											nextLogs(true);

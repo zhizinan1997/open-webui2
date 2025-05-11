@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.9.1] - 2025.05.11
+
+### Added
+
+- 支持查看详细积分记录 (管理员面板-用户-积分日志)
+- 注册邮箱验证及邮箱域名白名单
+- 支持配置单次请求最低消费
+- 支持配置支付方式优先级 (二维码或者跳转)
+- 增加更多积分余额校验
+
+### Changed
+
+- 合并官方 0.6.9 改动
+
+### Fixed
+
+- 修复图片 Token 计算异常
+
 ## [0.6.7.2] - 2025.05.08
 
 ### Changed

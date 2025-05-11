@@ -110,54 +110,7 @@ if os.path.exists(f"{DATA_DIR}/config.json"):
 
 DEFAULT_CONFIG = {
     "version": 0,
-    "ui": {
-        "default_locale": "",
-        "prompt_suggestions": [
-            {
-                "title": [
-                    "Help me study",
-                    "vocabulary for a college entrance exam",
-                ],
-                "content": "Help me study vocabulary: write a sentence for me to fill in the blank, and I'll try to pick the correct option.",
-            },
-            {
-                "title": [
-                    "Give me ideas",
-                    "for what to do with my kids' art",
-                ],
-                "content": "What are 5 creative things I could do with my kids' art? I don't want to throw them away, but it's also so much clutter.",
-            },
-            {
-                "title": ["Tell me a fun fact", "about the Roman Empire"],
-                "content": "Tell me a random fun fact about the Roman Empire",
-            },
-            {
-                "title": [
-                    "Show me a code snippet",
-                    "of a website's sticky header",
-                ],
-                "content": "Show me a code snippet of a website's sticky header in CSS and JavaScript.",
-            },
-            {
-                "title": [
-                    "Explain options trading",
-                    "if I'm familiar with buying and selling stocks",
-                ],
-                "content": "Explain options trading in simple terms if I'm familiar with buying and selling stocks.",
-            },
-            {
-                "title": ["Overcome procrastination", "give me tips"],
-                "content": "Could you start by asking me about instances when I procrastinate the most and then give me some suggestions to overcome it?",
-            },
-            {
-                "title": [
-                    "Grammar check",
-                    "rewrite it for better readability ",
-                ],
-                "content": 'Check the following sentence for grammar and clarity: "[sentence]". Rewrite it for better readability while maintaining its original meaning.',
-            },
-        ],
-    },
+    "ui": {},
 }
 
 
@@ -512,7 +465,6 @@ ENABLE_OAUTH_GROUP_CREATION = PersistentConfig(
     os.environ.get("ENABLE_OAUTH_GROUP_CREATION", "False").lower() == "true",
 )
 
-
 OAUTH_BLOCKED_GROUPS = PersistentConfig(
     "OAUTH_BLOCKED_GROUPS",
     "oauth.blocked_groups",
@@ -547,6 +499,12 @@ OAUTH_ALLOWED_DOMAINS = PersistentConfig(
         domain.strip()
         for domain in os.environ.get("OAUTH_ALLOWED_DOMAINS", "*").split(",")
     ],
+)
+
+OAUTH_UPDATE_PICTURE_ON_LOGIN = PersistentConfig(
+    "OAUTH_UPDATE_PICTURE_ON_LOGIN",
+    "oauth.update_picture_on_login",
+    os.environ.get("OAUTH_UPDATE_PICTURE_ON_LOGIN", "False").lower() == "true",
 )
 
 
@@ -722,9 +680,10 @@ S3_BUCKET_NAME = os.environ.get("S3_BUCKET_NAME", None)
 S3_KEY_PREFIX = os.environ.get("S3_KEY_PREFIX", None)
 S3_ENDPOINT_URL = os.environ.get("S3_ENDPOINT_URL", None)
 S3_USE_ACCELERATE_ENDPOINT = (
-    os.environ.get("S3_USE_ACCELERATE_ENDPOINT", "False").lower() == "true"
+    os.environ.get("S3_USE_ACCELERATE_ENDPOINT", "false").lower() == "true"
 )
 S3_ADDRESSING_STYLE = os.environ.get("S3_ADDRESSING_STYLE", None)
+S3_ENABLE_TAGGING = os.getenv("S3_ENABLE_TAGGING", "false").lower() == "true"
 
 GCS_BUCKET_NAME = os.environ.get("GCS_BUCKET_NAME", None)
 GOOGLE_APPLICATION_CREDENTIALS_JSON = os.environ.get(
@@ -884,7 +843,6 @@ except Exception as e:
     log.exception(f"Error loading TOOL_SERVER_CONNECTIONS: {e}")
     tool_server_connections = []
 
-
 TOOL_SERVER_CONNECTIONS = PersistentConfig(
     "TOOL_SERVER_CONNECTIONS",
     "tool_server.connections",
@@ -914,6 +872,42 @@ ENABLE_LOGIN_FORM = PersistentConfig(
     "ENABLE_LOGIN_FORM",
     "ui.ENABLE_LOGIN_FORM",
     os.environ.get("ENABLE_LOGIN_FORM", "True").lower() == "true",
+)
+
+ENABLE_SIGNUP_VERIFY = PersistentConfig(
+    "ENABLE_SIGNUP_VERIFY",
+    "ui.signup_verify.enabled",
+    os.environ.get("ENABLE_SIGNUP_VERIFY", "False").lower() == "true",
+)
+
+SIGNUP_EMAIL_DOMAIN_WHITELIST = PersistentConfig(
+    "SIGNUP_EMAIL_DOMAIN_WHITELIST",
+    "ui.signup.email_domain_whitelist",
+    os.environ.get("SIGNUP_EMAIL_DOMAIN_WHITELIST", ""),
+)
+
+SMTP_HOST = PersistentConfig(
+    "SMTP_HOST",
+    "ui.smtp.host",
+    os.environ.get("SMTP_HOST", ""),
+)
+
+SMTP_PORT = PersistentConfig(
+    "SMTP_PORT",
+    "ui.smtp.port",
+    os.environ.get("SMTP_PORT", "465"),
+)
+
+SMTP_USERNAME = PersistentConfig(
+    "SMTP_USERNAME",
+    "ui.smtp.username",
+    os.environ.get("SMTP_USERNAME", ""),
+)
+
+SMTP_PASSWORD = PersistentConfig(
+    "SMTP_PASSWORD",
+    "ui.smtp.password",
+    os.environ.get("SMTP_PASSWORD", ""),
 )
 
 DEFAULT_LOCALE = PersistentConfig(
@@ -1101,7 +1095,6 @@ USER_PERMISSIONS_FEATURES_NOTES = (
     os.environ.get("USER_PERMISSIONS_FEATURES_NOTES", "True").lower() == "true"
 )
 
-
 DEFAULT_USER_PERMISSIONS = {
     "workspace": {
         "models": USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS,
@@ -1206,7 +1199,16 @@ ENABLE_USER_WEBHOOKS = PersistentConfig(
 )
 
 # FastAPI / AnyIO settings
-THREAD_POOL_SIZE = int(os.getenv("THREAD_POOL_SIZE", "0"))
+THREAD_POOL_SIZE = os.getenv("THREAD_POOL_SIZE", None)
+
+if THREAD_POOL_SIZE is not None and isinstance(THREAD_POOL_SIZE, str):
+    try:
+        THREAD_POOL_SIZE = int(THREAD_POOL_SIZE)
+    except ValueError:
+        log.warning(
+            f"THREAD_POOL_SIZE is not a valid integer: {THREAD_POOL_SIZE}. Defaulting to None."
+        )
+        THREAD_POOL_SIZE = None
 
 
 def validate_cors_origins(origins):
@@ -1306,6 +1308,9 @@ Generate a concise, 3-5 word title with an emoji summarizing the chat history.
 - Use emojis that enhance understanding of the topic, but avoid quotation marks or special formatting.
 - Write the title in the chat's primary language; default to English if multilingual.
 - Prioritize accuracy over excessive creativity; keep it clear and simple.
+- Your entire response must consist solely of the JSON object, without any introductory or concluding text.
+- The output must be a single, raw JSON object, without any markdown code fences or other encapsulating text.
+- Ensure no conversational text, affirmations, or explanations precede or follow the raw JSON output, as this will cause direct parsing failure.
 ### Output:
 JSON format: { "title": "your concise title here" }
 ### Examples:
@@ -1639,7 +1644,8 @@ DEFAULT_CODE_INTERPRETER_PROMPT = """
 1. **Code Interpreter**: `<code_interpreter type="code" lang="python"></code_interpreter>`
    - You have access to a Python shell that runs directly in the user's browser, enabling fast execution of code for analysis, calculations, or problem-solving.  Use it in this response.
    - The Python code you write can incorporate a wide array of libraries, handle data manipulation or visualization, perform API calls for web-related tasks, or tackle virtually any computational challenge. Use this flexibility to **think outside the box, craft elegant solutions, and harness Python's full potential**.
-   - To use it, **you must enclose your code within `<code_interpreter type="code" lang="python">` XML tags** and stop right away. If you don't, the code won't execute. Do NOT use triple backticks.
+   - To use it, **you must enclose your code within `<code_interpreter type="code" lang="python">` XML tags** and stop right away. If you don't, the code won't execute. 
+   - When writing code in the code_interpreter XML tag, Do NOT use the triple backticks code block for markdown formatting, example: ```py # python code ``` will cause an error because it is markdown formatting, it is not python code.
    - When coding, **always aim to print meaningful outputs** (e.g., results, tables, summaries, or visuals) to better interpret and verify the findings. Avoid relying on implicit outputs; prioritize explicit and clear print statements so the results are effectively communicated to the user.  
    - After obtaining the printed output, **always provide a concise analysis, interpretation, or next steps to help the user understand the findings or refine the outcome further.**  
    - If the results are unclear, unexpected, or require validation, refine the code and execute it again as needed. Always aim to deliver meaningful insights from the results, iterating if necessary.  
@@ -1684,6 +1690,12 @@ if VECTOR_DB == "chroma":
 MILVUS_URI = os.environ.get("MILVUS_URI", f"{DATA_DIR}/vector_db/milvus.db")
 MILVUS_DB = os.environ.get("MILVUS_DB", "default")
 MILVUS_TOKEN = os.environ.get("MILVUS_TOKEN", None)
+
+MILVUS_INDEX_TYPE = os.environ.get("MILVUS_INDEX_TYPE", "HNSW")
+MILVUS_METRIC_TYPE = os.environ.get("MILVUS_METRIC_TYPE", "COSINE")
+MILVUS_HNSW_M = int(os.environ.get("MILVUS_HNSW_M", "16"))
+MILVUS_HNSW_EFCONSTRUCTION = int(os.environ.get("MILVUS_HNSW_EFCONSTRUCTION", "100"))
+MILVUS_IVF_FLAT_NLIST = int(os.environ.get("MILVUS_IVF_FLAT_NLIST", "128"))
 
 # Qdrant
 QDRANT_URI = os.environ.get("QDRANT_URI", None)
@@ -1772,6 +1784,11 @@ ONEDRIVE_SHAREPOINT_URL = PersistentConfig(
     os.environ.get("ONEDRIVE_SHAREPOINT_URL", ""),
 )
 
+ONEDRIVE_SHAREPOINT_TENANT_ID = PersistentConfig(
+    "ONEDRIVE_SHAREPOINT_TENANT_ID",
+    "onedrive.sharepoint_tenant_id",
+    os.environ.get("ONEDRIVE_SHAREPOINT_TENANT_ID", ""),
+)
 
 # RAG Content Extraction
 CONTENT_EXTRACTION_ENGINE = PersistentConfig(
@@ -1919,6 +1936,12 @@ RAG_EMBEDDING_PREFIX_FIELD_NAME = os.environ.get(
     "RAG_EMBEDDING_PREFIX_FIELD_NAME", None
 )
 
+RAG_RERANKING_ENGINE = PersistentConfig(
+    "RAG_RERANKING_ENGINE",
+    "rag.reranking_engine",
+    os.environ.get("RAG_RERANKING_ENGINE", ""),
+)
+
 RAG_RERANKING_MODEL = PersistentConfig(
     "RAG_RERANKING_MODEL",
     "rag.reranking_model",
@@ -1926,6 +1949,7 @@ RAG_RERANKING_MODEL = PersistentConfig(
 )
 if RAG_RERANKING_MODEL.value != "":
     log.info(f"Reranking model set: {RAG_RERANKING_MODEL.value}")
+
 
 RAG_RERANKING_MODEL_AUTO_UPDATE = (
     not OFFLINE_MODE
@@ -1935,6 +1959,19 @@ RAG_RERANKING_MODEL_AUTO_UPDATE = (
 RAG_RERANKING_MODEL_TRUST_REMOTE_CODE = (
     os.environ.get("RAG_RERANKING_MODEL_TRUST_REMOTE_CODE", "True").lower() == "true"
 )
+
+RAG_EXTERNAL_RERANKER_URL = PersistentConfig(
+    "RAG_EXTERNAL_RERANKER_URL",
+    "rag.external_reranker_url",
+    os.environ.get("RAG_EXTERNAL_RERANKER_URL", ""),
+)
+
+RAG_EXTERNAL_RERANKER_API_KEY = PersistentConfig(
+    "RAG_EXTERNAL_RERANKER_API_KEY",
+    "rag.external_reranker_api_key",
+    os.environ.get("RAG_EXTERNAL_RERANKER_API_KEY", ""),
+)
+
 
 RAG_TEXT_SPLITTER = PersistentConfig(
     "RAG_TEXT_SPLITTER",
@@ -2833,6 +2870,18 @@ USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE = PersistentConfig(
     "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE",
     "credit.calculate.feature.tool_server_price",
     os.environ.get("USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE", "0"),
+)
+
+USAGE_CALCULATE_MINIMUM_COST = PersistentConfig(
+    "USAGE_CALCULATE_MINIMUM_COST",
+    "credit.calculate.minimum_cost",
+    os.environ.get("USAGE_CALCULATE_MINIMUM_COST", "0"),
+)
+
+EZFP_PAY_PRIORITY = PersistentConfig(
+    "EZFP_PAY_PRIORITY",
+    "credit.ezfp.pay_priority",
+    os.environ.get("EZFP_PAY_PRIORITY", "qrcode"),
 )
 
 EZFP_ENDPOINT = PersistentConfig(
