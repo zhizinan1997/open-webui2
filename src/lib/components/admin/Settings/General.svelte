@@ -297,10 +297,15 @@
 						<Switch bind:state={adminConfig.ENABLE_SIGNUP} />
 					</div>
 
-					<div class=" mb-2.5 flex w-full justify-between pr-2">
-						<div class=" self-center text-xs font-medium">{$i18n.t('Enable Sign Up Verify')}</div>
+					<div class=" flex w-full justify-between pr-2">
+						<div class="self-center text-xs font-medium">
+							{$i18n.t('Enable Sign Up Verify')}
+						</div>
 
 						<Switch bind:state={adminConfig.ENABLE_SIGNUP_VERIFY} />
+					</div>
+					<div class="mb-2.5 text-xs text-gray-300 font-medium">
+						{$i18n.t('After verify, will auto change to role User')}
 					</div>
 
 					<div class="mb-2.5 flex w-full flex-col pr-2">

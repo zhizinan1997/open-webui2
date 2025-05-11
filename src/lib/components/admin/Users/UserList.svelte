@@ -332,28 +332,28 @@
 					</th>
 
 					<th
-					scope="col"
-					class="px-3 py-1.5 cursor-pointer select-none"
-					on:click={() => setSortKey('credit')}
-				>
-					<div class="flex gap-1.5 items-center">
-						{$i18n.t('Credit')}
+						scope="col"
+						class="px-3 py-1.5 cursor-pointer select-none"
+						on:click={() => setSortKey('credit')}
+					>
+						<div class="flex gap-1.5 items-center">
+							{$i18n.t('Credit')}
 
-						{#if orderBy === 'credit'}
-							<span class="font-normal"
-								>{#if direction === 'asc'}
+							{#if orderBy === 'credit'}
+								<span class="font-normal"
+									>{#if direction === 'asc'}
+										<ChevronUp className="size-2" />
+									{:else}
+										<ChevronDown className="size-2" />
+									{/if}
+								</span>
+							{:else}
+								<span class="invisible">
 									<ChevronUp className="size-2" />
-								{:else}
-									<ChevronDown className="size-2" />
-								{/if}
-							</span>
-						{:else}
-							<span class="invisible">
-								<ChevronUp className="size-2" />
-							</span>
-						{/if}
-					</div>
-				</th>
+								</span>
+							{/if}
+						</div>
+					</th>
 
 					<th
 						scope="col"
