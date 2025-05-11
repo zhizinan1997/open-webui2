@@ -40,6 +40,7 @@ from open_webui.routers.pipelines import (
 from open_webui.models.functions import Functions
 from open_webui.models.models import Models
 from open_webui.utils.credit.usage import CreditDeduct
+from open_webui.utils.credit.utils import check_credit_by_user_id
 
 from open_webui.utils.plugin import load_function_module_by_id
 from open_webui.utils.models import get_all_models, check_model_access
@@ -162,6 +163,8 @@ async def generate_chat_completion(
     user: Any,
     bypass_filter: bool = False,
 ):
+    check_credit_by_user_id(user_id=user.id, form_data=form_data)
+
     log.debug(f"generate_chat_completion: {form_data}")
     if BYPASS_MODEL_ACCESS_CONTROL:
         bypass_filter = True
