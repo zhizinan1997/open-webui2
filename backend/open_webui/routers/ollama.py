@@ -36,6 +36,7 @@ from starlette.background import BackgroundTask
 
 
 from open_webui.models.models import Models
+from open_webui.utils.credit.utils import check_credit_by_user_id
 from open_webui.utils.misc import (
     calculate_sha256,
 )
@@ -1321,6 +1322,8 @@ async def generate_openai_chat_completion(
     url_idx: Optional[int] = None,
     user=Depends(get_verified_user),
 ):
+    check_credit_by_user_id(user_id=user.id, form_data=form_data)
+
     metadata = form_data.pop("metadata", None)
 
     try:
