@@ -88,12 +88,12 @@ export const listAllCreditLog = async (
 	token: string,
 	page: number,
 	limit: number,
-	user_id: string
+	query: string
 ) => {
 	let error = null;
 
 	const res = await fetch(
-		`${WEBUI_API_BASE_URL}/credit/all_logs?page=${page}&limit=${limit}&user_id=${user_id}`,
+		`${WEBUI_API_BASE_URL}/credit/all_logs?page=${page}&limit=${limit}&query=${query}`,
 		{
 			method: 'GET',
 			headers: {
