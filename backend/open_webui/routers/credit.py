@@ -53,20 +53,27 @@ async def list_credit_logs(
 
 @router.get("/all_logs")
 async def get_all_logs(
-    user_id: Optional[str] = None,
+    query: Optional[str] = None,
     page: Optional[int] = None,
     limit: Optional[int] = None,
     _: UserModel = Depends(get_admin_user),
 ):
+    # init params
     page = page or 1
     limit = limit or 10
     offset = (page - 1) * limit
-    results = CreditLogs.get_credit_log_by_page(
-        user_id=user_id, offset=offset, limit=limit
-    )
-    total = CreditLogs.count_credit_log(user_id=user_id)
-    users = Users.get_users()
+    # query users
+    users = Users.get_users(filter={"query": query})
     user_map = {user.id: user.name for user in users["users"]}
+    if query and not user_map:
+        return {"total": 0, "results": []}
+    # query db
+    user_ids = list(user_map.keys()) if query else None
+    results = CreditLogs.get_credit_log_by_page(
+        user_ids=user_ids, offset=offset, limit=limit
+    )
+    total = CreditLogs.count_credit_log(user_ids=user_ids)
+    # add username to results
     for result in results:
         setattr(result, "username", user_map.get(result.user_id, ""))
     return {"total": total, "results": results}

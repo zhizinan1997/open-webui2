@@ -288,23 +288,23 @@ TradeTickets = TradeTicketTable()
 
 
 class CreditLogTable:
-    def count_credit_log(self, user_id: Optional[str] = None) -> int:
+    def count_credit_log(self, user_ids: list[str] = None) -> int:
         with get_db() as db:
             query = db.query(CreditLog).order_by(CreditLog.created_at.desc())
-            if user_id:
-                query = query.filter(CreditLog.user_id == user_id)
+            if user_ids:
+                query = query.filter(CreditLog.user_id.in_(user_ids))
             return query.count()
 
     def get_credit_log_by_page(
         self,
-        user_id: str = "",
+        user_ids: list[str] = None,
         offset: Optional[int] = None,
         limit: Optional[int] = None,
     ) -> list[CreditLogSimpleModel]:
         with get_db() as db:
             query = db.query(CreditLog).order_by(CreditLog.created_at.desc())
-            if user_id:
-                query = query.filter(CreditLog.user_id == user_id)
+            if user_ids:
+                query = query.filter(CreditLog.user_id.in_(user_ids))
             if offset:
                 query = query.offset(offset)
             if limit:
