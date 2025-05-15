@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - 积分日志搜索修改为搜索用户名
+- 移除自定义滚动条样式
 
 ## [0.6.9.1] - 2025.05.11
 
