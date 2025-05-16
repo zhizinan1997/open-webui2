@@ -122,6 +122,10 @@
 		if (!modelTokenPieChart) {
 			modelTokenPieChart = echarts.init(modelTokenPie, echartsTheme);
 		}
+
+		const _modelTokenPieData = mergeData(data.model_token_pie)
+		const modelTokenPieX = _modelTokenPieData.map(item => item.name)
+		const modelTokenPieY = _modelTokenPieData.map(item => item.value)
 		modelTokenPieOption = {
 			title: {
 				text: $i18n.t('Model Tokens Cost'),
@@ -134,16 +138,26 @@
 				type: 'scroll',
 				bottom: '10px',
 				left: '10px',
-				right: '10px'
+				right: '10px',
+				data: ['modelToken']
 			},
 			tooltip: {
-				show: true
+				show: true,
+				trigger: 'axis'
 			},
+			xAxis: {
+				data: modelTokenPieX
+			},
+			yAxis: {},
 			series: [
 				{
-					type: 'pie',
-					data: mergeData(data.model_token_pie),
-					radius: ['40%', '60%']
+					name: 'modelToken',
+					type: 'bar',
+					data: modelTokenPieY,
+					barMaxWidth: 40,
+					itemStyle: {
+						barBorderRadius: 5,
+					}
 				}
 			]
 		};
@@ -152,6 +166,9 @@
 		if (!modelCostPieChart) {
 			modelCostPieChart = echarts.init(modelCostPie, echartsTheme);
 		}
+		const _modelCostPieData = mergeData(data.model_cost_pie)
+		const modelCostPieX = _modelCostPieData.map(item => item.name)
+		const modelCostPieY = _modelCostPieData.map(item => item.value)
 		modelCostPieOption = {
 			title: {
 				text: $i18n.t('Model Credit Cost'),
@@ -164,16 +181,26 @@
 				type: 'scroll',
 				bottom: '10px',
 				left: '10px',
-				right: '10px'
+				right: '10px',
+				data: ['modelCost']
 			},
 			tooltip: {
-				show: true
+				show: true,
+				trigger: 'axis'
 			},
+			xAxis: {
+				data: modelCostPieX
+			},
+			yAxis: {},
 			series: [
 				{
-					type: 'pie',
-					data: mergeData(data.model_cost_pie),
-					radius: ['40%', '60%']
+					name: 'modelToken',
+					type: 'bar',
+					data: modelCostPieY,
+					barMaxWidth: 40,
+					itemStyle: {
+						barBorderRadius: 5
+					}
 				}
 			]
 		};
@@ -182,6 +209,9 @@
 		if (!userTokenPieChart) {
 			userTokenPieChart = echarts.init(userTokenPie, echartsTheme);
 		}
+		const _userTokenPieData = mergeData(data.user_token_pie)
+		const userTokenX = _userTokenPieData.map(item => item.name)
+		const userTokenY = _userTokenPieData.map(item => item.value)
 		userTokenPieOption = {
 			title: {
 				text: $i18n.t('User Tokens Cost'),
@@ -194,16 +224,26 @@
 				type: 'scroll',
 				bottom: '10px',
 				left: '10px',
-				right: '10px'
+				right: '10px',
+				data: ['userToken']
 			},
 			tooltip: {
-				show: true
+				show: true,
+				trigger: 'axis'
 			},
+			xAxis: {
+				data: userTokenX
+			},
+			yAxis: {},
 			series: [
 				{
-					type: 'pie',
-					data: mergeData(data.user_token_pie),
-					radius: ['40%', '60%']
+					name: 'userToken',
+					type: 'bar',
+					data: userTokenY,
+					barMaxWidth: 40,
+					itemStyle: {
+						barBorderRadius: 5,
+					}
 				}
 			]
 		};
@@ -212,6 +252,9 @@
 		if (!userCostPieChart) {
 			userCostPieChart = echarts.init(userCostPie, echartsTheme);
 		}
+		const _userCostPieData = mergeData(data.user_cost_pie)
+		const userCostX = _userCostPieData.map(item => item.name)
+		const userCostY = _userCostPieData.map(item => item.value)
 		userCostPieOption = {
 			title: {
 				text: $i18n.t('User Credit Cost'),
@@ -224,16 +267,26 @@
 				type: 'scroll',
 				bottom: '10px',
 				left: '10px',
-				right: '10px'
+				right: '10px',
+				data: ['userCost'],
 			},
 			tooltip: {
-				show: true
+				show: true,
+				trigger: 'axis'
 			},
+			xAxis: {
+				data: userCostX
+			},
+			yAxis: {},
 			series: [
 				{
-					type: 'pie',
-					data: mergeData(data.user_cost_pie),
-					radius: ['40%', '60%']
+					name: 'userCost',
+					type: 'bar',
+					data: userCostY,
+					barMaxWidth: 40,
+					itemStyle: {
+						barBorderRadius: 5,
+					}
 				}
 			]
 		};
