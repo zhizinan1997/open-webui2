@@ -28,6 +28,8 @@ log.setLevel(SRC_LOG_LEVELS["MAIN"])
 
 router = APIRouter()
 
+PAGE_ITEM_COUNT = 30
+
 
 @router.get("/config")
 async def get_config(request: Request):
@@ -42,7 +44,7 @@ async def list_credit_logs(
     page: Optional[int] = None, user: UserModel = Depends(get_current_user)
 ) -> TradeTicketModel:
     if page:
-        limit = 10
+        limit = PAGE_ITEM_COUNT
         offset = (page - 1) * limit
         return CreditLogs.get_credit_log_by_page(
             user_ids=[user.id], offset=offset, limit=limit
@@ -60,7 +62,7 @@ async def get_all_logs(
 ):
     # init params
     page = page or 1
-    limit = limit or 10
+    limit = limit or PAGE_ITEM_COUNT
     offset = (page - 1) * limit
     # query users
     users = Users.get_users(filter={"query": query})
