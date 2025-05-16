@@ -134,13 +134,6 @@
 					fontWeight: '400'
 				}
 			},
-			legend: {
-				type: 'scroll',
-				bottom: '10px',
-				left: '10px',
-				right: '10px',
-				data: ['modelToken']
-			},
 			tooltip: {
 				show: true,
 				trigger: 'axis'
@@ -151,7 +144,6 @@
 			yAxis: {},
 			series: [
 				{
-					name: 'modelToken',
 					type: 'bar',
 					data: modelTokenPieY,
 					barMaxWidth: 40,
@@ -177,13 +169,6 @@
 					fontWeight: '400'
 				}
 			},
-			legend: {
-				type: 'scroll',
-				bottom: '10px',
-				left: '10px',
-				right: '10px',
-				data: ['modelCost']
-			},
 			tooltip: {
 				show: true,
 				trigger: 'axis'
@@ -194,7 +179,6 @@
 			yAxis: {},
 			series: [
 				{
-					name: 'modelToken',
 					type: 'bar',
 					data: modelCostPieY,
 					barMaxWidth: 40,
@@ -220,13 +204,6 @@
 					fontWeight: '400'
 				}
 			},
-			legend: {
-				type: 'scroll',
-				bottom: '10px',
-				left: '10px',
-				right: '10px',
-				data: ['userToken']
-			},
 			tooltip: {
 				show: true,
 				trigger: 'axis'
@@ -237,7 +214,6 @@
 			yAxis: {},
 			series: [
 				{
-					name: 'userToken',
 					type: 'bar',
 					data: userTokenY,
 					barMaxWidth: 40,
@@ -263,13 +239,6 @@
 					fontWeight: '400'
 				}
 			},
-			legend: {
-				type: 'scroll',
-				bottom: '10px',
-				left: '10px',
-				right: '10px',
-				data: ['userCost']
-			},
 			tooltip: {
 				show: true,
 				trigger: 'axis'
@@ -280,7 +249,6 @@
 			yAxis: {},
 			series: [
 				{
-					name: 'userCost',
 					type: 'bar',
 					data: userCostY,
 					barMaxWidth: 40,
