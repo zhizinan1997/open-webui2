@@ -123,9 +123,9 @@
 			modelTokenPieChart = echarts.init(modelTokenPie, echartsTheme);
 		}
 
-		const _modelTokenPieData = mergeData(data.model_token_pie)
-		const modelTokenPieX = _modelTokenPieData.map(item => item.name)
-		const modelTokenPieY = _modelTokenPieData.map(item => item.value)
+		const _modelTokenPieData = mergeData(data.model_token_pie);
+		const modelTokenPieX = _modelTokenPieData.map((item) => item.name);
+		const modelTokenPieY = _modelTokenPieData.map((item) => item.value);
 		modelTokenPieOption = {
 			title: {
 				text: $i18n.t('Model Tokens Cost'),
@@ -156,7 +156,7 @@
 					data: modelTokenPieY,
 					barMaxWidth: 40,
 					itemStyle: {
-						barBorderRadius: 5,
+						barBorderRadius: 5
 					}
 				}
 			]
@@ -166,9 +166,9 @@
 		if (!modelCostPieChart) {
 			modelCostPieChart = echarts.init(modelCostPie, echartsTheme);
 		}
-		const _modelCostPieData = mergeData(data.model_cost_pie)
-		const modelCostPieX = _modelCostPieData.map(item => item.name)
-		const modelCostPieY = _modelCostPieData.map(item => item.value)
+		const _modelCostPieData = mergeData(data.model_cost_pie);
+		const modelCostPieX = _modelCostPieData.map((item) => item.name);
+		const modelCostPieY = _modelCostPieData.map((item) => item.value);
 		modelCostPieOption = {
 			title: {
 				text: $i18n.t('Model Credit Cost'),
@@ -209,9 +209,9 @@
 		if (!userTokenPieChart) {
 			userTokenPieChart = echarts.init(userTokenPie, echartsTheme);
 		}
-		const _userTokenPieData = mergeData(data.user_token_pie)
-		const userTokenX = _userTokenPieData.map(item => item.name)
-		const userTokenY = _userTokenPieData.map(item => item.value)
+		const _userTokenPieData = mergeData(data.user_token_pie);
+		const userTokenX = _userTokenPieData.map((item) => item.name);
+		const userTokenY = _userTokenPieData.map((item) => item.value);
 		userTokenPieOption = {
 			title: {
 				text: $i18n.t('User Tokens Cost'),
@@ -242,7 +242,7 @@
 					data: userTokenY,
 					barMaxWidth: 40,
 					itemStyle: {
-						barBorderRadius: 5,
+						barBorderRadius: 5
 					}
 				}
 			]
@@ -252,9 +252,9 @@
 		if (!userCostPieChart) {
 			userCostPieChart = echarts.init(userCostPie, echartsTheme);
 		}
-		const _userCostPieData = mergeData(data.user_cost_pie)
-		const userCostX = _userCostPieData.map(item => item.name)
-		const userCostY = _userCostPieData.map(item => item.value)
+		const _userCostPieData = mergeData(data.user_cost_pie);
+		const userCostX = _userCostPieData.map((item) => item.name);
+		const userCostY = _userCostPieData.map((item) => item.value);
 		userCostPieOption = {
 			title: {
 				text: $i18n.t('User Credit Cost'),
@@ -268,7 +268,7 @@
 				bottom: '10px',
 				left: '10px',
 				right: '10px',
-				data: ['userCost'],
+				data: ['userCost']
 			},
 			tooltip: {
 				show: true,
@@ -285,7 +285,7 @@
 					data: userCostY,
 					barMaxWidth: 40,
 					itemStyle: {
-						barBorderRadius: 5,
+						barBorderRadius: 5
 					}
 				}
 			]
