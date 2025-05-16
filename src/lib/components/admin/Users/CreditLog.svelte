@@ -7,7 +7,7 @@
 	const i18n = getContext('i18n');
 
 	let page = 1;
-	let limit = 10;
+	let limit = 30;
 	let total = 0;
 
 	$: if (page) {
