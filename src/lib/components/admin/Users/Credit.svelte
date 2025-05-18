@@ -6,7 +6,7 @@
 	import type { EChartsType } from 'echarts';
 	import { theme } from '$lib/stores';
 
-	const maxDimensions = 15;
+	const maxDimensions = 20;
 	const echartsTheme = $theme.includes('dark') ? 'dark' : 'light';
 
 	let userPaymentLine: HTMLDivElement;
@@ -122,10 +122,6 @@
 		if (!modelTokenPieChart) {
 			modelTokenPieChart = echarts.init(modelTokenPie, echartsTheme);
 		}
-
-		const _modelTokenPieData = mergeData(data.model_token_pie);
-		const modelTokenPieX = _modelTokenPieData.map((item) => item.name);
-		const modelTokenPieY = _modelTokenPieData.map((item) => item.value);
 		modelTokenPieOption = {
 			title: {
 				text: $i18n.t('Model Tokens Cost'),
@@ -134,21 +130,22 @@
 					fontWeight: '400'
 				}
 			},
+			legend: {
+				type: 'scroll',
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
+			},
 			tooltip: {
-				show: true,
-				trigger: 'axis'
+				show: true
 			},
-			xAxis: {
-				data: modelTokenPieX
-			},
-			yAxis: {},
 			series: [
 				{
-					type: 'bar',
-					data: modelTokenPieY,
-					barMaxWidth: 40,
-					itemStyle: {
-						barBorderRadius: 5
+					type: 'pie',
+					data: mergeData(data.model_token_pie),
+					radius: ['40%', '60%'],
+					label: {
+						formatter: '{b}: {c}'
 					}
 				}
 			]
@@ -158,9 +155,6 @@
 		if (!modelCostPieChart) {
 			modelCostPieChart = echarts.init(modelCostPie, echartsTheme);
 		}
-		const _modelCostPieData = mergeData(data.model_cost_pie);
-		const modelCostPieX = _modelCostPieData.map((item) => item.name);
-		const modelCostPieY = _modelCostPieData.map((item) => item.value);
 		modelCostPieOption = {
 			title: {
 				text: $i18n.t('Model Credit Cost'),
@@ -169,21 +163,22 @@
 					fontWeight: '400'
 				}
 			},
+			legend: {
+				type: 'scroll',
+				bottom: '10px',
+				left: '10px',
+				right: '10px'
+			},
 			tooltip: {
-				show: true,
-				trigger: 'axis'
+				show: true
 			},
-			xAxis: {
-				data: modelCostPieX
-			},
-			yAxis: {},
 			series: [
 				{
-					type: 'bar',
-					data: modelCostPieY,
-					barMaxWidth: 40,
-					itemStyle: {
-						barBorderRadius: 5
+					type: 'pie',
+					data: mergeData(data.model_cost_pie),
+					radius: ['40%', '60%'],
+					label: {
+						formatter: '{b}: {c}'
 					}
 				}
 			]
@@ -209,7 +204,17 @@
 				trigger: 'axis'
 			},
 			xAxis: {
-				data: userTokenX
+				data: userTokenX,
+				type: 'category',
+				axisLabel: {
+					interval: 0,
+					rotate: 45,
+					width: 80,
+					margin: 24,
+					overflow: 'truncate',
+					align: 'center',
+					verticalAlign: 'middle'
+				}
 			},
 			yAxis: {},
 			series: [
@@ -217,8 +222,17 @@
 					type: 'bar',
 					data: userTokenY,
 					barMaxWidth: 40,
+					showBackground: true,
+					backgroundStyle: {
+						borderRadius: [5, 5, 0, 0]
+					},
 					itemStyle: {
-						barBorderRadius: 5
+						barBorderRadius: [5, 5, 0, 0]
+					},
+					colorBy: 'data',
+					label: {
+						show: true,
+						position: 'top'
 					}
 				}
 			]
@@ -244,7 +258,17 @@
 				trigger: 'axis'
 			},
 			xAxis: {
-				data: userCostX
+				data: userCostX,
+				type: 'category',
+				axisLabel: {
+					interval: 0,
+					rotate: 45,
+					width: 80,
+					margin: 24,
+					overflow: 'truncate',
+					align: 'center',
+					verticalAlign: 'middle'
+				}
 			},
 			yAxis: {},
 			series: [
@@ -252,8 +276,17 @@
 					type: 'bar',
 					data: userCostY,
 					barMaxWidth: 40,
+					showBackground: true,
+					backgroundStyle: {
+						borderRadius: [5, 5, 0, 0]
+					},
 					itemStyle: {
-						barBorderRadius: 5
+						barBorderRadius: [5, 5, 0, 0]
+					},
+					colorBy: 'data',
+					label: {
+						show: true,
+						position: 'top'
 					}
 				}
 			]
