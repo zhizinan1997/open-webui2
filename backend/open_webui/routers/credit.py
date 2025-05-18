@@ -178,6 +178,8 @@ async def get_statistics(
     user_map = {user.id: user.name for user in users}
 
     # build graph data
+    total_tokens = 0
+    total_credit = 0
     model_cost_pie = defaultdict(int)
     model_token_pie = defaultdict(int)
     user_cost_pie = defaultdict(int)
@@ -190,6 +192,9 @@ async def get_statistics(
         if not model:
             continue
 
+        total_tokens += log.detail.usage.total_tokens
+        total_credit += log.detail.usage.total_price
+
         model_key = log.detail.api_params.model.id
         model_cost_pie[model_key] += log.detail.usage.total_price
         model_token_pie[model_key] += log.detail.usage.total_tokens
@@ -199,6 +204,7 @@ async def get_statistics(
         user_token_pie[user_key] += log.detail.usage.total_tokens
 
     # build trade data
+    total_payment = 0
     user_payment_data = defaultdict(Decimal)
     for log in trade_logs:
         callback = log.detail.get("callback")
@@ -208,6 +214,7 @@ async def get_statistics(
             continue
         time_key = datetime.datetime.fromtimestamp(log.created_at).strftime("%Y-%m-%d")
         user_payment_data[time_key] += log.amount
+        total_payment += log.amount
     user_payment_stats_x = []
     user_payment_stats_y = []
     for key, val in user_payment_data.items():
@@ -216,6 +223,8 @@ async def get_statistics(
 
     # response
     return {
+        "total_tokens": total_tokens,
+        "total_credit": total_credit,
         "model_cost_pie": [
             {"name": model, "value": total} for model, total in model_cost_pie.items()
         ],
@@ -230,6 +239,7 @@ async def get_statistics(
             {"name": user.split(":", 1)[1], "value": total}
             for user, total in user_token_pie.items()
         ],
+        "total_payment": total_payment,
         "user_payment_stats_x": user_payment_stats_x,
         "user_payment_stats_y": user_payment_stats_y,
     }

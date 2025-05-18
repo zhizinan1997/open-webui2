@@ -36,13 +36,18 @@
 		value: number;
 	};
 	type Data = {
+		total_tokens: Number;
+		total_credit: Number;
 		model_cost_pie: Array<ChartItem>;
 		model_token_pie: Array<ChartItem>;
 		user_cost_pie: Array<ChartItem>;
 		user_token_pie: Array<ChartItem>;
+		total_payment: Number;
 		user_payment_stats_x: Array<String>;
 		user_payment_stats_y: Array<Number>;
 	};
+
+	let statsData: Data = {};
 
 	let period = 7;
 
@@ -76,6 +81,7 @@
 		});
 
 		if (data) {
+			statsData = data;
 			drawChart(data);
 		}
 	};
@@ -345,6 +351,23 @@
 		>
 			{$i18n.t('Today')}
 		</button>
+	</div>
+
+	<div
+		class="mt-2 flex justify-between items-center bg-gray-50 rounded-md dark:text-gray-300 dark:bg-gray-850"
+	>
+		<div class="flex flex-col items-center w-full">
+			<span class="text-gray-500 text-xs mb-1">{$i18n.t('Total Payment')}</span>
+			<div class="text-blue-600 font-medium">{statsData.total_payment ?? 0}</div>
+		</div>
+		<div class="flex flex-col items-center border-x border-gray-200 w-full">
+			<span class="text-gray-500 text-xs mb-1">{$i18n.t('Total Credit Cost')}</span>
+			<div class="text-green-600 font-medium">{statsData.total_credit ?? 0}</div>
+		</div>
+		<div class="flex flex-col items-center w-full">
+			<span class="text-gray-500 text-xs mb-1">{$i18n.t('Total Token Cost')}</span>
+			<div class="text-purple-600 font-medium">{statsData.total_tokens ?? 0}</div>
+		</div>
 	</div>
 
 	<div
