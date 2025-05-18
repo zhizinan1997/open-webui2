@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.X] - 2025.05.12
 
+### Added
+
+- 积分统计增加总充值和总消耗信息
+
 ### Changed
 
-- 积分统计信息修改为柱状图
 - 积分日志搜索修改为搜索用户名
 - 移除自定义滚动条样式
 - 修改积分日志单页数量为 30
