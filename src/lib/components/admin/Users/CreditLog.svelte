@@ -7,23 +7,23 @@
 	const i18n = getContext('i18n');
 
 	let page = 1;
-	let limit = 10;
+	let limit = 30;
 	let total = 0;
 
 	$: if (page) {
 		doQuery();
 	}
 
-	let userID = '';
+	let query = '';
 
-	$: if (userID !== undefined) {
+	$: if (query !== undefined) {
 		page = 1;
 		doQuery();
 	}
 
 	let logs = [];
 	const doQuery = async () => {
-		const data = await listAllCreditLog(localStorage.token, page, limit, userID).catch((error) => {
+		const data = await listAllCreditLog(localStorage.token, page, limit, query).catch((error) => {
 			toast.error(`${error}`);
 			return null;
 		});
@@ -85,8 +85,8 @@
 				</div>
 				<input
 					class=" w-full text-sm pr-4 py-1 rounded-r-xl outline-hidden bg-transparent"
-					bind:value={userID}
-					placeholder={$i18n.t('Search User ID')}
+					bind:value={query}
+					placeholder={$i18n.t('Search')}
 				/>
 			</div>
 		</div>
@@ -104,7 +104,7 @@
 					{$i18n.t('Date')}
 				</th>
 				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('User (User ID)')}
+					{$i18n.t('User')}
 				</th>
 				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Credit')}
@@ -127,7 +127,7 @@
 					</td>
 					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit">
 						<div class=" line-clamp-1">
-							{log.username || '- -'} ({log.user_id})
+							{log.username || log.user_id}
 						</div>
 					</td>
 					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit">
