@@ -5,6 +5,9 @@
 	import * as echarts from 'echarts';
 	import type { EChartsType } from 'echarts';
 	import { theme } from '$lib/stores';
+	import flatpickr from 'flatpickr';
+	import 'flatpickr/dist/flatpickr.css';
+	import { Mandarin } from 'flatpickr/dist/l10n/zh.js';
 
 	const maxDimensions = 20;
 	const echartsTheme = $theme.includes('dark') ? 'dark' : 'light';
@@ -54,11 +57,6 @@
 	let endTime = new Date();
 	let startTime = new Date();
 
-	const onChangePeriod = async (p: number) => {
-		period = p;
-		await doQuery();
-	};
-
 	const mergeData = (data: Array<ChartItem>) => {
 		let sorted = data.sort((a, b) => b.value - a.value);
 		let topItems = sorted.slice(0, maxDimensions);
@@ -67,11 +65,10 @@
 		return [...topItems, ...(restSum > 0 ? [{ name: $i18n.t('Other'), value: restSum }] : [])];
 	};
 
-	const doQuery = async () => {
-		endTime = new Date();
-		startTime = new Date();
-		startTime.setDate(endTime.getDate() - period);
+	let dateRangeInput;
+	let fp;
 
+	const doQuery = async (startTime: Date, endTime: Date) => {
 		const data = await getCreditStats(localStorage.token, {
 			start_time: Math.round(startTime.getTime() / 1000),
 			end_time: Math.round(endTime.getTime() / 1000)
@@ -301,7 +298,51 @@
 	};
 
 	onMount(async () => {
-		await doQuery();
+		if (echartsTheme === 'dark') {
+			await import('flatpickr/dist/themes/dark.css');
+		}
+
+		let locale = null;
+		const lang = document.documentElement.getAttribute('lang');
+		if (lang === 'zh-CN') {
+			locale = Mandarin;
+		}
+
+		const end = new Date();
+		const start = new Date();
+		start.setDate(end.getDate() - 7);
+
+		const thirtyDaysAgo = new Date();
+		thirtyDaysAgo.setDate(end.getDate() - 30);
+		const tomorrow = new Date();
+		tomorrow.setDate(end.getDate() + 1);
+
+		fp = flatpickr(dateRangeInput, {
+			locale: locale,
+			mode: 'range',
+			dateFormat: 'Y-m-d H:i:S',
+			enableTime: true,
+			animate: true,
+			allowInput: true,
+			defaultDate: [start, end],
+			defaultHour: 0,
+			maxDate: tomorrow,
+			minDate: thirtyDaysAgo,
+			position: 'auto center',
+			showMonths: 2,
+			time_24hr: true,
+			onChange: async (selectedDates, dateStr, _) => {
+				if (selectedDates.length === 2) {
+					await doQuery(selectedDates[0], selectedDates[1]);
+				}
+			}
+		});
+
+		await doQuery(start, end);
+
+		return () => {
+			fp.destroy();
+		};
 	});
 </script>
 
@@ -310,47 +351,13 @@
 		{$i18n.t('Credit Statistics')}
 	</div>
 
-	<div class="mt-2 flex justify-around h-[36px] white">
-		<button
-			class="w-full mr-2 rounded-md {period === 30
-				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
-				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
-			on:click={async () => {
-				await onChangePeriod(30);
-			}}
-		>
-			{$i18n.t('Last 30 Days')}
-		</button>
-		<button
-			class="w-full mr-2 rounded-md {period === 14
-				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
-				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
-			on:click={async () => {
-				await onChangePeriod(14);
-			}}
-		>
-			{$i18n.t('Last 14 Days')}
-		</button>
-		<button
-			class="w-full mr-2 rounded-md {period === 7
-				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
-				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
-			on:click={async () => {
-				await onChangePeriod(7);
-			}}
-		>
-			{$i18n.t('Last 7 Days')}
-		</button>
-		<button
-			class="w-full rounded-md {period === 1
-				? 'bg-gray-200 dark:text-stone-900 dark:bg-gray-750'
-				: 'bg-gray-50 dark:text-gray-300 dark:bg-gray-850'}"
-			on:click={async () => {
-				await onChangePeriod(1);
-			}}
-		>
-			{$i18n.t('Today')}
-		</button>
+	<div class="mt-2 flex justify-around h-[48px] white">
+		<input
+			bind:this={dateRangeInput}
+			type="text"
+			class="w-full mr-2 rounded-md bg-gray-50 dark:text-gray-300 dark:bg-gray-850 text-center font-medium"
+			readonly
+		/>
 	</div>
 
 	<div
