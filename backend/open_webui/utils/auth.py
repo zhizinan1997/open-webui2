@@ -13,6 +13,8 @@ import pytz
 from pytz import UTC
 from typing import Optional, Union, List, Dict
 
+from opentelemetry import trace
+
 from open_webui.config import WEBUI_URL
 from open_webui.utils.smtp import send_email
 
@@ -251,7 +253,17 @@ def get_current_user(
                     status.HTTP_403_FORBIDDEN, detail=ERROR_MESSAGES.API_KEY_NOT_ALLOWED
                 )
 
-        return get_current_user_by_api_key(token)
+        user = get_current_user_by_api_key(token)
+
+        # Add user info to current span
+        current_span = trace.get_current_span()
+        if current_span:
+            current_span.set_attribute("client.user.id", user.id)
+            current_span.set_attribute("client.user.email", user.email)
+            current_span.set_attribute("client.user.role", user.role)
+            current_span.set_attribute("client.auth.type", "api_key")
+
+        return user
 
     # auth by jwt token
     try:
@@ -270,6 +282,14 @@ def get_current_user(
                 detail=ERROR_MESSAGES.INVALID_TOKEN,
             )
         else:
+            # Add user info to current span
+            current_span = trace.get_current_span()
+            if current_span:
+                current_span.set_attribute("client.user.id", user.id)
+                current_span.set_attribute("client.user.email", user.email)
+                current_span.set_attribute("client.user.role", user.role)
+                current_span.set_attribute("client.auth.type", "jwt")
+
             # Refresh the user's last active timestamp asynchronously
             # to prevent blocking the request
             if background_tasks:
@@ -291,6 +311,14 @@ def get_current_user_by_api_key(api_key: str):
             detail=ERROR_MESSAGES.INVALID_TOKEN,
         )
     else:
+        # Add user info to current span
+        current_span = trace.get_current_span()
+        if current_span:
+            current_span.set_attribute("client.user.id", user.id)
+            current_span.set_attribute("client.user.email", user.email)
+            current_span.set_attribute("client.user.role", user.role)
+            current_span.set_attribute("client.auth.type", "api_key")
+
         Users.update_user_last_active_by_id(user.id)
 
     return user
