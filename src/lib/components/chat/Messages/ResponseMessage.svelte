@@ -1180,6 +1180,7 @@
 														.join('\n')
 												)}</pre>`
 											: ''}
+										tippyOptions={{ interactive: true }}
 										placement="bottom"
 									>
 										<button
