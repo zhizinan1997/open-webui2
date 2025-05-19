@@ -355,7 +355,7 @@
 		<input
 			bind:this={dateRangeInput}
 			type="text"
-			class="w-full mr-2 rounded-md bg-gray-50 dark:text-gray-300 dark:bg-gray-850 text-center font-medium"
+			class="w-full rounded-md bg-gray-50 dark:text-gray-300 dark:bg-gray-850 text-center font-medium"
 			readonly
 		/>
 	</div>
