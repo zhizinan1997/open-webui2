@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.X] - 2025.05.12
+## [0.6.10.1] - 2025.05.19
 
 ### Added
 
@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 积分日志搜索修改为搜索用户名
 - 移除自定义滚动条样式
 - 修改积分日志单页数量为 30
+- 合并官方 0.6.10 改动
 
 ## [0.6.9.1] - 2025.05.11
 
