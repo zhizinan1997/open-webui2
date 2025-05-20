@@ -327,7 +327,7 @@
 						>
 							{#if logs.length > 0}
 								<table
-									class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm}"
+									class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed max-w-full rounded-sm}"
 								>
 									<thead
 										class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 -translate-y-0.5"
@@ -353,21 +353,21 @@
 												<td
 													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
 												>
-													<div class=" line-clamp-1">
+													<div class="line-clamp-1">
 														{formatDate(log.created_at)}
 													</div>
 												</td>
 												<td
 													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
 												>
-													<div class=" line-clamp-1">
+													<div class="line-clamp-1">
 														{parseFloat(log.credit).toFixed(6)}
 													</div>
 												</td>
 												<td
 													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
 												>
-													<div class=" line-clamp-1">
+													<div class="truncate">
 														{log.detail?.api_params?.model?.name ||
 															log.detail?.api_params?.model?.id ||
 															'- -'}
@@ -376,7 +376,7 @@
 												<td
 													class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white w-fit"
 												>
-													<div class=" line-clamp-1">
+													<div class="line-clamp-1">
 														{formatDesc(log)}
 													</div>
 												</td>

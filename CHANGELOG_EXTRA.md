@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 优化用量信息的交互
 
+### Fixed
+
+- 修复积分日志在部分场景下的样式异常
+
 ## [0.6.10.1] - 2025.05.19
 
 ### Added
