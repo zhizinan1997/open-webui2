@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Cấu hình API OpenAI",
 	"OpenAI API Key is required.": "Bắt buộc nhập API OpenAI Key.",
 	"OpenAI API settings updated": "Đã cập nhật cài đặt API OpenAI",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "Yêu cầu URL/Key API OpenAI.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

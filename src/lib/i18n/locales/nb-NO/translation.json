@@ -929,6 +929,7 @@
 	"OpenAI API Config": "API-konfigurasjon for OpenAI",
 	"OpenAI API Key is required.": "API-nøkkel for OpenAI kreves.",
 	"OpenAI API settings updated": "API-innstillinger for OpenAI er oppdatert",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "URL/nøkkel for OpenAI kreves.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

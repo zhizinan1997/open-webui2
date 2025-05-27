@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API konfigurazioa",
 	"OpenAI API Key is required.": "OpenAI API gakoa beharrezkoa da.",
 	"OpenAI API settings updated": "OpenAI API ezarpenak eguneratu dira",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/Gakoa beharrezkoa da.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

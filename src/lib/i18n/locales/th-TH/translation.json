@@ -929,6 +929,7 @@
 	"OpenAI API Config": "การตั้งค่า OpenAI API",
 	"OpenAI API Key is required.": "จำเป็นต้องใช้คีย์ OpenAI API",
 	"OpenAI API settings updated": "",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "จำเป็นต้องใช้ URL/คีย์ OpenAI",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

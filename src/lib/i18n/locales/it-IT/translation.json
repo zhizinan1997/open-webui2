@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Configurazione API OpenAI",
 	"OpenAI API Key is required.": "La Chiave API OpenAI è obbligatoria.",
 	"OpenAI API settings updated": "Impostazioni API OpenAI aggiornate",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "URL/Chiave OpenAI obbligatori.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API कॉन्फिग",
 	"OpenAI API Key is required.": "OpenAI API कुंजी आवश्यक है",
 	"OpenAI API settings updated": "",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/Key आवश्यक है।",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

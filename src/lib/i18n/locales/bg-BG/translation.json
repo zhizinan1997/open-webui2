@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API конфигурация",
 	"OpenAI API Key is required.": "OpenAI API ключ е задължителен.",
 	"OpenAI API settings updated": "Настройките на OpenAI API са актуализирани",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/Key е задължителен.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

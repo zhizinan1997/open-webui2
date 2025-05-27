@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API Konfigürasyonu",
 	"OpenAI API Key is required.": "OpenAI API Anahtarı gereklidir.",
 	"OpenAI API settings updated": "OpenAI API ayarları güncellendi",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/Anahtar gereklidir.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",
