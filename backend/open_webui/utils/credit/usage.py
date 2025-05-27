@@ -150,7 +150,7 @@ class CreditDeduct:
         model_id: str,
         body: dict,
         is_stream: bool,
-        is_embedding: bool,
+        is_embedding: bool = False,
     ) -> None:
         self.remote_id = ""
         self.user = user
