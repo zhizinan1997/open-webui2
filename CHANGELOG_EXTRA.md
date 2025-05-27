@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 支持对 OpenAI 的嵌入计费 (管理员面板-设置-积分)
 
+### Changed
+
+- 优化使用 Filter/Tool/Pipe 后的性能下降 (多副本不一致，需要重启)
+
 ## [0.6.11.1] - 2025.05.27
 
 ### Changed
