@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API 設定",
 	"OpenAI API Key is required.": "需要 OpenAI API 金鑰。",
 	"OpenAI API settings updated": "OpenAI API 設定已更新",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "需要 OpenAI URL 或金鑰。",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

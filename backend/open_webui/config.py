@@ -2918,6 +2918,12 @@ USAGE_CALCULATE_DEFAULT_TOKEN_PRICE = PersistentConfig(
     os.environ.get("USAGE_CALCULATE_DEFAULT_TOKEN_PRICE", "0"),
 )
 
+USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE = PersistentConfig(
+    "USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE",
+    "credit.calculate.default_embedding_price",
+    os.environ.get("USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE", "0"),
+)
+
 USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE = PersistentConfig(
     "USAGE_CALCULATE_FEATURE_IMAGE_GEN_PRICE",
     "credit.calculate.feature.image_gen_price",

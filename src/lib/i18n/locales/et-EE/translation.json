@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API seadistus",
 	"OpenAI API Key is required.": "OpenAI API võti on nõutav.",
 	"OpenAI API settings updated": "OpenAI API seaded uuendatud",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/võti on nõutav.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

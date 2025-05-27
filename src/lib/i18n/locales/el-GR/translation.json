@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Διαμόρφωση API OpenAI",
 	"OpenAI API Key is required.": "Απαιτείται το Κλειδί API OpenAI.",
 	"OpenAI API settings updated": "Οι ρυθμίσεις API OpenAI ενημερώθηκαν",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "Απαιτείται URL/Kλειδί OpenAI.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

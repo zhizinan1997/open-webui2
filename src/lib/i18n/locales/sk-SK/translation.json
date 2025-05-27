@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Konfigurácia API OpenAI",
 	"OpenAI API Key is required.": "Je vyžadovaný kľúč OpenAI API.",
 	"OpenAI API settings updated": "",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "Je vyžadovaný odkaz/adresa URL alebo kľúč OpenAI.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Cumraíocht API OpenAI",
 	"OpenAI API Key is required.": "Tá Eochair API OpenAI ag teastáil.",
 	"OpenAI API settings updated": "Nuashonraíodh socruithe OpenAI API",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "Teastaíonn URL/eochair OpenAI.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

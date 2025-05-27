@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API إعدادات",
 	"OpenAI API Key is required.": "OpenAI API.مطلوب مفتاح ",
 	"OpenAI API settings updated": "تم تحديث إعدادات OpenAI API",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "URL/مفتاح OpenAI.مطلوب عنوان ",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

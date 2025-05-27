@@ -929,6 +929,7 @@
 	"OpenAI API Config": "Configurația API OpenAI",
 	"OpenAI API Key is required.": "Este necesară cheia API OpenAI.",
 	"OpenAI API settings updated": "",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "Este necesar URL-ul/Cheia OpenAI.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",

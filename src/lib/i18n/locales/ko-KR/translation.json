@@ -929,6 +929,7 @@
 	"OpenAI API Config": "OpenAI API 설정",
 	"OpenAI API Key is required.": "OpenAI API 키가 필요합니다.",
 	"OpenAI API settings updated": "OpenAI API 설정이 업데이트되었습니다.",
+	"OpenAI Embedding Price": "",
 	"OpenAI URL/Key required.": "OpenAI URL/키가 필요합니다.",
 	"openapi.json URL or Path": "",
 	"OpenWebUI Host": "",
