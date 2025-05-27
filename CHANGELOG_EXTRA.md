@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.x] - 2025.05.27
 
-## Added
+### Added
 
 - 支持对 OpenAI 的嵌入计费 (管理员面板-设置-积分)
 
