@@ -46,8 +46,6 @@ def apply_model_params_to_body(
         return form_data
 
     for key, value in params.items():
-        if key == "stream_response":
-            continue
         if value is not None:
             if key in mappings:
                 cast_func = mappings[key]
