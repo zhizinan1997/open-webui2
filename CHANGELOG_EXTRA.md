@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.13.1] - 2025.05.30
 
+### Added
+
+- 支持对 Azure OpenAI 及 Ollama 的嵌入计费 (管理员面板-设置-积分)
+
 ### Changed
 
 - 合并官方 0.6.13 改动
