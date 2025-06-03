@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - 支持自定义模型 Logo URL
+- 增加 HTTP Read Buffer Size 配置
 
 ## [0.6.13.1] - 2025.05.30
 
