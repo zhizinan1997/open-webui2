@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 增加 HTTP Read Buffer Size 配置
 - 请求异常时跳过计费
 
+### Changed
+
+- 修改积分统计的最大范围为最近 180 天
+
 ## [0.6.13.1] - 2025.05.30
 
 ### Added
