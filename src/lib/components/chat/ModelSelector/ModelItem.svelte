@@ -38,6 +38,7 @@
 	};
 
 	let showMenu = false;
+	let showExternal = false;
 </script>
 
 <button
@@ -150,7 +151,7 @@
 							</svg>
 						</div>
 					</Tooltip>
-				{:else if item.model.connection_type === 'external'}
+				{:else if item.model.connection_type === 'external' && showExternal}
 					<Tooltip content={`${$i18n.t('External')}`}>
 						<div class="translate-y-[1px]">
 							<svg
@@ -169,6 +170,34 @@
 									d="M7.086 9.975a.75.75 0 0 1-1.06 0 3.5 3.5 0 0 1 0-4.95l2-2a3.5 3.5 0 0 1 5.396 4.402.75.75 0 0 1-1.251-.827 2 2 0 0 0-3.085-2.514l-2 2a2 2 0 0 0 0 2.828.75.75 0 0 1 0 1.06Z"
 									clip-rule="evenodd"
 								/>
+							</svg>
+						</div>
+					</Tooltip>
+				{/if}
+
+				{#if item.model?.info?.price?.request_price || item.model?.info?.price?.prompt_price || item.model?.info?.price?.completion_price}
+					<Tooltip
+						content={item.model?.info?.price?.request_price
+							? `${$i18n.t('Price For 1M Requests')}: ${item.model?.info?.price?.request_price ?? 0}`
+							: `${$i18n.t('Prompt Price For 1M Tokens')}: ${item.model?.info?.price?.prompt_price ?? 0}<br/>` +
+								`${$i18n.t('Completion Price For 1M Tokens')}: ${item.model?.info?.price?.completion_price ?? 0}<br/>`}
+					>
+						<div class=" translate-y-[1px]">
+							<svg
+								class="icon"
+								viewBox="0 0 1024 1024"
+								xmlns="http://www.w3.org/2000/svg"
+								width="13"
+								height="13"
+							>
+								<path
+									d="M512 0C229.23 0 0 229.23 0 512s229.23 512 512 512 512-229.23 512-512S794.77 0 512 0z m316.78 828.78a446.4 446.4 0 1 1 96-142.42 446.59 446.59 0 0 1-96 142.42z"
+									fill="#1F1F21"
+								></path>
+								<path
+									d="M672 512a32 32 0 0 0 0-64H557.25l137.38-137.37a32 32 0 0 0-45.25-45.25L512 402.75 374.63 265.37a32 32 0 0 0-45.25 45.25L466.75 448H352a32 32 0 0 0 0 64h128v64H352a32 32 0 0 0 0 64h128v96a32 32 0 0 0 64 0v-96h128a32 32 0 0 0 0-64H544v-64h128z"
+									fill="#1F1F21"
+								></path>
 							</svg>
 						</div>
 					</Tooltip>
