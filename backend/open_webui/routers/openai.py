@@ -922,6 +922,11 @@ async def embeddings(request: Request, form_data: dict, user):
     Returns:
         dict: OpenAI-compatible embeddings response.
     """
+
+    # check credit
+    if user:
+        check_credit_by_user_id(user_id=user.id, form_data={}, is_embedding=True)
+
     idx = 0
     # Prepare payload/body
     body = json.dumps(form_data)
@@ -959,6 +964,17 @@ async def embeddings(request: Request, form_data: dict, user):
         )
         r.raise_for_status()
         if "text/event-stream" in r.headers.get("Content-Type", ""):
+            if user:
+                with CreditDeduct(
+                    user=user,
+                    model_id=model_id,
+                    body={
+                        "messages": [{"role": "user", "content": form_data["input"]}]
+                    },
+                    is_stream=False,
+                    is_embedding=True,
+                ) as credit_deduct:
+                    credit_deduct.run(form_data["input"])
             streaming = True
             return StreamingResponse(
                 r.content,
@@ -970,6 +986,22 @@ async def embeddings(request: Request, form_data: dict, user):
             )
         else:
             response_data = await r.json()
+            if user:
+                with CreditDeduct(
+                    user=user,
+                    model_id=model_id,
+                    body={
+                        "messages": [{"role": "user", "content": form_data["input"]}]
+                    },
+                    is_stream=False,
+                    is_embedding=True,
+                ) as credit_deduct:
+                    if "usage" in response_data:
+                        prompt_tokens = response_data["usage"]["prompt_tokens"]
+                        credit_deduct.usage.prompt_tokens = prompt_tokens
+                        credit_deduct.usage.total_tokens = prompt_tokens
+                    else:
+                        credit_deduct.run(form_data["input"])
             return response_data
     except Exception as e:
         log.exception(e)

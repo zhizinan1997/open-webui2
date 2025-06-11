@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 支持自定义模型 Logo URL
 - 增加 HTTP Read Buffer Size 配置
 - 请求异常时跳过计费
+- 对 Embedding 接口计费 (/api/embeddings)
 
 ### Changed
 

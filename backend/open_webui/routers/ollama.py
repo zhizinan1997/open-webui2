@@ -38,6 +38,7 @@ from starlette.background import BackgroundTask
 
 
 from open_webui.models.models import Models
+from open_webui.utils.credit.usage import CreditDeduct
 from open_webui.utils.credit.utils import check_credit_by_user_id
 from open_webui.utils.misc import (
     calculate_sha256,
@@ -1076,6 +1077,10 @@ async def embeddings(
 ):
     log.info(f"generate_ollama_embeddings {form_data}")
 
+    # check credit
+    if user:
+        check_credit_by_user_id(user_id=user.id, form_data={}, is_embedding=True)
+
     if url_idx is None:
         await get_all_models(request, user=user)
         models = request.app.state.OLLAMA_MODELS
@@ -1127,6 +1132,19 @@ async def embeddings(
         r.raise_for_status()
 
         data = r.json()
+
+        # calculate usage
+        if user:
+            input_text = form_data.prompt
+            with CreditDeduct(
+                user=user,
+                model_id=form_data.model,
+                body={"messages": [{"role": "user", "content": input_text}]},
+                is_stream=False,
+                is_embedding=True,
+            ) as credit_deduct:
+                credit_deduct.run(input_text)
+
         return data
     except Exception as e:
         log.exception(e)
