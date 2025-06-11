@@ -253,6 +253,7 @@ async def generate_title(
 async def generate_follow_ups(
     request: Request, form_data: dict, user=Depends(get_verified_user)
 ):
+    check_credit_by_user_id(user_id=user.id, form_data=form_data)
 
     if not request.app.state.config.ENABLE_FOLLOW_UP_GENERATION:
         return JSONResponse(
