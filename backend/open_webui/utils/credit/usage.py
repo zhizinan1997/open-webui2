@@ -337,10 +337,11 @@ class CreditDeduct:
                 try:
                     jsonpath_expr = jsonpath_parse(path)
                     matches = jsonpath_expr.find(self.body)
+                    if not matches:
+                        continue
                     # check exists
                     if exists_check:
-                        if matches:
-                            custom_fees[name] = cost
+                        custom_fees[name] = cost
                         continue
                     for match in matches:
                         if match.value == value:
