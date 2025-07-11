@@ -244,30 +244,30 @@ class CreditDeduct:
             custom_config_str = USAGE_CUSTOM_PRICE_CONFIG.value
             if not custom_config_str or custom_config_str == "[]":
                 return Decimal(0)
-            
+
             custom_configs = json.loads(custom_config_str)
             if not isinstance(custom_configs, list):
                 return Decimal(0)
-            
+
             total_custom_price = Decimal(0)
-            
+
             for config in custom_configs:
                 if not isinstance(config, dict):
                     continue
-                
+
                 path = config.get("path")
                 value = config.get("value")
                 exists_check = config.get("exists", False)
                 cost = config.get("cost", 0)
-                
+
                 if not path or cost <= 0:
                     continue
-                
+
                 # Apply jsonpath to the request body
                 try:
                     jsonpath_expr = jsonpath_parse(path)
                     matches = jsonpath_expr.find(self.body)
-                    
+
                     if exists_check:
                         # Bill if the path exists
                         if matches:
@@ -278,13 +278,15 @@ class CreditDeduct:
                             if match.value == value:
                                 total_custom_price += Decimal(cost) / 1000 / 1000
                                 break
-                
+
                 except Exception as e:
-                    logger.warning(f"Error processing custom price config {config}: {e}")
+                    logger.warning(
+                        f"Error processing custom price config {config}: {e}"
+                    )
                     continue
-            
+
             return total_custom_price
-        
+
         except Exception as e:
             logger.warning(f"Error calculating custom price: {e}")
             return Decimal(0)
