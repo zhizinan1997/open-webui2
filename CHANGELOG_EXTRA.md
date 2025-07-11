@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - 部分依赖更新
+- 移除英文/中文以外的语言支持
 
 ## [0.6.15.1] - 2025.06.18
 
