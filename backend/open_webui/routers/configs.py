@@ -337,6 +337,7 @@ class UsageConfigForm(BaseModel):
     USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE: float = Field(default=0, ge=0)
     USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE: float = Field(default=0, ge=0)
     USAGE_CALCULATE_MINIMUM_COST: float = Field(default=0, ge=0)
+    USAGE_CUSTOM_PRICE_CONFIG: str = Field(default="[]")
     EZFP_PAY_PRIORITY: Literal["qrcode", "link"] = Field(default="qrcode")
     EZFP_ENDPOINT: Optional[str] = None
     EZFP_PID: Optional[str] = None
@@ -359,6 +360,7 @@ async def get_usage_config(request: Request, user=Depends(get_admin_user)):
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
         "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "USAGE_CUSTOM_PRICE_CONFIG": request.app.state.config.USAGE_CUSTOM_PRICE_CONFIG,
         "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,
@@ -399,6 +401,9 @@ async def set_usage_config(
     request.app.state.config.USAGE_CALCULATE_MINIMUM_COST = (
         form_data.USAGE_CALCULATE_MINIMUM_COST
     )
+    request.app.state.config.USAGE_CUSTOM_PRICE_CONFIG = (
+        form_data.USAGE_CUSTOM_PRICE_CONFIG
+    )
     request.app.state.config.EZFP_PAY_PRIORITY = form_data.EZFP_PAY_PRIORITY
     request.app.state.config.EZFP_ENDPOINT = form_data.EZFP_ENDPOINT
     request.app.state.config.EZFP_PID = form_data.EZFP_PID
@@ -408,6 +413,8 @@ async def set_usage_config(
 
     return {
         "CREDIT_NO_CREDIT_MSG": request.app.state.config.CREDIT_NO_CREDIT_MSG,
+        "CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO,
+        "CREDIT_DEFAULT_CREDIT": request.app.state.config.CREDIT_DEFAULT_CREDIT,
         "USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE": request.app.state.config.USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
         "USAGE_DEFAULT_ENCODING_MODEL": request.app.state.config.USAGE_DEFAULT_ENCODING_MODEL,
         "USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE": request.app.state.config.USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE,
@@ -416,6 +423,7 @@ async def set_usage_config(
         "USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_WEB_SEARCH_PRICE,
         "USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE": request.app.state.config.USAGE_CALCULATE_FEATURE_TOOL_SERVER_PRICE,
         "USAGE_CALCULATE_MINIMUM_COST": request.app.state.config.USAGE_CALCULATE_MINIMUM_COST,
+        "USAGE_CUSTOM_PRICE_CONFIG": request.app.state.config.USAGE_CUSTOM_PRICE_CONFIG,
         "EZFP_PAY_PRIORITY": request.app.state.config.EZFP_PAY_PRIORITY,
         "EZFP_ENDPOINT": request.app.state.config.EZFP_ENDPOINT,
         "EZFP_PID": request.app.state.config.EZFP_PID,

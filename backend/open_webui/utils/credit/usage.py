@@ -7,11 +7,13 @@ from typing import List, Union
 import tiktoken
 from fastapi import HTTPException
 from tiktoken import Encoding
+from jsonpath_ng import parse as jsonpath_parse
 
 from open_webui.config import (
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
     USAGE_DEFAULT_ENCODING_MODEL,
     USAGE_CALCULATE_MINIMUM_COST,
+    USAGE_CUSTOM_PRICE_CONFIG,
 )
 from open_webui.env import SRC_LOG_LEVELS
 from open_webui.models.credits import AddCreditForm, Credits, SetCreditFormDetail
@@ -233,7 +235,59 @@ class CreditDeduct:
 
     @property
     def feature_price(self) -> Decimal:
-        return get_feature_price(self.features)
+        return get_feature_price(self.features) + self.custom_price
+
+    @property
+    def custom_price(self) -> Decimal:
+        """Calculate custom pricing based on USAGE_CUSTOM_PRICE_CONFIG"""
+        try:
+            custom_config_str = USAGE_CUSTOM_PRICE_CONFIG.value
+            if not custom_config_str or custom_config_str == "[]":
+                return Decimal(0)
+            
+            custom_configs = json.loads(custom_config_str)
+            if not isinstance(custom_configs, list):
+                return Decimal(0)
+            
+            total_custom_price = Decimal(0)
+            
+            for config in custom_configs:
+                if not isinstance(config, dict):
+                    continue
+                
+                path = config.get("path")
+                value = config.get("value")
+                exists_check = config.get("exists", False)
+                cost = config.get("cost", 0)
+                
+                if not path or cost <= 0:
+                    continue
+                
+                # Apply jsonpath to the request body
+                try:
+                    jsonpath_expr = jsonpath_parse(path)
+                    matches = jsonpath_expr.find(self.body)
+                    
+                    if exists_check:
+                        # Bill if the path exists
+                        if matches:
+                            total_custom_price += Decimal(cost) / 1000 / 1000
+                    else:
+                        # Bill if path exists and value matches
+                        for match in matches:
+                            if match.value == value:
+                                total_custom_price += Decimal(cost) / 1000 / 1000
+                                break
+                
+                except Exception as e:
+                    logger.warning(f"Error processing custom price config {config}: {e}")
+                    continue
+            
+            return total_custom_price
+        
+        except Exception as e:
+            logger.warning(f"Error calculating custom price: {e}")
+            return Decimal(0)
 
     @property
     def total_price(self) -> Decimal:
