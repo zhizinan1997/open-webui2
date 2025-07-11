@@ -41,6 +41,23 @@ ghcr.io/u8f69/open-webui:<版本号>
 
 ## 拓展配置
 
+### 自定义价格配置
+
+可以对请求 Body 中的任何匹配的内容额外计费，例如 OpenAI 和 Gemini 原生网页搜索  
+此部分配置较为复杂，如有需要可以提 ISSUE 单获取支持，或者使用 LLM 生成，Prompt 为 "参考这个例子，生成一个 XXX 的配置"，并提供下面的例子
+
+```json
+[
+	{
+		"name": "web_search", // 计费名称，使用纯英文和下划线
+		"path": "$.tools[*].type", // python jsonpath_ng 兼容的解析路径
+		"exists": false, // 是否检测到 path 就计费，优先级高于 value 匹配
+		"value": "web_search_preview", // 匹配的值
+		"cost": 1000000 // 1M 次请求的价格
+	}
+]
+```
+
 ### HTTP Client Read Buffer Size
 
 当有遇到 `Chunk too big` 报错时，可以适当调节这里的大小

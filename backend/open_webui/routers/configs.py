@@ -347,7 +347,7 @@ class UsageConfigForm(BaseModel):
 
 
 @router.get("/usage", response_model=UsageConfigForm)
-async def get_usage_config(request: Request, user=Depends(get_admin_user)):
+async def get_usage_config(request: Request, _=Depends(get_admin_user)):
     return {
         "CREDIT_NO_CREDIT_MSG": request.app.state.config.CREDIT_NO_CREDIT_MSG,
         "CREDIT_EXCHANGE_RATIO": request.app.state.config.CREDIT_EXCHANGE_RATIO,
@@ -372,7 +372,7 @@ async def get_usage_config(request: Request, user=Depends(get_admin_user)):
 
 @router.post("/usage", response_model=UsageConfigForm)
 async def set_usage_config(
-    request: Request, form_data: UsageConfigForm, user=Depends(get_admin_user)
+    request: Request, form_data: UsageConfigForm, _=Depends(get_admin_user)
 ):
     request.app.state.config.CREDIT_NO_CREDIT_MSG = form_data.CREDIT_NO_CREDIT_MSG
     request.app.state.config.CREDIT_EXCHANGE_RATIO = form_data.CREDIT_EXCHANGE_RATIO
