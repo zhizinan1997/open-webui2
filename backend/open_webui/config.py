@@ -3175,6 +3175,12 @@ USAGE_CALCULATE_MINIMUM_COST = PersistentConfig(
     os.environ.get("USAGE_CALCULATE_MINIMUM_COST", "0"),
 )
 
+USAGE_CUSTOM_PRICE_CONFIG = PersistentConfig(
+    "USAGE_CUSTOM_PRICE_CONFIG",
+    "credit.calculate.custom_price_config",
+    os.environ.get("USAGE_CUSTOM_PRICE_CONFIG", "[]"),
+)
+
 EZFP_PAY_PRIORITY = PersistentConfig(
     "EZFP_PAY_PRIORITY",
     "credit.ezfp.pay_priority",

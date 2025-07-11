@@ -78,6 +78,7 @@ xlrd==2.0.1
 validators==0.35.0
 psutil
 sentencepiece
+jsonpath-ng
 soundfile==0.13.1
 azure-ai-documentintelligence==1.0.2
 

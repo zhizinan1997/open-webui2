@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.15.2] - 2025.07.08
+## [0.6.15.3] - 2025.07.11
+
+### Added
+
+- 支持对请求 Body 中的内容进行额外计费 (管理员面板-设置-积分-自定义价格配置)
 
 ### Changed
 
 - 部分依赖更新
+- 移除英文/中文以外的语言支持
 
 ## [0.6.15.1] - 2025.06.18
 
