@@ -198,8 +198,8 @@ class CreditDeduct:
                         "request_unit_price": float(self.request_unit_price),
                         "feature_price": float(self.feature_price),
                         "features": list(self.features),
-                        "custom_price": float(self.custom_price),
-                        "custom_price_detail": {
+                        "custom_fee": float(self.custom_price),
+                        "custom_fee_detail": {
                             k: float(v / 1000 / 1000)
                             for k, v in self.custom_fees.items()
                         },
@@ -276,8 +276,8 @@ class CreditDeduct:
                 "request_price": float(self.request_price),
                 "feature_price": float(self.feature_price),
                 "features": list(self.features),
-                "custom_price": float(self.custom_price),
-                "custom_price_detail": {
+                "custom_fee": float(self.custom_price),
+                "custom_fee_detail": {
                     k: float(v / 1000 / 1000) for k, v in self.custom_fees.items()
                 },
                 "is_calculate": not self.is_official_usage,
