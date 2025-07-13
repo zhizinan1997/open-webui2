@@ -1,4 +1,5 @@
 - commit message 必须遵循格式：<type>(<scope>): <subject>
+- 使用纯英文，避免使用中文或其他语言
 - type 可选值：feat, fix, docs, style, refactor, perf, test, chore
 - scope 描述影响的模块或功能，不能为空
 - subject 首字母小写，简洁明了，不超过 50 字符，且不以句号结尾
