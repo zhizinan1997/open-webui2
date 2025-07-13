@@ -7,3 +7,5 @@
 - 重构时需带来可维护性或功能上的实质提升
 - 新增功能时考虑向后兼容和 API 稳定性
 - 遵循 MIT 许可证要求和语义化版本控制规范
+- 提交前使用 `npm run format` 和 `npm run format:backend` 格式化代码，确保符合项目规范
+- 提交前使用 `npm run i18n:parse` 解析国际化文件，并补充 `zh-CN` 翻译
