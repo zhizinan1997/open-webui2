@@ -148,7 +148,7 @@
 					data: mergeData(data.model_token_pie),
 					radius: ['40%', '60%'],
 					label: {
-						formatter: '{b}: {c}'
+						show: false
 					}
 				}
 			]
@@ -181,7 +181,7 @@
 					data: mergeData(data.model_cost_pie),
 					radius: ['40%', '60%'],
 					label: {
-						formatter: '{b}: {c}'
+						show: false
 					}
 				}
 			]

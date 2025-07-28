@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.18.2] - 2025.07.28
+## [0.6.18.3] - 2025.07.28
 
 ### Added
 
 - 支持配置提示 Token 缓存价格 (管理员面板-设置-模型-模型价格配置)
+
+### Changed
+
+- 移除积分统计面板的数字展示
 
 ## [0.6.18.1] - 2025.07.20
 
