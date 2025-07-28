@@ -137,6 +137,9 @@ class ModelPriceForm(BaseModel):
     prompt_price: float = Field(
         default=0, description="prompt token price for 1m tokens", ge=0
     )
+    prompt_cache_price: float = Field(
+        default=0, description="prompt cache token price for 1m tokens", ge=0
+    )
     completion_price: float = Field(
         default=0, description="completion token price for 1m tokens", ge=0
     )
