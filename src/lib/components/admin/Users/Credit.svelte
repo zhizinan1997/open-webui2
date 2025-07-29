@@ -331,7 +331,7 @@
 			position: 'auto center',
 			showMonths: 2,
 			time_24hr: true,
-			onChange: async (selectedDates, dateStr, _) => {
+			onChange: async (selectedDates, _) => {
 				if (selectedDates.length === 2) {
 					await doQuery(selectedDates[0], selectedDates[1]);
 				}
