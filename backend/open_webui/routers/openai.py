@@ -929,10 +929,10 @@ async def generate_chat_completion(
                     return PlainTextResponse(status_code=r.status, content=response)
 
             with CreditDeduct(
-                    user=user,
-                    model_id=model_id,
-                    body=form_data,
-                    is_stream=False,
+                user=user,
+                model_id=model_id,
+                body=form_data,
+                is_stream=False,
             ) as credit_deduct:
                 credit_deduct.run(response=response)
                 return credit_deduct.add_usage_to_resp(response)
