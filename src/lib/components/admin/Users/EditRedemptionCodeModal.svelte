@@ -138,6 +138,12 @@
 									{code.username || code.user_id}
 								</div>
 							{/if}
+							{#if code.expired_at}
+								<div>
+									<span class="font-medium">{$i18n.t('Expiration Time')}:</span>
+									{formatDate(code.expired_at)}
+								</div>
+							{/if}
 						</div>
 					</div>
 				{/if}

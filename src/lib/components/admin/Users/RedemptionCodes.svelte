@@ -10,12 +10,13 @@
 	} from '$lib/apis/credit';
 	import CreateRedemptionCodeModal from './CreateRedemptionCodeModal.svelte';
 	import EditRedemptionCodeModal from './EditRedemptionCodeModal.svelte';
+	import Spinner from '$lib/components/common/Spinner.svelte';
 
 	const i18n = getContext('i18n');
 
 	let page = 1;
 	let limit = 30;
-	let total = 0;
+	let total = null;
 	let keyword = '';
 	let codes: any[] = [];
 
@@ -215,127 +216,135 @@
 	</div>
 </div>
 
-<div class="mt-2 scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm">
-	<table
-		class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm"
+{#if total === null}
+	<div class="my-10">
+		<Spinner className="size-5" />
+	</div>
+{:else}
+	<div
+		class="mt-2 scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm"
 	>
-		<thead
-			class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 -translate-y-0.5"
+		<table
+			class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-auto max-w-full rounded-sm"
 		>
-			<tr>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Redemption Code')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Topic')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Credit Amount')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Status')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Used By')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Created At')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Expired At')}
-				</th>
-				<th scope="col" class="px-3 py-1.5 select-none w-3">
-					{$i18n.t('Actions')}
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each codes as code}
-				<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs group">
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1 font-mono text-xs">
-							{hideCode(code.code)}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1">
-							{code.purpose}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1">
-							{parseFloat(code.amount).toFixed(2)}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium {getStatusClass(code)}">
-						<div class="line-clamp-1">
-							{getStatusText(code)}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1">
-							{code.username || '-'}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1">
-							{formatDate(code.created_at)}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
-						<div class="line-clamp-1">
-							{formatDate(code.expired_at)}
-						</div>
-					</td>
-					<td class="px-3 py-1.5 text-left">
-						<div class="flex items-center space-x-1">
-							<Tooltip content={$i18n.t('Edit')}>
-								<button
-									class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-									on:click={() => handleEdit(code)}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="w-3 h-3"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-										/>
-									</svg>
-								</button>
-							</Tooltip>
-
-							<Tooltip content={$i18n.t('Delete')}>
-								<button
-									class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-red-500"
-									on:click={() => handleDelete(code.code)}
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 24 24"
-										stroke-width="1.5"
-										stroke="currentColor"
-										class="w-3 h-3"
-									>
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-										/>
-									</svg>
-								</button>
-							</Tooltip>
-						</div>
-					</td>
+			<thead
+				class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 -translate-y-0.5"
+			>
+				<tr>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Redemption Code')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Topic')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Credit Amount')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Status')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Used By')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Used At')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Expired At')}
+					</th>
+					<th scope="col" class="px-3 py-1.5 select-none w-3">
+						{$i18n.t('Actions')}
+					</th>
 				</tr>
-			{/each}
-		</tbody>
-	</table>
-</div>
+			</thead>
+			<tbody>
+				{#each codes as code}
+					<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs group">
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1 font-mono text-xs">
+								{hideCode(code.code)}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1">
+								{code.purpose}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1">
+								{parseFloat(code.amount).toFixed(2)}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium {getStatusClass(code)}">
+							<div class="line-clamp-1">
+								{getStatusText(code)}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1">
+								{code.username || '-'}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1">
+								{formatDate(code.received_at)}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
+							<div class="line-clamp-1">
+								{formatDate(code.expired_at)}
+							</div>
+						</td>
+						<td class="px-3 py-1.5 text-left">
+							<div class="flex items-center space-x-1">
+								<Tooltip content={$i18n.t('Edit')}>
+									<button
+										class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+										on:click={() => handleEdit(code)}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="w-3 h-3"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+											/>
+										</svg>
+									</button>
+								</Tooltip>
 
-<Pagination bind:page count={total} perPage={limit} />
+								<Tooltip content={$i18n.t('Delete')}>
+									<button
+										class="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-red-500"
+										on:click={() => handleDelete(code.code)}
+									>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											viewBox="0 0 24 24"
+											stroke-width="1.5"
+											stroke="currentColor"
+											class="w-3 h-3"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+											/>
+										</svg>
+									</button>
+								</Tooltip>
+							</div>
+						</td>
+					</tr>
+				{/each}
+			</tbody>
+		</table>
+	</div>
+
+	<Pagination bind:page count={total} perPage={limit} />
+{/if}

@@ -379,7 +379,11 @@
 						<div
 							class="overflow-y-scroll max-h-[14rem] flex flex-col scrollbar-hidden relative whitespace-nowrap overflow-x-auto max-w-full rounded-sm"
 						>
-							{#if logs.length > 0}
+							{#if logs.length === 0 && hasMore}
+								<div class="my-10">
+									<Spinner className="size-5" />
+								</div>
+							{:else if logs.length > 0}
 								<table
 									class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed max-w-full rounded-sm}"
 								>
@@ -509,6 +513,6 @@
 					</form>
 				</div>
 			</div>
-		</div></Modal
-	>
+		</div>
+	</Modal>
 </div>
