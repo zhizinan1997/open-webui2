@@ -350,7 +350,33 @@ export const exportRedemptionCodes = async (token: string, keyword: string) => {
 	)
 		.then(async (res) => {
 			if (!res.ok) throw await res.json();
-			return res;
+			return res.text();
+		})
+		.catch((err) => {
+			console.log(err);
+			error = err.detail;
+			return null;
+		});
+
+	if (error) {
+		throw error;
+	}
+
+	return res;
+};
+
+export const receiveRedemptionCode = async (token: string, code: string) => {
+	let error = null;
+
+	const res = await fetch(`${WEBUI_API_BASE_URL}/credit/redemption_codes/${code}/receive`, {
+		method: 'GET',
+		headers: {
+			Authorization: `Bearer ${token}`
+		}
+	})
+		.then(async (res) => {
+			if (!res.ok) throw await res.json();
+			return res.json();
 		})
 		.catch((err) => {
 			console.log(err);

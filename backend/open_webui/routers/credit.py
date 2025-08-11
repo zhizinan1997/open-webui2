@@ -353,6 +353,12 @@ async def update_redemption_code(
     if not existing_code:
         raise HTTPException(status_code=404, detail="Redemption code not found.")
 
+    if existing_code.received_at is not None:
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot update a code that has already been received.",
+        )
+
     if form_data.expired_at is not None:
         expired_at = datetime.datetime.fromtimestamp(form_data.expired_at)
         if expired_at.timestamp() < int(time.time()):
