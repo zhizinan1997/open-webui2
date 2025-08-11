@@ -43,6 +43,7 @@ from open_webui.env import (
     REDIS_SENTINEL_HOSTS,
     REDIS_SENTINEL_PORT,
     WEBUI_NAME,
+    REDIS_CLUSTER,
 )
 
 from fastapi import BackgroundTasks, Depends, HTTPException, Request, Response, status
@@ -543,6 +544,7 @@ def send_verify_email(email: str):
         redis_sentinels=get_sentinels_from_env(
             REDIS_SENTINEL_HOSTS, REDIS_SENTINEL_PORT
         ),
+        redis_cluster=REDIS_CLUSTER,
     )
     code = f"{uuid.uuid4().hex}{uuid.uuid1().hex}"
     redis.set(name=get_email_code_key(code=code), value=email, ex=timedelta(days=1))
@@ -561,5 +563,6 @@ def verify_email_by_code(code: str) -> str:
         redis_sentinels=get_sentinels_from_env(
             REDIS_SENTINEL_HOSTS, REDIS_SENTINEL_PORT
         ),
+        redis_cluster=REDIS_CLUSTER,
     )
     return redis.get(name=get_email_code_key(code=code))

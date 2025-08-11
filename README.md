@@ -36,11 +36,23 @@ ghcr.io/u8f69/open-webui:<版本号>
 
 ![usage](./docs/usage.png)
 
+### 兑换码
+
+![redemption code](./docs/redemption.png)
+
 ### 支持注册邮箱验证
 
 ![email](./docs/sign_verify_user.png)
 
 ## 拓展配置
+
+### 兑换码功能
+
+需要使用 Redis 避免被多次兑换
+
+```
+REDIS_URL=redis://:<password>@<host>:6379/0
+```
 
 ### 自定义价格配置
 
