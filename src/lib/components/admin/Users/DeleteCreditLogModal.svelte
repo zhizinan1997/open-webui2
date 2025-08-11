@@ -15,10 +15,21 @@
 
 	let loading = false;
 
+	const formatDatetimeLocal = (timestamp?: number): string => {
+		if (!timestamp) return '';
+		const date = new Date(timestamp * 1000);
+		return date.toISOString().slice(0, 16);
+	};
+
 	let input = '';
+	let _input = new Date();
+	_input.setMonth(_input.getMonth() - 1);
+	input = formatDatetimeLocal(Math.floor(_input.getTime() / 1000));
 
 	$: if (show) {
-		input = '';
+		let _input = new Date();
+		_input.setMonth(_input.getMonth() - 1);
+		input = formatDatetimeLocal(Math.floor(_input.getTime() / 1000));
 	}
 
 	const submitHandler = async () => {
