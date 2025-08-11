@@ -1,13 +1,12 @@
 import time
 import uuid
 from decimal import Decimal
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
-from sqlalchemy import JSON, BigInteger, Column, Numeric, String
+from sqlalchemy import JSON, BigInteger, Column, Numeric, String, or_
 
-from open_webui.config import CREDIT_EXCHANGE_RATIO
 from open_webui.internal.db import Base, get_db
 
 
@@ -47,6 +46,19 @@ class TradeTicket(Base):
     detail = Column(JSON, nullable=True)
 
     created_at = Column(BigInteger, index=True)
+
+
+class RedemptionCode(Base):
+    __tablename__ = "redemption_code"
+
+    code = Column(String, primary_key=True)
+    purpose = Column(String, index=True)
+    user_id = Column(String, index=True, nullable=True)
+    amount = Column(Numeric(precision=24, scale=12))
+
+    created_at = Column(BigInteger, index=True)
+    expired_at = Column(BigInteger, index=True, nullable=True)
+    received_at = Column(BigInteger, index=True, nullable=True)
 
 
 ####################
@@ -134,6 +146,17 @@ class TradeTicketModel(BaseModel):
     amount: Decimal = Field(default_factory=lambda: Decimal("0"))
     detail: dict = Field(default_factory=lambda: {})
     created_at: int = Field(default_factory=lambda: int(time.time()))
+
+
+class RedemptionCodeModel(BaseModel):
+    model_config = ConfigDict(from_attributes=True, extra="allow")
+    code: str
+    purpose: str
+    user_id: Optional[str] = None
+    amount: Decimal
+    created_at: int
+    expired_at: Optional[int] = None
+    received_at: Optional[int] = None
 
 
 ####################
@@ -265,6 +288,8 @@ class TradeTicketTable:
             return []
 
     def update_credit_by_id(self, id: str, detail: dict) -> None:
+        from open_webui.config import CREDIT_EXCHANGE_RATIO
+
         try:
             with get_db() as db:
                 db.query(TradeTicket).filter(TradeTicket.id == id).update(
@@ -340,3 +365,79 @@ class CreditLogTable:
 
 
 CreditLogs = CreditLogTable()
+
+
+class RedemptionCodeTable:
+    def get_code(self, code: str) -> Optional[RedemptionCodeModel]:
+        try:
+            with get_db() as db:
+                redemption_code = (
+                    db.query(RedemptionCode).filter(RedemptionCode.code == code).first()
+                )
+                return (
+                    RedemptionCodeModel.model_validate(redemption_code)
+                    if redemption_code
+                    else None
+                )
+        except Exception:
+            return None
+
+    def get_codes(
+        self, keyword: str = None, offset: int = None, limit: int = None
+    ) -> Tuple[int, List[RedemptionCodeModel]]:
+        with get_db() as db:
+            query = db.query(RedemptionCode).order_by(RedemptionCode.created_at.desc())
+            if keyword:
+                query = query.filter(
+                    or_(
+                        RedemptionCode.code == keyword,
+                        RedemptionCode.purpose == keyword,
+                    )
+                )
+            if offset:
+                query = query.offset(offset)
+            if limit:
+                query = query.limit(limit)
+            return query.count(), [
+                RedemptionCodeModel.model_validate(code) for code in query.all()
+            ]
+
+    def insert_codes(self, redemption_codes: List[RedemptionCodeModel]) -> None:
+        try:
+            with get_db() as db:
+                db.add_all(
+                    [RedemptionCode(**code.model_dump()) for code in redemption_codes]
+                )
+                db.commit()
+            return None
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+    def update_code(self, code: RedemptionCodeModel) -> None:
+        try:
+            with get_db() as db:
+                db.query(RedemptionCode).filter(
+                    RedemptionCode.code == code.code
+                ).update(
+                    {
+                        "purpose": code.purpose,
+                        "amount": code.amount,
+                        "expired_at": code.expired_at,
+                    }
+                )
+                db.commit()
+            return None
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+    def delete_code(self, code: str) -> None:
+        try:
+            with get_db() as db:
+                db.query(RedemptionCode).filter(RedemptionCode.code == code).delete()
+                db.commit()
+            return None
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+
+RedemptionCodes = RedemptionCodeTable()
