@@ -119,6 +119,7 @@
 										placeholder={$i18n.t('Number of redemption codes')}
 										bind:value={count}
 										type="number"
+										step="1"
 										min="1"
 										max="1000"
 										required

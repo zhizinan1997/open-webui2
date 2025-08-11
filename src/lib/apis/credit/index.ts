@@ -350,7 +350,7 @@ export const exportRedemptionCodes = async (token: string, keyword: string) => {
 	)
 		.then(async (res) => {
 			if (!res.ok) throw await res.json();
-			return res.text();
+			return res;
 		})
 		.catch((err) => {
 			console.log(err);
