@@ -7,7 +7,14 @@ from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import JSON, BigInteger, Column, Numeric, String, or_
 
+from open_webui.env import (
+    REDIS_URL,
+    REDIS_SENTINEL_HOSTS,
+    REDIS_SENTINEL_PORT,
+    REDIS_CLUSTER,
+)
 from open_webui.internal.db import Base, get_db
+from open_webui.utils.redis import get_redis_connection, get_sentinels_from_env
 
 
 ####################
@@ -436,6 +443,49 @@ class RedemptionCodeTable:
                 db.query(RedemptionCode).filter(RedemptionCode.code == code).delete()
                 db.commit()
             return None
+        except Exception as err:
+            raise HTTPException(status_code=500, detail=str(err))
+
+    def receive_code(self, code: str, user_id: str) -> None:
+        # receive
+        try:
+            # load code
+            redemption_code = self.get_code(code)
+            if redemption_code is None:
+                raise HTTPException(status_code=404, detail="Code not found")
+            # check if code is received
+            if redemption_code.user_id is not None:
+                raise HTTPException(status_code=400, detail="Code already received")
+            # concurrency control
+            cache_key = f"redemption_code:{code}"
+            redis = get_redis_connection(
+                redis_url=REDIS_URL,
+                redis_sentinels=get_sentinels_from_env(
+                    REDIS_SENTINEL_HOSTS, REDIS_SENTINEL_PORT
+                ),
+                redis_cluster=REDIS_CLUSTER,
+            )
+            if not redis.set(cache_key, cache_key, nx=True, ex=60):
+                raise HTTPException(status_code=400, detail="Code already received")
+            # receive
+            with get_db() as db:
+                db.query(RedemptionCode).filter(RedemptionCode.code == code).update(
+                    {
+                        "user_id": user_id,
+                        "received_at": int(time.time()),
+                    }
+                )
+                db.commit()
+            Credits.add_credit_by_user_id(
+                AddCreditForm(
+                    user_id=user_id,
+                    amount=redemption_code.amount,
+                    detail=SetCreditFormDetail(desc="redemption code received"),
+                )
+            )
+            return
+        except HTTPException as err:
+            raise err
         except Exception as err:
             raise HTTPException(status_code=500, detail=str(err))
 

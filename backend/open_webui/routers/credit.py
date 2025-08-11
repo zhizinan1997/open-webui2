@@ -23,7 +23,7 @@ from open_webui.models.credits import (
 )
 from open_webui.models.models import Models, ModelPriceForm
 from open_webui.models.users import UserModel, Users
-from open_webui.utils.auth import get_current_user, get_admin_user
+from open_webui.utils.auth import get_verified_user, get_admin_user
 from open_webui.utils.credit.ezfp import ezfp_client
 from open_webui.utils.models import get_all_models
 
@@ -45,7 +45,7 @@ async def get_config(request: Request):
 
 @router.get("/logs", response_model=list[CreditLogSimpleModel])
 async def list_credit_logs(
-    page: Optional[int] = None, user: UserModel = Depends(get_current_user)
+    page: Optional[int] = None, user: UserModel = Depends(get_verified_user)
 ) -> TradeTicketModel:
     if page:
         limit = PAGE_ITEM_COUNT
@@ -104,7 +104,7 @@ async def get_all_logs(
 
 @router.post("/tickets", response_model=TradeTicketModel)
 async def create_ticket(
-    request: Request, form_data: dict, user: UserModel = Depends(get_current_user)
+    request: Request, form_data: dict, user: UserModel = Depends(get_verified_user)
 ) -> TradeTicketModel:
     out_trade_no = (
         f"{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.{uuid.uuid4().hex}"
@@ -423,3 +423,14 @@ async def export_redemption_codes(
     }
     # return the response
     return Response(content=csv_content, headers=headers)
+
+
+@router.get("/redemption_codes/{code}/receive")
+async def receive_redemption_code(
+    code: str, user: UserModel = Depends(get_verified_user)
+) -> None:
+    """
+    Receive a redemption code.
+    """
+    RedemptionCodes.receive_code(code, user.id)
+    return None
