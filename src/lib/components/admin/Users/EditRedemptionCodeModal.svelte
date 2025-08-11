@@ -191,26 +191,26 @@
 						</div>
 					</div>
 
-					<div class="flex justify-end pt-3">
-						<button
-							class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg disabled:opacity-50"
-							type="submit"
-							disabled={loading}
-						>
-							{#if loading}
-								<div
-									class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
-								></div>
-								{$i18n.t('Updating...')}
-							{:else}
-								{$i18n.t('Update')}
-							{/if}
-						</button>
-					</div>
-
 					{#if isCodeUsed}
 						<div class="text-red-500 text-xs mt-2">
 							{$i18n.t('This redemption code has already been used and cannot be edited')}
+						</div>
+					{:else}
+						<div class="flex justify-end pt-3">
+							<button
+								class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-gray-100 transition rounded-lg disabled:opacity-50"
+								type="submit"
+								disabled={loading}
+							>
+								{#if loading}
+									<div
+										class="animate-spin inline-block w-4 h-4 border-[3px] border-current border-t-transparent text-white rounded-full"
+									></div>
+									{$i18n.t('Updating...')}
+								{:else}
+									{$i18n.t('Update')}
+								{/if}
+							</button>
 						</div>
 					{/if}
 				</form>
