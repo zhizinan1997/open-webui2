@@ -488,7 +488,9 @@ class RedemptionCodeTable:
                 AddCreditForm(
                     user_id=user_id,
                     amount=redemption_code.amount,
-                    detail=SetCreditFormDetail(desc="redemption code received"),
+                    detail=SetCreditFormDetail(
+                        desc="redemption code received", api_params={"code": code}
+                    ),
                 )
             )
             return
