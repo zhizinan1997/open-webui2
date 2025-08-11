@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- 增加兑换码系统
+- 积分充值页面增加兑换码功能 (设置-积分)
+- 增加兑换码管理功能 (管理员面板-用户-兑换码)
 
 ## [0.6.21.1] - 2025.08.10
 
