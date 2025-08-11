@@ -401,11 +401,12 @@ class RedemptionCodeTable:
                         RedemptionCode.purpose == keyword,
                     )
                 )
+            total = query.count()
             if offset:
                 query = query.offset(offset)
             if limit:
                 query = query.limit(limit)
-            return query.count(), [
+            return total, [
                 RedemptionCodeModel.model_validate(code) for code in query.all()
             ]
 
@@ -456,6 +457,13 @@ class RedemptionCodeTable:
             # check if code is received
             if redemption_code.user_id is not None:
                 raise HTTPException(status_code=400, detail="Code already received")
+            # check expired
+            now = int(time.time())
+            if (
+                redemption_code.expired_at is not None
+                and redemption_code.expired_at < now
+            ):
+                raise HTTPException(status_code=400, detail="Code expired")
             # concurrency control
             cache_key = f"redemption_code:{code}"
             redis = get_redis_connection(
