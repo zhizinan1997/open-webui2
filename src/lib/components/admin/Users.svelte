@@ -190,7 +190,7 @@
 					/>
 				</svg>
 			</div>
-			<div class=" self-center">{$i18n.t('Redemption')}</div>
+			<div class=" self-center">{$i18n.t('Redemption Code')}</div>
 		</button>
 	</div>
 
