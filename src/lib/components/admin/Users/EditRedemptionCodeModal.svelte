@@ -16,6 +16,9 @@
 	let expiredAt = '';
 	let loading = false;
 
+	// check if code is already used
+	$: isCodeUsed = code?.received_at;
+
 	$: if (show && code) {
 		// populate form when modal opens with code data
 		purpose = code.purpose || '';
@@ -30,8 +33,14 @@
 			return;
 		}
 
+		// prevent editing used codes
+		if (isCodeUsed) {
+			toast.error($i18n.t('Cannot edit a used redemption code'));
+			return;
+		}
+
 		if (!purpose.trim()) {
-			toast.error($i18n.t('Purpose is required'));
+			toast.error($i18n.t('Topic is required'));
 			return;
 		}
 
@@ -132,25 +141,27 @@
 				>
 					<div class="flex flex-col gap-3">
 						<div>
-							<div class="text-sm font-medium py-1">{$i18n.t('Purpose')} *</div>
+							<div class="text-sm font-medium py-1">{$i18n.t('Topic')} *</div>
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600"
-								placeholder={$i18n.t('Enter purpose for this code')}
+								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+								placeholder={$i18n.t('Enter topic for this code')}
 								bind:value={purpose}
+								disabled={isCodeUsed}
 								required
 								maxlength="255"
 							/>
 						</div>
 
 						<div>
-							<div class="text-sm font-medium py-1">{$i18n.t('Amount')} *</div>
+							<div class="text-sm font-medium py-1">{$i18n.t('Credit Amount')} *</div>
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600"
+								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
 								placeholder={$i18n.t('Credit amount')}
 								bind:value={amount}
 								type="number"
 								step="0.01"
 								min="0.01"
+								disabled={isCodeUsed}
 								required
 							/>
 						</div>
@@ -160,9 +171,10 @@
 								{$i18n.t('Expiration Time')} ({$i18n.t('Optional')})
 							</div>
 							<input
-								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600"
+								class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
 								bind:value={expiredAt}
 								type="datetime-local"
+								disabled={isCodeUsed}
 							/>
 							<div class="text-xs text-gray-500 mt-1">
 								{$i18n.t('Leave empty for no expiration')}
@@ -186,6 +198,12 @@
 							{/if}
 						</button>
 					</div>
+
+					{#if isCodeUsed}
+						<div class="text-red-500 text-xs mt-2">
+							{$i18n.t('This redemption code has already been used and cannot be edited')}
+						</div>
+					{/if}
 				</form>
 			</div>
 		</div>

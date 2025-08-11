@@ -112,6 +112,10 @@
 		return 'text-green-500';
 	};
 
+	const hideCode = (code: string): string => {
+		return code.replace(/(.{4})(.*)(.{4})/, '$1****$3');
+	};
+
 	onMount(async () => {
 		await loadCodes();
 	});
@@ -204,7 +208,7 @@
 				<input
 					class="w-full text-sm pr-4 py-1 rounded-r-xl outline-hidden bg-transparent"
 					bind:value={keyword}
-					placeholder={$i18n.t('Search by code or purpose')}
+					placeholder={$i18n.t('Search by code or topic')}
 				/>
 			</div>
 		</div>
@@ -219,28 +223,28 @@
 			class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-400 -translate-y-0.5"
 		>
 			<tr>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Redemption Code')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
-					{$i18n.t('Purpose')}
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
+					{$i18n.t('Topic')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
-					{$i18n.t('Amount')}
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
+					{$i18n.t('Credit Amount')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Status')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Used By')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Created At')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Expired At')}
 				</th>
-				<th scope="col" class="px-3 py-1.5 select-none">
+				<th scope="col" class="px-3 py-1.5 select-none w-3">
 					{$i18n.t('Actions')}
 				</th>
 			</tr>
@@ -250,7 +254,7 @@
 				<tr class="bg-white dark:bg-gray-900 dark:border-gray-850 text-xs group">
 					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">
 						<div class="line-clamp-1 font-mono text-xs">
-							{code.code}
+							{hideCode(code.code)}
 						</div>
 					</td>
 					<td class="px-3 py-1.5 text-left font-medium text-gray-900 dark:text-white">

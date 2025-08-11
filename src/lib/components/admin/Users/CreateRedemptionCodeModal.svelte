@@ -27,7 +27,7 @@
 
 	const submitHandler = async () => {
 		if (!purpose.trim()) {
-			toast.error($i18n.t('Purpose is required'));
+			toast.error($i18n.t('Topic is required'));
 			return;
 		}
 
@@ -101,10 +101,10 @@
 					<div class="px-1">
 						<div class="flex flex-col w-full">
 							<div>
-								<div class="text-sm font-medium py-1">{$i18n.t('Purpose')} *</div>
+								<div class="text-sm font-medium py-1">{$i18n.t('Topic')} *</div>
 								<input
 									class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600"
-									placeholder={$i18n.t('Enter purpose for these codes')}
+									placeholder={$i18n.t('Enter topic for these codes')}
 									bind:value={purpose}
 									required
 									maxlength="255"
@@ -126,7 +126,7 @@
 								</div>
 
 								<div>
-									<div class="text-sm font-medium py-1">{$i18n.t('Amount')} *</div>
+									<div class="text-sm font-medium py-1">{$i18n.t('Credit Amount')} *</div>
 									<input
 										class="w-full rounded-lg py-2 px-4 text-sm dark:text-gray-300 dark:bg-gray-850 outline-none border border-gray-200 dark:border-gray-600"
 										placeholder={$i18n.t('Credit amount')}
