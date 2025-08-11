@@ -9,22 +9,31 @@
 	const i18n = getContext('i18n');
 
 	export let show = false;
-	export let code = null;
+	export let code: any = null;
 
 	let purpose = '';
 	let amount = 0;
 	let expiredAt = '';
 	let loading = false;
 
+	// add flag to prevent reinitializing form data
+	let initialized = false;
+
 	// check if code is already used
 	$: isCodeUsed = code?.received_at;
 
-	$: if (show && code) {
+	$: if (show && code && !initialized) {
 		// populate form when modal opens with code data
 		purpose = code.purpose || '';
 		amount = parseFloat(code.amount) || 0;
 		expiredAt = code.expired_at ? formatDatetimeLocal(code.expired_at) : '';
 		loading = false;
+		initialized = true;
+	}
+
+	// reset initialization flag when modal closes
+	$: if (!show) {
+		initialized = false;
 	}
 
 	const submitHandler = async () => {
