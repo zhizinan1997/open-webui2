@@ -15,7 +15,6 @@ from pydantic import BaseModel
 from sqlalchemy import JSON, Column, DateTime, Integer, func
 from authlib.integrations.starlette_client import OAuth
 
-
 from open_webui.env import (
     DATA_DIR,
     DATABASE_URL,
@@ -388,7 +387,6 @@ MICROSOFT_CLIENT_PICTURE_URL = PersistentConfig(
         "https://graph.microsoft.com/v1.0/me/photo/$value",
     ),
 )
-
 
 MICROSOFT_OAUTH_SCOPE = PersistentConfig(
     "MICROSOFT_OAUTH_SCOPE",
@@ -945,7 +943,6 @@ except Exception:
     pass
 OPENAI_API_BASE_URL = "https://api.openai.com/v1"
 
-
 ####################################
 # MODELS
 ####################################
@@ -955,7 +952,6 @@ ENABLE_BASE_MODELS_CACHE = PersistentConfig(
     "models.base_models_cache",
     os.environ.get("ENABLE_BASE_MODELS_CACHE", "False").lower() == "true",
 )
-
 
 ####################################
 # TOOL_SERVERS
@@ -1112,13 +1108,11 @@ PENDING_USER_OVERLAY_CONTENT = PersistentConfig(
     os.environ.get("PENDING_USER_OVERLAY_CONTENT", ""),
 )
 
-
 RESPONSE_WATERMARK = PersistentConfig(
     "RESPONSE_WATERMARK",
     "ui.watermark",
     os.environ.get("RESPONSE_WATERMARK", ""),
 )
-
 
 USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS = (
     os.environ.get("USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS", "False").lower()
@@ -1539,7 +1533,6 @@ Strictly return in JSON format:
 {{MESSAGES:END:6}}
 </chat_history>"""
 
-
 FOLLOW_UP_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     "FOLLOW_UP_GENERATION_PROMPT_TEMPLATE",
     "task.follow_up.prompt_template",
@@ -1940,7 +1933,6 @@ if PGVECTOR_PGCRYPTO and not PGVECTOR_PGCRYPTO_KEY:
         "PGVECTOR_PGCRYPTO is enabled but PGVECTOR_PGCRYPTO_KEY is not set. Please provide a valid key."
     )
 
-
 PGVECTOR_POOL_SIZE = os.environ.get("PGVECTOR_POOL_SIZE", None)
 
 if PGVECTOR_POOL_SIZE != None:
@@ -2000,7 +1992,6 @@ ORACLE_VECTOR_LENGTH = os.environ.get("ORACLE_VECTOR_LENGTH", 768)
 ORACLE_DB_POOL_MIN = int(os.environ.get("ORACLE_DB_POOL_MIN", 2))
 ORACLE_DB_POOL_MAX = int(os.environ.get("ORACLE_DB_POOL_MAX", 10))
 ORACLE_DB_POOL_INCREMENT = int(os.environ.get("ORACLE_DB_POOL_INCREMENT", 1))
-
 
 if VECTOR_DB == "oracle23ai":
     if not ORACLE_DB_USER or not ORACLE_DB_PASSWORD or not ORACLE_DB_DSN:
@@ -2188,13 +2179,11 @@ DOCLING_PICTURE_DESCRIPTION_MODE = PersistentConfig(
     os.getenv("DOCLING_PICTURE_DESCRIPTION_MODE", ""),
 )
 
-
 docling_picture_description_local = os.getenv("DOCLING_PICTURE_DESCRIPTION_LOCAL", "")
 try:
     docling_picture_description_local = json.loads(docling_picture_description_local)
 except json.JSONDecodeError:
     docling_picture_description_local = {}
-
 
 DOCLING_PICTURE_DESCRIPTION_LOCAL = PersistentConfig(
     "DOCLING_PICTURE_DESCRIPTION_LOCAL",
@@ -2208,13 +2197,11 @@ try:
 except json.JSONDecodeError:
     docling_picture_description_api = {}
 
-
 DOCLING_PICTURE_DESCRIPTION_API = PersistentConfig(
     "DOCLING_PICTURE_DESCRIPTION_API",
     "rag.docling_picture_description_api",
     docling_picture_description_api,
 )
-
 
 DOCUMENT_INTELLIGENCE_ENDPOINT = PersistentConfig(
     "DOCUMENT_INTELLIGENCE_ENDPOINT",
@@ -2311,7 +2298,6 @@ FILE_IMAGE_COMPRESSION_HEIGHT = PersistentConfig(
     ),
 )
 
-
 RAG_ALLOWED_FILE_EXTENSIONS = PersistentConfig(
     "RAG_ALLOWED_FILE_EXTENSIONS",
     "rag.file.allowed_extensions",
@@ -2381,7 +2367,6 @@ RAG_RERANKING_MODEL = PersistentConfig(
 if RAG_RERANKING_MODEL.value != "":
     log.info(f"Reranking model set: {RAG_RERANKING_MODEL.value}")
 
-
 RAG_RERANKING_MODEL_AUTO_UPDATE = (
     not OFFLINE_MODE
     and os.environ.get("RAG_RERANKING_MODEL_AUTO_UPDATE", "True").lower() == "true"
@@ -2402,7 +2387,6 @@ RAG_EXTERNAL_RERANKER_API_KEY = PersistentConfig(
     "rag.external_reranker_api_key",
     os.environ.get("RAG_EXTERNAL_RERANKER_API_KEY", ""),
 )
-
 
 RAG_TEXT_SPLITTER = PersistentConfig(
     "RAG_TEXT_SPLITTER",
@@ -2539,7 +2523,6 @@ BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
     os.getenv("BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL", "False").lower() == "true",
 )
 
-
 BYPASS_WEB_SEARCH_WEB_LOADER = PersistentConfig(
     "BYPASS_WEB_SEARCH_WEB_LOADER",
     "rag.web.search.bypass_web_loader",
@@ -2569,7 +2552,6 @@ WEB_SEARCH_CONCURRENT_REQUESTS = PersistentConfig(
     "rag.web.search.concurrent_requests",
     int(os.getenv("WEB_SEARCH_CONCURRENT_REQUESTS", "10")),
 )
-
 
 WEB_LOADER_ENGINE = PersistentConfig(
     "WEB_LOADER_ENGINE",
@@ -3305,6 +3287,17 @@ LDAP_ATTRIBUTE_FOR_GROUPS = PersistentConfig(
     "ldap.server.attribute_for_groups",
     os.environ.get("LDAP_ATTRIBUTE_FOR_GROUPS", "memberOf"),
 )
+
+####################################
+# Style
+####################################
+
+STYLE_USE_ENHANCED_MARKDOWN_EDITOR = os.environ.get(
+    "STYLE_USE_ENHANCED_MARKDOWN_EDITOR", "True"
+).lower()
+STYLE_USE_ENHANCED_CODE_BLOCK = os.environ.get(
+    "STYLE_USE_ENHANCED_CODE_BLOCK", "True"
+).lower()
 
 ####################################
 # Credit and Usage
