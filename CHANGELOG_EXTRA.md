@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 积分日志与兑换码的样式调整为 OpenWebUI 的统一样式
 - 支持禁用自定义编辑器和代码块
 
+### Fixed
+
+- 修复自定义用户待激活界面提示不生效的问题
+
 ## [0.6.22.1] - 2025.08.11
 
 ### Added

@@ -1730,6 +1730,11 @@ async def get_app_config(request: Request):
                 else {}
             ),
         },
+        "ui": {
+            "pending_user_overlay_title": app.state.config.PENDING_USER_OVERLAY_TITLE,
+            "pending_user_overlay_content": app.state.config.PENDING_USER_OVERLAY_CONTENT,
+            "response_watermark": app.state.config.RESPONSE_WATERMARK,
+        },
         **(
             {
                 "default_models": app.state.config.DEFAULT_MODELS,
@@ -1766,11 +1771,6 @@ async def get_app_config(request: Request):
                     "sharepoint_url": ONEDRIVE_SHAREPOINT_URL.value,
                     "sharepoint_tenant_id": ONEDRIVE_SHAREPOINT_TENANT_ID.value,
                 },
-                "ui": {
-                    "pending_user_overlay_title": app.state.config.PENDING_USER_OVERLAY_TITLE,
-                    "pending_user_overlay_content": app.state.config.PENDING_USER_OVERLAY_CONTENT,
-                    "response_watermark": app.state.config.RESPONSE_WATERMARK,
-                },
                 "license_metadata": app.state.LICENSE_METADATA,
                 **(
                     {
@@ -1795,7 +1795,7 @@ async def get_app_config(request: Request):
                     }
                     if app.state.LICENSE_METADATA
                     else {}
-                )
+                ),
             }
         ),
     }
