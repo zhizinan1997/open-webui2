@@ -39,6 +39,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.datastructures import Headers
 
+from bs4 import BeautifulSoup
+
 from open_webui.models.credits import Credits
 from open_webui.utils import logger
 from open_webui.utils.audit import AuditLevel, AuditLoggingMiddleware
@@ -404,6 +406,8 @@ from open_webui.config import (
     EZFP_PAY_PRIORITY,
     USAGE_CALCULATE_DEFAULT_EMBEDDING_PRICE,
     USAGE_CUSTOM_PRICE_CONFIG,
+    STYLE_USE_ENHANCED_MARKDOWN_EDITOR,
+    STYLE_USE_ENHANCED_CODE_BLOCK,
 )
 from open_webui.env import (
     LICENSE_KEY,
@@ -440,6 +444,7 @@ from open_webui.env import (
     ENABLE_OTEL,
     EXTERNAL_PWA_MANIFEST_URL,
     AIOHTTP_CLIENT_SESSION_SSL,
+    BASE_DIR,
 )
 
 from open_webui.utils.models import (
@@ -532,6 +537,29 @@ async def lifespan(app: FastAPI):
 
     if LICENSE_KEY:
         get_license_data(app, LICENSE_KEY)
+
+    # toggle custom enhanced features
+    try:
+        index_html = os.path.join(BASE_DIR, "build/index.html")
+        with open(index_html, "r") as file:
+            index_html_content = file.read()
+        index_html_soup = BeautifulSoup(index_html_content, "html.parser")
+        index_html_meta = index_html_soup.find(
+            "meta", attrs={"name": "enhanced-editor"}
+        )
+        if index_html_meta:
+            index_html_meta["content"] = STYLE_USE_ENHANCED_MARKDOWN_EDITOR
+        index_html_meta = index_html_soup.find("meta", attrs={"name": "code-pretty"})
+        if index_html_meta:
+            index_html_meta["content"] = STYLE_USE_ENHANCED_CODE_BLOCK
+        with open(index_html, "w") as file:
+            file.write(str(index_html_soup))
+        del index_html
+        del index_html_content
+        del index_html_soup
+        del index_html_meta
+    except Exception as e:
+        print("toggle custom enhanced features failed:", e)
 
     # This should be blocking (sync) so functions are not deactivated on first /get_models calls
     # when the first user lands on the / route.

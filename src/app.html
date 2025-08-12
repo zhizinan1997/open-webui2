@@ -26,11 +26,43 @@
 		<script src="/static/loader.js" defer></script>
 		<link rel="stylesheet" href="/static/custom.css" />
 
+		<!-- enhanced start -->
 		<script src="/static/qrcode.min.js?v=202505151942"></script>
-		<script src="/static/code-pretty.js?v=202505151942"></script>
-		<link href="/static/code-pretty.css?v=202505151942" rel="stylesheet" />
-		<script src="/static/enhanced-editor.js?v=202505151942"></script>
-		<link href="/static/enhanced-editor.css?v=202505151942" rel="stylesheet" />
+		<meta name="code-pretty" content="true" />
+		<script>
+			(function () {
+				const meta = document.querySelector('meta[name="code-pretty"]');
+				const enabled = meta && meta.content === 'true';
+				if (!enabled) return;
+
+				const link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.href = '/static/code-pretty.css?v=202505151942';
+				document.head.appendChild(link);
+
+				const s = document.createElement('script');
+				s.src = '/static/code-pretty.js?v=202505151942';
+				document.head.appendChild(s);
+			})();
+		</script>
+		<meta name="enhanced-editor" content="true" />
+		<script>
+			(function () {
+				const meta = document.querySelector('meta[name="enhanced-editor"]');
+				const enabled = meta && meta.content === 'true';
+				if (!enabled) return;
+
+				const link = document.createElement('link');
+				link.rel = 'stylesheet';
+				link.href = '/static/enhanced-editor.css?v=202505151942';
+				document.head.appendChild(link);
+
+				const s = document.createElement('script');
+				s.src = '/static/enhanced-editor.js?v=202505151942';
+				document.head.appendChild(s);
+			})();
+		</script>
+		<!-- enhanced end -->
 
 		<script>
 			function resizeIframe(obj) {
@@ -164,8 +196,8 @@
 			</div>
 
 			<!-- <span style="position: absolute; bottom: 32px; left: 50%; margin: -36px 0 0 -36px">
-				Footer content
-			</span> -->
+		Footer content
+	</span> -->
 		</div>
 	</body>
 </html>
