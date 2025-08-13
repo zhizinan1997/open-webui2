@@ -11,6 +11,7 @@ from typing import Generic, Union, Optional, TypeVar
 from urllib.parse import urlparse
 
 import requests
+from psycopg2.errors import DuplicateTable
 from pydantic import BaseModel
 from sqlalchemy import JSON, Column, DateTime, Integer, func, text
 from authlib.integrations.starlette_client import OAuth
@@ -100,21 +101,17 @@ def run_extra_migrations():
             try:
                 command.stamp(alembic_cfg, migration["base"])
                 command.upgrade(alembic_cfg, migration["upgrade_to"])
-            except OperationalError as err:
-                if str(err).index("already exists") != -1:
+            except Exception as err:
+                if (
+                    str(err).index("already exists") != -1
+                    or str(err).index("duplicate") != -1
+                ):
                     log.info(
                         "skip migrate %s to %s: already exists",
                         migration["base"],
                         migration["upgrade_to"],
                     )
                     continue
-                log.warning(
-                    "failed to migrate %s to %s: %s",
-                    migration["base"],
-                    migration["upgrade_to"],
-                    err,
-                )
-            except Exception as err:
                 log.warning(
                     "failed to migrate %s to %s: %s",
                     migration["base"],
