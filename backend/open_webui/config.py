@@ -102,7 +102,12 @@ def run_extra_migrations():
                 command.upgrade(alembic_cfg, migration["upgrade_to"])
             except OperationalError as err:
                 if str(err).index("already exists") != -1:
-                    pass
+                    log.info(
+                        "skip migrate %s to %s: already exists",
+                        migration["base"],
+                        migration["upgrade_to"],
+                    )
+                    continue
                 log.warning(
                     "failed to migrate %s to %s: %s",
                     migration["base"],
