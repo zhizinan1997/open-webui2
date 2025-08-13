@@ -102,10 +102,8 @@ def run_extra_migrations():
                 command.stamp(alembic_cfg, migration["base"])
                 command.upgrade(alembic_cfg, migration["upgrade_to"])
             except Exception as err:
-                if (
-                    str(err).index("already exists") != -1
-                    or str(err).index("duplicate") != -1
-                ):
+                err = str(err)
+                if err.index("already exists") != -1 or err.index("duplicate") != -1:
                     log.info(
                         "skip migrate %s to %s: already exists",
                         migration["base"],
