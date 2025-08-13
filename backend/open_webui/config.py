@@ -11,9 +11,11 @@ from typing import Generic, Union, Optional, TypeVar
 from urllib.parse import urlparse
 
 import requests
+from psycopg2.errors import DuplicateTable
 from pydantic import BaseModel
-from sqlalchemy import JSON, Column, DateTime, Integer, func
+from sqlalchemy import JSON, Column, DateTime, Integer, func, text
 from authlib.integrations.starlette_client import OAuth
+from sqlalchemy.exc import OperationalError
 
 from open_webui.env import (
     DATA_DIR,
@@ -31,7 +33,7 @@ from open_webui.env import (
     WEBUI_NAME,
     log,
 )
-from open_webui.internal.db import Base, get_db
+from open_webui.internal.db import Base, get_db, Session
 from open_webui.utils.redis import get_redis_connection
 
 
@@ -68,6 +70,60 @@ def run_migrations():
 
 
 run_migrations()
+
+
+def run_extra_migrations():
+    """
+    Only create table or index is allowed here.
+    """
+    custom_migrations = [
+        {"base": "3781e22d8b01", "upgrade_to": "1403e6d80d1d"},
+        {"base": "d31026856c01", "upgrade_to": "97c08d196e3d"},
+    ]
+    log.info("Running extra migrations")
+    # do migrations
+    try:
+        # load version from db
+        current_version = Session.execute(
+            text("SELECT version_num FROM alembic_version")
+        ).scalar_one()
+
+        # init alembic
+        from alembic import command
+        from alembic.config import Config
+
+        alembic_cfg = Config(OPEN_WEBUI_DIR / "alembic.ini")
+        migrations_path = OPEN_WEBUI_DIR / "migrations"
+        alembic_cfg.set_main_option("script_location", str(migrations_path))
+
+        # do migrations
+        for migration in custom_migrations:
+            try:
+                command.stamp(alembic_cfg, migration["base"])
+                command.upgrade(alembic_cfg, migration["upgrade_to"])
+            except Exception as err:
+                err = str(err)
+                if err.index("already exists") != -1 or err.index("duplicate") != -1:
+                    log.info(
+                        "skip migrate %s to %s: already exists",
+                        migration["base"],
+                        migration["upgrade_to"],
+                    )
+                    continue
+                log.warning(
+                    "failed to migrate %s to %s: %s",
+                    migration["base"],
+                    migration["upgrade_to"],
+                    err,
+                )
+
+        # stamp to current version
+        command.stamp(alembic_cfg, current_version)
+    except Exception as e:
+        log.exception("Error running extra migrations: %s", e)
+
+
+run_extra_migrations()
 
 
 class Config(Base):
