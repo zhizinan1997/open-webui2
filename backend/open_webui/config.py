@@ -11,10 +11,11 @@ from typing import Generic, Union, Optional, TypeVar
 from urllib.parse import urlparse
 
 import requests
+from psycopg2.errors import DuplicateTable
 from pydantic import BaseModel
-from sqlalchemy import JSON, Column, DateTime, Integer, func
+from sqlalchemy import JSON, Column, DateTime, Integer, func, text
 from authlib.integrations.starlette_client import OAuth
-
+from sqlalchemy.exc import OperationalError
 
 from open_webui.env import (
     DATA_DIR,
@@ -32,7 +33,7 @@ from open_webui.env import (
     WEBUI_NAME,
     log,
 )
-from open_webui.internal.db import Base, get_db
+from open_webui.internal.db import Base, get_db, Session
 from open_webui.utils.redis import get_redis_connection
 
 
@@ -69,6 +70,60 @@ def run_migrations():
 
 
 run_migrations()
+
+
+def run_extra_migrations():
+    """
+    Only create table or index is allowed here.
+    """
+    custom_migrations = [
+        {"base": "3781e22d8b01", "upgrade_to": "1403e6d80d1d"},
+        {"base": "d31026856c01", "upgrade_to": "97c08d196e3d"},
+    ]
+    log.info("Running extra migrations")
+    # do migrations
+    try:
+        # load version from db
+        current_version = Session.execute(
+            text("SELECT version_num FROM alembic_version")
+        ).scalar_one()
+
+        # init alembic
+        from alembic import command
+        from alembic.config import Config
+
+        alembic_cfg = Config(OPEN_WEBUI_DIR / "alembic.ini")
+        migrations_path = OPEN_WEBUI_DIR / "migrations"
+        alembic_cfg.set_main_option("script_location", str(migrations_path))
+
+        # do migrations
+        for migration in custom_migrations:
+            try:
+                command.stamp(alembic_cfg, migration["base"])
+                command.upgrade(alembic_cfg, migration["upgrade_to"])
+            except Exception as err:
+                err = str(err)
+                if err.index("already exists") != -1 or err.index("duplicate") != -1:
+                    log.info(
+                        "skip migrate %s to %s: already exists",
+                        migration["base"],
+                        migration["upgrade_to"],
+                    )
+                    continue
+                log.warning(
+                    "failed to migrate %s to %s: %s",
+                    migration["base"],
+                    migration["upgrade_to"],
+                    err,
+                )
+
+        # stamp to current version
+        command.stamp(alembic_cfg, current_version)
+    except Exception as e:
+        log.exception("Error running extra migrations: %s", e)
+
+
+run_extra_migrations()
 
 
 class Config(Base):
@@ -389,7 +444,6 @@ MICROSOFT_CLIENT_PICTURE_URL = PersistentConfig(
     ),
 )
 
-
 MICROSOFT_OAUTH_SCOPE = PersistentConfig(
     "MICROSOFT_OAUTH_SCOPE",
     "oauth.microsoft.scope",
@@ -507,7 +561,7 @@ OAUTH_EMAIL_CLAIM = PersistentConfig(
 OAUTH_GROUPS_CLAIM = PersistentConfig(
     "OAUTH_GROUPS_CLAIM",
     "oauth.oidc.group_claim",
-    os.environ.get("OAUTH_GROUP_CLAIM", "groups"),
+    os.environ.get("OAUTH_GROUPS_CLAIM", os.environ.get("OAUTH_GROUP_CLAIM", "groups")),
 )
 
 ENABLE_OAUTH_ROLE_MANAGEMENT = PersistentConfig(
@@ -907,6 +961,9 @@ GEMINI_API_BASE_URL = os.environ.get("GEMINI_API_BASE_URL", "")
 
 if OPENAI_API_BASE_URL == "":
     OPENAI_API_BASE_URL = "https://api.openai.com/v1"
+else:
+    if OPENAI_API_BASE_URL.endswith("/"):
+        OPENAI_API_BASE_URL = OPENAI_API_BASE_URL[:-1]
 
 OPENAI_API_KEYS = os.environ.get("OPENAI_API_KEYS", "")
 OPENAI_API_KEYS = OPENAI_API_KEYS if OPENAI_API_KEYS != "" else OPENAI_API_KEY
@@ -945,7 +1002,6 @@ except Exception:
     pass
 OPENAI_API_BASE_URL = "https://api.openai.com/v1"
 
-
 ####################################
 # MODELS
 ####################################
@@ -955,7 +1011,6 @@ ENABLE_BASE_MODELS_CACHE = PersistentConfig(
     "models.base_models_cache",
     os.environ.get("ENABLE_BASE_MODELS_CACHE", "False").lower() == "true",
 )
-
 
 ####################################
 # TOOL_SERVERS
@@ -1112,13 +1167,11 @@ PENDING_USER_OVERLAY_CONTENT = PersistentConfig(
     os.environ.get("PENDING_USER_OVERLAY_CONTENT", ""),
 )
 
-
 RESPONSE_WATERMARK = PersistentConfig(
     "RESPONSE_WATERMARK",
     "ui.watermark",
     os.environ.get("RESPONSE_WATERMARK", ""),
 )
-
 
 USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS = (
     os.environ.get("USER_PERMISSIONS_WORKSPACE_MODELS_ACCESS", "False").lower()
@@ -1339,6 +1392,14 @@ ENABLE_ADMIN_WORKSPACE_CONTENT_ACCESS = (
     os.environ.get("ENABLE_ADMIN_WORKSPACE_CONTENT_ACCESS", "True").lower() == "true"
 )
 
+BYPASS_ADMIN_ACCESS_CONTROL = (
+    os.environ.get(
+        "BYPASS_ADMIN_ACCESS_CONTROL",
+        os.environ.get("ENABLE_ADMIN_WORKSPACE_CONTENT_ACCESS", "True"),
+    ).lower()
+    == "true"
+)
+
 ENABLE_ADMIN_CHAT_ACCESS = (
     os.environ.get("ENABLE_ADMIN_CHAT_ACCESS", "True").lower() == "true"
 )
@@ -1539,7 +1600,6 @@ Strictly return in JSON format:
 {{MESSAGES:END:6}}
 </chat_history>"""
 
-
 FOLLOW_UP_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
     "FOLLOW_UP_GENERATION_PROMPT_TEMPLATE",
     "task.follow_up.prompt_template",
@@ -1547,7 +1607,7 @@ FOLLOW_UP_GENERATION_PROMPT_TEMPLATE = PersistentConfig(
 )
 
 DEFAULT_FOLLOW_UP_GENERATION_PROMPT_TEMPLATE = """### Task:
-Suggest 3-5 relevant follow-up questions or prompts that the user might naturally ask next in this conversation as a **user**, based on the chat history, to help continue or deepen the discussion.
+Suggest 3-5 relevant follow-up questions or prompts in the chat's primary language that the user might naturally ask next in this conversation as a **user**, based on the chat history, to help continue or deepen the discussion.
 ### Guidelines:
 - Write all follow-up questions from the user’s point of view, directed to the assistant.
 - Make questions concise, clear, and directly related to the discussed topic(s).
@@ -1831,6 +1891,12 @@ CODE_INTERPRETER_JUPYTER_TIMEOUT = PersistentConfig(
     ),
 )
 
+CODE_INTERPRETER_BLOCKED_MODULES = [
+    library.strip()
+    for library in os.environ.get("CODE_INTERPRETER_BLOCKED_MODULES", "").split(",")
+    if library.strip()
+]
+
 DEFAULT_CODE_INTERPRETER_PROMPT = """
 #### Tools Available
 
@@ -1940,7 +2006,6 @@ if PGVECTOR_PGCRYPTO and not PGVECTOR_PGCRYPTO_KEY:
         "PGVECTOR_PGCRYPTO is enabled but PGVECTOR_PGCRYPTO_KEY is not set. Please provide a valid key."
     )
 
-
 PGVECTOR_POOL_SIZE = os.environ.get("PGVECTOR_POOL_SIZE", None)
 
 if PGVECTOR_POOL_SIZE != None:
@@ -2000,7 +2065,6 @@ ORACLE_VECTOR_LENGTH = os.environ.get("ORACLE_VECTOR_LENGTH", 768)
 ORACLE_DB_POOL_MIN = int(os.environ.get("ORACLE_DB_POOL_MIN", 2))
 ORACLE_DB_POOL_MAX = int(os.environ.get("ORACLE_DB_POOL_MAX", 10))
 ORACLE_DB_POOL_INCREMENT = int(os.environ.get("ORACLE_DB_POOL_INCREMENT", 1))
-
 
 if VECTOR_DB == "oracle23ai":
     if not ORACLE_DB_USER or not ORACLE_DB_PASSWORD or not ORACLE_DB_DSN:
@@ -2188,13 +2252,11 @@ DOCLING_PICTURE_DESCRIPTION_MODE = PersistentConfig(
     os.getenv("DOCLING_PICTURE_DESCRIPTION_MODE", ""),
 )
 
-
 docling_picture_description_local = os.getenv("DOCLING_PICTURE_DESCRIPTION_LOCAL", "")
 try:
     docling_picture_description_local = json.loads(docling_picture_description_local)
 except json.JSONDecodeError:
     docling_picture_description_local = {}
-
 
 DOCLING_PICTURE_DESCRIPTION_LOCAL = PersistentConfig(
     "DOCLING_PICTURE_DESCRIPTION_LOCAL",
@@ -2208,13 +2270,11 @@ try:
 except json.JSONDecodeError:
     docling_picture_description_api = {}
 
-
 DOCLING_PICTURE_DESCRIPTION_API = PersistentConfig(
     "DOCLING_PICTURE_DESCRIPTION_API",
     "rag.docling_picture_description_api",
     docling_picture_description_api,
 )
-
 
 DOCUMENT_INTELLIGENCE_ENDPOINT = PersistentConfig(
     "DOCUMENT_INTELLIGENCE_ENDPOINT",
@@ -2311,7 +2371,6 @@ FILE_IMAGE_COMPRESSION_HEIGHT = PersistentConfig(
     ),
 )
 
-
 RAG_ALLOWED_FILE_EXTENSIONS = PersistentConfig(
     "RAG_ALLOWED_FILE_EXTENSIONS",
     "rag.file.allowed_extensions",
@@ -2381,7 +2440,6 @@ RAG_RERANKING_MODEL = PersistentConfig(
 if RAG_RERANKING_MODEL.value != "":
     log.info(f"Reranking model set: {RAG_RERANKING_MODEL.value}")
 
-
 RAG_RERANKING_MODEL_AUTO_UPDATE = (
     not OFFLINE_MODE
     and os.environ.get("RAG_RERANKING_MODEL_AUTO_UPDATE", "True").lower() == "true"
@@ -2402,7 +2460,6 @@ RAG_EXTERNAL_RERANKER_API_KEY = PersistentConfig(
     "rag.external_reranker_api_key",
     os.environ.get("RAG_EXTERNAL_RERANKER_API_KEY", ""),
 )
-
 
 RAG_TEXT_SPLITTER = PersistentConfig(
     "RAG_TEXT_SPLITTER",
@@ -2539,7 +2596,6 @@ BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL = PersistentConfig(
     os.getenv("BYPASS_WEB_SEARCH_EMBEDDING_AND_RETRIEVAL", "False").lower() == "true",
 )
 
-
 BYPASS_WEB_SEARCH_WEB_LOADER = PersistentConfig(
     "BYPASS_WEB_SEARCH_WEB_LOADER",
     "rag.web.search.bypass_web_loader",
@@ -2570,12 +2626,19 @@ WEB_SEARCH_CONCURRENT_REQUESTS = PersistentConfig(
     int(os.getenv("WEB_SEARCH_CONCURRENT_REQUESTS", "10")),
 )
 
-
 WEB_LOADER_ENGINE = PersistentConfig(
     "WEB_LOADER_ENGINE",
     "rag.web.loader.engine",
     os.environ.get("WEB_LOADER_ENGINE", ""),
 )
+
+
+WEB_LOADER_CONCURRENT_REQUESTS = PersistentConfig(
+    "WEB_LOADER_CONCURRENT_REQUESTS",
+    "rag.web.loader.concurrent_requests",
+    int(os.getenv("WEB_LOADER_CONCURRENT_REQUESTS", "10")),
+)
+
 
 ENABLE_WEB_LOADER_SSL_VERIFICATION = PersistentConfig(
     "ENABLE_WEB_LOADER_SSL_VERIFICATION",
@@ -3305,6 +3368,17 @@ LDAP_ATTRIBUTE_FOR_GROUPS = PersistentConfig(
     "ldap.server.attribute_for_groups",
     os.environ.get("LDAP_ATTRIBUTE_FOR_GROUPS", "memberOf"),
 )
+
+####################################
+# Style
+####################################
+
+STYLE_USE_ENHANCED_MARKDOWN_EDITOR = os.environ.get(
+    "STYLE_USE_ENHANCED_MARKDOWN_EDITOR", "True"
+).lower()
+STYLE_USE_ENHANCED_CODE_BLOCK = os.environ.get(
+    "STYLE_USE_ENHANCED_CODE_BLOCK", "True"
+).lower()
 
 ####################################
 # Credit and Usage
