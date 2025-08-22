@@ -1564,7 +1564,9 @@ async def chat_completion(
 
     async def process_chat(request, form_data, user, metadata, model):
         try:
-            form_data["metadata"]["features_for_credit"] = form_data["metadata"]["features"]
+            form_data["metadata"]["features_for_credit"] = form_data["metadata"][
+                "features"
+            ]
 
             form_data, metadata, events = await process_chat_payload(
                 request, form_data, user, metadata, model

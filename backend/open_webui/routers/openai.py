@@ -703,7 +703,12 @@ def get_azure_allowed_params(api_version: str) -> set[str]:
 
 
 def is_openai_reasoning_model(model: str) -> bool:
-    return model.lower().startswith(("o1", "o3", "o4", "gpt-5"))
+    # split / for openrouter.ai models
+    # split . for pipe models
+    real_model_name = (model.lower().split("/", 1)[-1]).split(".", 1)[-1]
+
+    # check for reasoning models
+    return real_model_name.startswith(("o1", "o3", "o4", "gpt-5"))
 
 
 def convert_to_azure_payload(url, payload: dict, api_version: str):
