@@ -40,7 +40,7 @@ from open_webui.utils.credit.utils import check_credit_by_user_id
 
 from open_webui.utils.payload import (
     apply_model_params_to_body_openai,
-    apply_model_system_prompt_to_body,
+    apply_system_prompt_to_body,
 )
 from open_webui.utils.misc import (
     convert_logit_bias_input_to_json,
@@ -362,9 +362,18 @@ async def get_all_models_responses(request: Request, user: UserModel) -> list:
             prefix_id = api_config.get("prefix_id", None)
             tags = api_config.get("tags", [])
 
-            for model in (
+            model_list = (
                 response if isinstance(response, list) else response.get("data", [])
-            ):
+            )
+            if not isinstance(model_list, list):
+                # Catch non-list responses
+                model_list = []
+
+            for model in model_list:
+                # Remove name key if its value is None #16689
+                if "name" in model and model["name"] is None:
+                    del model["name"]
+
                 if prefix_id:
                     model["id"] = (
                         f"{prefix_id}.{model.get('id', model.get('name', ''))}"
@@ -693,6 +702,10 @@ def get_azure_allowed_params(api_version: str) -> set[str]:
     return allowed_params
 
 
+def is_openai_reasoning_model(model: str) -> bool:
+    return model.lower().startswith(("o1", "o3", "o4", "gpt-5"))
+
+
 def convert_to_azure_payload(url, payload: dict, api_version: str):
     model = payload.get("model", "")
 
@@ -700,7 +713,7 @@ def convert_to_azure_payload(url, payload: dict, api_version: str):
     allowed_params = get_azure_allowed_params(api_version)
 
     # Special handling for o-series models
-    if model.startswith("o") and model.endswith("-mini"):
+    if is_openai_reasoning_model(model):
         # Convert max_tokens to max_completion_tokens for o-series models
         if "max_tokens" in payload:
             payload["max_completion_tokens"] = payload["max_tokens"]
@@ -752,7 +765,7 @@ async def generate_chat_completion(
             system = params.pop("system", None)
 
             payload = apply_model_params_to_body_openai(params, payload)
-            payload = apply_model_system_prompt_to_body(system, payload, metadata, user)
+            payload = apply_system_prompt_to_body(system, payload, metadata, user)
 
         # Check if user has access to the model
         if not bypass_filter and user.role == "user":
@@ -807,14 +820,8 @@ async def generate_chat_completion(
     url = request.app.state.config.OPENAI_API_BASE_URLS[idx]
     key = request.app.state.config.OPENAI_API_KEYS[idx]
 
-    # clean model name
-    # split / for openrouter.ai models
-    # split . for pipe models
-    real_model_name = (payload["model"].lower().split("/", 1)[-1]).split(".", 1)[-1]
-
-    # Check if model is from "o" series
-    is_reasoning_model = real_model_name.startswith(("o1", "o3", "o4", "gpt-5"))
-    if is_reasoning_model:
+    # Check if model is a reasoning model that needs special handling
+    if is_openai_reasoning_model(payload["model"]):
         payload = openai_reasoning_model_handler(payload)
     elif "api.openai.com" not in url:
         # Remove "max_completion_tokens" from the payload for backward compatibility

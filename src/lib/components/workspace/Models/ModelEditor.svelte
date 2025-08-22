@@ -326,7 +326,7 @@
 					/>
 				</svg>
 			</div>
-			<div class=" self-center text-sm font-medium">{'Back'}</div>
+			<div class=" self-center text-sm font-medium">{$i18n.t('Back')}</div>
 		</button>
 	{/if}
 
@@ -466,7 +466,7 @@
 								}}
 								type="button"
 							>
-								Reset Image</button
+								{$i18n.t('Reset Image')}</button
 							>
 						</div>
 					</div>
@@ -515,7 +515,7 @@
 							<div>
 								<select
 									class="text-sm w-full bg-transparent outline-hidden"
-									placeholder="Select a base model (e.g. llama3, gpt-4o)"
+									placeholder={$i18n.t('Select a base model (e.g. llama3, gpt-4o)')}
 									bind:value={info.base_model_id}
 									on:change={(e) => {
 										addUsage(e.target.value);
@@ -692,7 +692,9 @@
 								<div>
 									<Textarea
 										className=" text-sm w-full bg-transparent outline-hidden resize-none overflow-y-hidden "
-										placeholder={`Write your model system prompt content here\ne.g.) You are Mario from Super Mario Bros, acting as an assistant.`}
+										placeholder={$i18n.t(
+											'Write your model system prompt content here\ne.g.) You are Mario from Super Mario Bros, acting as an assistant.'
+										)}
 										rows={4}
 										bind:value={system}
 									/>
@@ -809,7 +811,7 @@
 										</div>
 									{/each}
 								{:else}
-									<div class="text-xs text-center">No suggestion prompts</div>
+									<div class="text-xs text-center">{$i18n.t('No suggestion prompts')}</div>
 								{/if}
 							</div>
 						{/if}
