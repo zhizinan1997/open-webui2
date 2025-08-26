@@ -173,7 +173,7 @@
 						on:click={() => {
 							show = false;
 						}}
-						href="https://github.com/U8F69/releases"
+						href="https://github.com/ovinc-cn/openwebui/releases"
 					>
 						<Map className="size-5" />
 						<div class="flex items-center">{$i18n.t('Releases')}</div>

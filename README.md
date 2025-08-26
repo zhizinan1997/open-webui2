@@ -8,10 +8,10 @@
 
 ## 部署方式
 
-部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/U8F69/open-webui/releases/latest) 中查看
+部署二开版本只需要替换镜像和版本，其他的部署与官方版本没有差别，版本号请在 [Release](https://github.com/ovinc-cn/openwebui/releases/latest) 中查看
 
 ```
-ghcr.io/u8f69/open-webui:<版本号>
+ghcr.io/ovinc-cn/openwebui:<版本号>
 ```
 
 ## 拓展特性
