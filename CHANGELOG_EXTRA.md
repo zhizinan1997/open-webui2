@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.25.2] - 2025.08.26
+## [0.6.26.1] - 2025.08.28
 
 ### Changed
 
-- Github 仓库迁移
+- 合并官方 0.6.26 改动
 
 ## [0.6.25.1] - 2025.08.22
 
