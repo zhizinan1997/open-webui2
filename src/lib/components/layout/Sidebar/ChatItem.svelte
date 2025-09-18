@@ -409,29 +409,28 @@
 			/>
 		</div>
 	{:else}
-		<Tooltip content={title}>
-			<a
-				class=" w-full flex justify-between rounded-lg px-[11px] py-[6px] {id === $chatId ||
-				confirmEdit
-					? 'bg-gray-100 dark:bg-gray-900'
-					: selected
-						? 'bg-gray-100 dark:bg-gray-950'
-						: ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
-				href="/c/{id}"
-				on:click={() => {
-					dispatch('select');
+		<a
+			class=" w-full flex justify-between rounded-lg px-[11px] py-[6px] {id === $chatId ||
+			confirmEdit
+				? 'bg-gray-100 dark:bg-gray-900'
+				: selected
+					? 'bg-gray-100 dark:bg-gray-950'
+					: ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
+			href="/c/{id}"
+			on:click={() => {
+				dispatch('select');
 
 				if ($selectedFolder) {
 					selectedFolder.set(null);
 				}
 
-					if ($mobile) {
-						showSidebar.set(false);
-					}
-				}}
-				on:dblclick={async (e) => {
-					e.preventDefault();
-					e.stopPropagation();
+				if ($mobile) {
+					showSidebar.set(false);
+				}
+			}}
+			on:dblclick={async (e) => {
+				e.preventDefault();
+				e.stopPropagation();
 
 				doubleClicked = true;
 				renameHandler();
