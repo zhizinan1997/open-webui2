@@ -279,7 +279,10 @@
 
 		setTimeout(() => {
 			const input = document.getElementById(`chat-title-input-${id}`);
-			if (input) input.focus();
+			if (input) {
+				input.focus();
+				input.select();
+			}
 		}, 0);
 	};
 
@@ -406,52 +409,47 @@
 			/>
 		</div>
 	{:else}
-		<Tooltip content={title}>
-			<a
-				class=" w-full flex justify-between rounded-lg px-[11px] py-[6px] {id === $chatId ||
-				confirmEdit
-					? 'bg-gray-100 dark:bg-gray-900'
-					: selected
-						? 'bg-gray-100 dark:bg-gray-950'
-						: ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
-				href="/c/{id}"
-				on:click={() => {
-					dispatch('select');
+		<a
+			class=" w-full flex justify-between rounded-lg px-[11px] py-[6px] {id === $chatId ||
+			confirmEdit
+				? 'bg-gray-100 dark:bg-gray-900'
+				: selected
+					? 'bg-gray-100 dark:bg-gray-950'
+					: ' group-hover:bg-gray-100 dark:group-hover:bg-gray-950'}  whitespace-nowrap text-ellipsis"
+			href="/c/{id}"
+			on:click={() => {
+				dispatch('select');
 
-					if (
-						$selectedFolder &&
-						!($selectedFolder?.items?.chats.map((chat) => chat.id) ?? []).includes(id)
-					) {
-						selectedFolder.set(null); // Reset selected folder if the chat is not in it
-					}
+				if ($selectedFolder) {
+					selectedFolder.set(null);
+				}
 
-					if ($mobile) {
-						showSidebar.set(false);
-					}
-				}}
-				on:dblclick={async (e) => {
-					e.preventDefault();
-					e.stopPropagation();
+				if ($mobile) {
+					showSidebar.set(false);
+				}
+			}}
+			on:dblclick={async (e) => {
+				e.preventDefault();
+				e.stopPropagation();
 
-					doubleClicked = true;
-					renameHandler();
-				}}
-				on:mouseenter={(e) => {
-					mouseOver = true;
-				}}
-				on:mouseleave={(e) => {
-					mouseOver = false;
-				}}
-				on:focus={(e) => {}}
-				draggable="false"
-			>
-				<div class=" flex self-center flex-1 w-full">
-					<div dir="auto" class="text-left self-center overflow-hidden w-full h-[20px]">
-						{title}
-					</div>
+				doubleClicked = true;
+				renameHandler();
+			}}
+			on:mouseenter={(e) => {
+				mouseOver = true;
+			}}
+			on:mouseleave={(e) => {
+				mouseOver = false;
+			}}
+			on:focus={(e) => {}}
+			draggable="false"
+		>
+			<div class=" flex self-center flex-1 w-full">
+				<div dir="auto" class="text-left self-center overflow-hidden w-full h-[20px] truncate">
+					{title}
 				</div>
-			</a>
-		</Tooltip>
+			</div>
+		</a>
 	{/if}
 
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
