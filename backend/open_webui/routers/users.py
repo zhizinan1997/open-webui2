@@ -25,6 +25,7 @@ from open_webui.models.users import (
     UserModel,
     UserListResponse,
     UserInfoListResponse,
+    UserIdNameListResponse,
     UserRoleUpdateForm,
     Users,
     UserSettings,
@@ -125,6 +126,23 @@ async def get_all_users(
     for user in users:
         setattr(user, "credit", credit_map.get(user.id, {}).get("credit", 0))
     return user_data
+
+
+@router.get("/search", response_model=UserIdNameListResponse)
+async def search_users(
+    query: Optional[str] = None,
+    user=Depends(get_verified_user),
+):
+    limit = PAGE_ITEM_COUNT
+
+    page = 1  # Always return the first page for search
+    skip = (page - 1) * limit
+
+    filter = {}
+    if query:
+        filter["query"] = query
+
+    return Users.get_users(filter=filter, skip=skip, limit=limit)
 
 
 ############################
