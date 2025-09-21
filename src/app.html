@@ -146,12 +146,451 @@
 			})();
 		</script>
 
+		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+		<!-- 通知弹窗样式 -->
+		<style>
+			/* 通知弹窗遮罩层 */
+			#notification-overlay {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				background: rgba(0, 0, 0, 0.1);
+				backdrop-filter: blur(4px);
+				-webkit-backdrop-filter: blur(4px);
+				z-index: 9998;
+				display: none;
+				animation: fadeIn 0.3s ease-in-out;
+			}
+
+			/* 通知弹窗容器 */
+			#notification-modal {
+				position: fixed;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				background: white;
+				border-radius: 12px;
+				box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+				z-index: 9999;
+				display: none;
+				max-width: 90%;
+				max-height: 80vh;
+				width: 600px;
+				animation: slideIn 0.3s ease-out;
+				overflow: hidden;
+			}
+
+			/* 深色模式适配 */
+			html.dark #notification-modal {
+				background: #1f2937;
+				color: #e5e7eb;
+			}
+
+			html.her #notification-modal {
+				background: #7c2d1f;
+				color: #fef2f2;
+			}
+
+			/* 弹窗头部 */
+			.notification-header {
+				padding: 20px 24px;
+				border-bottom: 1px solid #e5e7eb;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+
+			html.dark .notification-header {
+				border-bottom: 1px solid #374151;
+			}
+
+			.notification-title {
+				font-size: 20px;
+				font-weight: 600;
+				margin: 0;
+				color: #111827;
+			}
+
+			html.dark .notification-title {
+				color: #f3f4f6;
+			}
+
+			/* 关闭按钮 */
+			.notification-close {
+				background: none;
+				border: none;
+				cursor: pointer;
+				padding: 4px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: 6px;
+				transition: background 0.2s;
+				color: #6b7280;
+			}
+
+			.notification-close:hover {
+				background: #f3f4f6;
+			}
+
+			html.dark .notification-close:hover {
+				background: #374151;
+			}
+
+			html.dark .notification-close {
+				color: #9ca3af;
+			}
+
+			/* 弹窗内容区 */
+			.notification-content {
+				padding: 24px;
+				max-height: calc(80vh - 140px);
+				overflow-y: auto;
+				overflow-x: hidden;
+				-webkit-overflow-scrolling: touch;
+			}
+
+			/* Markdown 内容样式 */
+			.notification-content h1,
+			.notification-content h2,
+			.notification-content h3,
+			.notification-content h4,
+			.notification-content h5,
+			.notification-content h6 {
+				margin-top: 1.5em;
+				margin-bottom: 0.5em;
+			}
+
+			.notification-content h1:first-child,
+			.notification-content h2:first-child,
+			.notification-content h3:first-child {
+				margin-top: 0;
+			}
+
+			.notification-content p {
+				margin: 1em 0;
+				line-height: 1.6;
+			}
+
+			.notification-content ul,
+			.notification-content ol {
+				margin: 1em 0;
+				padding-left: 2em;
+			}
+
+			.notification-content li {
+				margin: 0.5em 0;
+			}
+
+			.notification-content pre {
+				background: #f3f4f6;
+				padding: 1em;
+				border-radius: 6px;
+				overflow-x: auto;
+			}
+
+			html.dark .notification-content pre {
+				background: #1f2937;
+			}
+
+			.notification-content code {
+				background: #f3f4f6;
+				padding: 0.2em 0.4em;
+				border-radius: 3px;
+				font-size: 0.9em;
+			}
+
+			html.dark .notification-content code {
+				background: #374151;
+			}
+
+			.notification-content pre code {
+				background: none;
+				padding: 0;
+			}
+
+			.notification-content a {
+				color: #3b82f6;
+				text-decoration: none;
+			}
+
+			.notification-content a:hover {
+				text-decoration: underline;
+			}
+
+			html.dark .notification-content a {
+				color: #60a5fa;
+			}
+
+			/* 弹窗底部 */
+			.notification-footer {
+				padding: 16px 24px;
+				border-top: 1px solid #e5e7eb;
+				display: flex;
+				justify-content: flex-end;
+			}
+
+			html.dark .notification-footer {
+				border-top: 1px solid #374151;
+			}
+
+			.notification-confirm {
+				background: #3b82f6;
+				color: white;
+				border: none;
+				padding: 8px 20px;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 14px;
+				font-weight: 500;
+				transition: background 0.2s;
+			}
+
+			.notification-confirm:hover {
+				background: #2563eb;
+			}
+
+			/* 动画效果 */
+			@keyframes fadeIn {
+				from {
+					opacity: 0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+
+			@keyframes slideIn {
+				from {
+					opacity: 0;
+					transform: translate(-50%, -48%);
+				}
+				to {
+					opacity: 1;
+					transform: translate(-50%, -50%);
+				}
+			}
+
+			/* 移动端适配 - 优化后 */
+			@media (max-width: 640px) {
+				#notification-modal {
+					width: 85%;
+					max-width: 360px;
+					max-height: 50vh; /* 缩小为屏幕高度的一半 */
+				}
+
+				.notification-header {
+					padding: 12px 16px;
+				}
+
+				.notification-title {
+					font-size: 16px;
+				}
+
+				.notification-content {
+					padding: 16px;
+					max-height: calc(50vh - 100px); /* 调整内容区域高度 */
+					overflow-y: auto;
+					-webkit-overflow-scrolling: touch;
+				}
+
+				.notification-footer {
+					padding: 10px 16px;
+				}
+
+				.notification-confirm {
+					padding: 6px 16px;
+					font-size: 13px;
+				}
+			}
+
+			/* 针对更小的设备 */
+			@media (max-width: 380px) {
+				#notification-modal {
+					width: 90%;
+					max-height: 45vh; /* 小屏设备进一步缩小 */
+				}
+
+				.notification-content {
+					max-height: calc(45vh - 95px);
+				}
+
+				.notification-header {
+					padding: 10px 14px;
+				}
+
+				.notification-title {
+					font-size: 15px;
+				}
+
+				.notification-content {
+					padding: 14px;
+				}
+			}
+
+			/* 平板设备优化 */
+			@media (min-width: 641px) and (max-width: 1024px) {
+				#notification-modal {
+					width: 500px;
+					max-height: 70vh;
+				}
+
+				.notification-content {
+					max-height: calc(70vh - 140px);
+				}
+			}
+
+			/* 自定义滚动条 */
+			.notification-content::-webkit-scrollbar {
+				width: 8px;
+			}
+
+			.notification-content::-webkit-scrollbar-track {
+				background: #f1f1f1;
+				border-radius: 4px;
+			}
+
+			.notification-content::-webkit-scrollbar-thumb {
+				background: #888;
+				border-radius: 4px;
+			}
+
+			.notification-content::-webkit-scrollbar-thumb:hover {
+				background: #555;
+			}
+
+			html.dark .notification-content::-webkit-scrollbar-track {
+				background: #374151;
+			}
+
+			html.dark .notification-content::-webkit-scrollbar-thumb {
+				background: #6b7280;
+			}
+
+			html.dark .notification-content::-webkit-scrollbar-thumb:hover {
+				background: #9ca3af;
+			}
+		</style>
 		<title>Open WebUI</title>
 
 		%sveltekit.head%
 	</head>
 
 	<body data-sveltekit-preload-data="hover">
+		<!-- 通知弹窗 HTML 结构 -->
+		<div id="notification-overlay"></div>
+		<div id="notification-modal">
+			<div class="notification-header">
+				<h2 class="notification-title">通知</h2>
+				<button class="notification-close" id="notification-close-btn">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
+			</div>
+			<div class="notification-content" id="notification-content">
+				<!-- Markdown 内容将被渲染到这里 -->
+			</div>
+			<div class="notification-footer">
+				<button class="notification-confirm" id="notification-confirm-btn">已阅读</button>
+			</div>
+		</div>
+		<script>
+			// 通知弹窗逻辑
+			(function () {
+				let autoCloseTimer;
+				// 显示通知弹窗
+				function showNotification() {
+					const overlay = document.getElementById('notification-overlay');
+					const modal = document.getElementById('notification-modal');
+					if (overlay && modal) {
+						overlay.style.display = 'block';
+						modal.style.display = 'block';
+						// 30秒后自动关闭
+						autoCloseTimer = setTimeout(closeNotification, 30000);
+						// 获取并渲染通知内容
+						loadNotificationContent();
+					}
+				}
+				// 关闭通知弹窗
+				function closeNotification() {
+					const overlay = document.getElementById('notification-overlay');
+					const modal = document.getElementById('notification-modal');
+					if (overlay && modal) {
+						overlay.style.display = 'none';
+						modal.style.display = 'none';
+					}
+					// 清除自动关闭定时器
+					if (autoCloseTimer) {
+						clearTimeout(autoCloseTimer);
+					}
+				}
+				// 加载并渲染 Markdown 内容
+				function loadNotificationContent() {
+					fetch('/tz.md')
+						.then((response) => {
+							if (!response.ok) {
+								throw new Error('无法加载通知内容');
+							}
+							return response.text();
+						})
+						.then((markdown) => {
+							// 使用 marked.js 解析 Markdown
+							if (typeof marked !== 'undefined') {
+								const htmlContent = marked.parse(markdown);
+								const contentElement = document.getElementById('notification-content');
+								if (contentElement) {
+									contentElement.innerHTML = htmlContent;
+								}
+							} else {
+								// 如果 marked.js 没有加载，显示原始文本
+								const contentElement = document.getElementById('notification-content');
+								if (contentElement) {
+									contentElement.innerHTML = '<pre>' + markdown + '</pre>';
+								}
+							}
+						})
+						.catch((error) => {
+							console.error('加载通知内容失败:', error);
+							const contentElement = document.getElementById('notification-content');
+							if (contentElement) {
+								contentElement.innerHTML = '<p>通知内容加载失败，请刷新页面重试。</p>';
+							}
+						});
+				}
+				// DOM 加载完成后初始化
+				document.addEventListener('DOMContentLoaded', function () {
+					// 显示通知弹窗
+					showNotification();
+					// 绑定关闭按钮事件
+					const closeBtn = document.getElementById('notification-close-btn');
+					const confirmBtn = document.getElementById('notification-confirm-btn');
+					const overlay = document.getElementById('notification-overlay');
+					if (closeBtn) {
+						closeBtn.addEventListener('click', closeNotification);
+					}
+					if (confirmBtn) {
+						confirmBtn.addEventListener('click', closeNotification);
+					}
+					// 点击遮罩层也可以关闭弹窗（可选）
+					if (overlay) {
+						overlay.addEventListener('click', closeNotification);
+					}
+				});
+			})();
+		</script>
 		<div style="display: contents">%sveltekit.body%</div>
 
 		<div
